@@ -1,15 +1,17 @@
 describe('Component: OrderHistory', function() {
     var scope,
         q,
+        oc,
         order,
         lineItemList,
         product,
         spendingAccount;
     beforeEach(module('orderCloud'));
     beforeEach(module('orderCloud.sdk'));
-    beforeEach(inject(function($q, $rootScope) {
+    beforeEach(inject(function($q, $rootScope, OrderCloud) {
         q = $q;
         scope = $rootScope.$new();
+        oc = OrderCloud;
         order = {
             ID: "TestOrder123456789",
             Type: "Standard",
@@ -107,11 +109,13 @@ describe('Component: OrderHistory', function() {
         var state;
         beforeEach(inject(function($state, Orders) {
             state = $state.get('orderHistory');
-            spyOn(Orders, 'List').and.returnValue(null);
+            spyOn(oc.Auth, 'ReadToken').and.returnValue('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c3IiOiJDT05OT1JfSk9ITlNPTiIsImNpZCI6ImY1NjdjZTQ2LTNjMjQtNDZiZS1hOWM5LTMyN2ZhYmFkZWJiMyIsImltcCI6ImMxIiwidXNydHlwZSI6ImJ1eWVyIiwicm9sZSI6IkZ1bGxBY2Nlc3MiLCJpc3MiOiJodHRwczovL2F1dGgub3JkZXJjbG91ZC5pbyIsImF1ZCI6Imh0dHBzOi8vYXBpLm9yZGVyY2xvdWQuaW8iLCJleHAiOjE0NTQ5NzI2MDgsIm5iZiI6MTQ1NDk2OTAwOH0.RmWy4hoDzSLaWmlY3pxkOZ3OC2ZTRgzmpiEu_SN8YMk');
+            spyOn(oc.Orders, 'List').and.returnValue(null);
         }));
         it('should resolve OrderList', inject(function($injector, Orders) {
-            $injector.invoke(state.resolve.OrderList);
-            expect(Orders.List).toHaveBeenCalledWith('incoming');
+            var userType = $injector.invoke(state.resolve.UserType);
+            $injector.invoke(state.resolve.OrderList, scope, {OrderCloud: oc, UserType: userType});
+            expect(oc.Orders.List).toHaveBeenCalled();
         }));
     });
 
@@ -142,7 +146,7 @@ describe('Component: OrderHistory', function() {
 
     describe('Factory: OrderHistoryFactory', function() {
         var orderHistoryService, orderID, productID;
-        beforeEach(inject(function(OrderHistoryFactory, Orders, LineItems, Products, SpendingAccounts) {
+        beforeEach(inject(function(OrderHistoryFactory) {
             orderHistoryService = OrderHistoryFactory;
             var orderDefer = q.defer();
             var lineItemDefer = q.defer();
@@ -152,10 +156,10 @@ describe('Component: OrderHistory', function() {
             lineItemDefer.resolve(lineItemList);
             productDefer.resolve(product);
             spendingAccountDefer.resolve(spendingAccount);
-            spyOn(Orders, 'Get').and.returnValue(orderDefer.promise);
-            spyOn(LineItems, 'List').and.returnValue(lineItemDefer.promise);
-            spyOn(Products, 'Get').and.returnValue(productDefer.promise);
-            spyOn(SpendingAccounts, 'Get').and.returnValue(spendingAccountDefer.promise);
+            spyOn(oc.Orders, 'Get').and.returnValue(orderDefer.promise);
+            spyOn(oc.LineItems, 'List').and.returnValue(lineItemDefer.promise);
+            spyOn(oc.Products, 'Get').and.returnValue(productDefer.promise);
+            spyOn(oc.SpendingAccounts, 'Get').and.returnValue(spendingAccountDefer.promise);
             //scope.$digest();
         }));
 
@@ -166,15 +170,15 @@ describe('Component: OrderHistory', function() {
                 orderHistoryService.GetOrderDetails(orderID);
                 scope.$digest();
             });
-            it ('should call an Order Get', inject(function(Orders) {
-                expect(Orders.Get).toHaveBeenCalledWith(orderID);
-            }));
-            it ('should call a Line Item List', inject(function(LineItems) {
-                expect(LineItems.List).toHaveBeenCalledWith(orderID, 1, 100);
-            }));
-            it ('should call a Product Get', inject(function(Products) {
-                expect(Products.Get).toHaveBeenCalledWith(productID);
-            }));
+            it ('should call an Order Get', function() {
+                expect(oc.Orders.Get).toHaveBeenCalledWith(orderID);
+            });
+            it ('should call a Line Item List', function() {
+                expect(oc.LineItems.List).toHaveBeenCalledWith(orderID, 1, 100);
+            });
+            it ('should call a Product Get', function() {
+                expect(oc.Products.Get).toHaveBeenCalledWith(productID);
+            });
         });
     });
 });

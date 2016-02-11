@@ -5,6 +5,8 @@ angular.module( 'orderCloud' )
     .controller( 'OrderHistoryDetailCtrl', OrderHistoryDetailController )
     .controller( 'OrderHistoryDetailLineItemCtrl', OrderHistoryDetailLineItemController )
     .factory( 'OrderHistoryFactory', OrderHistoryFactory )
+    .directive( 'ordercloudOrderSearch', ordercloudOrderSearch )
+    .controller( 'OrderHistorySearchCtrl', OrderHistorySearchController )
     .filter('paymentmethods', paymentmethods)
 ;
 
@@ -18,8 +20,43 @@ function OrderHistoryConfig( $stateProvider ) {
             controllerAs: 'orderHistory',
             data: {componentName: 'Order History'},
             resolve: {
-                OrderList: function(Orders) {
-                    return Orders.List('incoming');
+                UserType: function(OrderCloud) {
+                    return JSON.parse(atob(OrderCloud.Auth.ReadToken().split('.')[1])).usrtype;
+                },
+                OrderList: function(OrderCloud, UserType) {
+                    return OrderCloud.Orders.List((UserType == 'admin' ? 'incoming' : 'outgoing'));
+                },
+                BuyerCompanies: function( $q, OrderCloud, UserType ) {
+                    var deferred = $q.defer();
+
+                    if (UserType == 'admin') {
+                        var returnObject = {};
+                        var queue = [];
+                        OrderCloud.Buyers.List(null, 1, 100)
+                            .then(function(data) {
+                                returnObject = data;
+                                for (var i = 1; i < data.Meta.TotalPages; i++) {
+                                    queue.push(OrderCloud.Buyers.List(null, i, 100));
+                                }
+
+                                if (queue.length) {
+                                    $q.all(queue).then(function(results) {
+                                        angular.forEach(results, function(result) {
+                                            returnObject.Items = returnObject.concat(result.Items);
+                                            deferred.resolve(returnObject);
+                                        });
+                                    });
+                                }
+                                else {
+                                    deferred.resolve(returnObject);
+                                }
+                            });
+                    }
+                    else {
+                        deferred.resolve();
+                    }
+
+                    return deferred.promise;
                 }
             }
         })
@@ -48,9 +85,13 @@ function OrderHistoryConfig( $stateProvider ) {
     ;
 }
 
-function OrderHistoryController( OrderList ) {
+function OrderHistoryController( OrderList, UserType, BuyerCompanies ) {
     var vm = this;
-    vm.orders = OrderList;
+    vm.list = OrderList;
+    vm.userType = UserType;
+    vm.buyerCompanies = BuyerCompanies;
+
+    vm.filters = {};
 }
 
 function OrderHistoryDetailController( SelectedOrder ) {
@@ -63,10 +104,11 @@ function OrderHistoryDetailLineItemController( SelectedLineItem ) {
     vm.lineItem = SelectedLineItem;
 }
 
-function OrderHistoryFactory( $q, Underscore, Orders, LineItems, Products, SpendingAccounts ) {
+function OrderHistoryFactory( $q, Underscore, OrderCloud ) {
     var service = {
         GetOrderDetails: _getOrderDetails,
-        GetLineItemDetails: _getLineItemDetails
+        GetLineItemDetails: _getLineItemDetails,
+        SearchOrders: _searchOrders
     };
 
     function _getOrderDetails(orderID) {
@@ -75,7 +117,7 @@ function OrderHistoryFactory( $q, Underscore, Orders, LineItems, Products, Spend
         var lineItemQueue = [];
         var productQueue = [];
 
-        Orders.Get(orderID)
+        OrderCloud.Orders.Get(orderID)
             .then(function(data) {
                 order = data;
                 order.LineItems = [];
@@ -83,11 +125,11 @@ function OrderHistoryFactory( $q, Underscore, Orders, LineItems, Products, Spend
             });
 
         function gatherLineItems() {
-            LineItems.List(orderID, 1, 100)
+            OrderCloud.LineItems.List(orderID, 1, 100)
                 .then(function(data) {
                     order.LineItems = order.LineItems.concat(data.Items);
                     for (var i = 2; i <= data.Meta.TotalPages; i++) {
-                        lineItemQueue.push(LineItems.List(orderID, i, 100));
+                        lineItemQueue.push(OrderCloud.LineItems.List(orderID, i, 100));
                     }
                     $q.all(lineItemQueue).then(function(results) {
                         angular.forEach(results, function(result) {
@@ -105,7 +147,7 @@ function OrderHistoryFactory( $q, Underscore, Orders, LineItems, Products, Spend
                 productQueue.push((function() {
                     var d = $q.defer();
 
-                    Products.Get(productID)
+                    OrderCloud.Products.Get(productID)
                         .then(function(product) {
                             angular.forEach(Underscore.where(order.LineItems, {ProductID: product.ID}), function(item) {
                                 item.Product = product;
@@ -120,7 +162,7 @@ function OrderHistoryFactory( $q, Underscore, Orders, LineItems, Products, Spend
 
             $q.all(productQueue).then(function() {
                 if (order.SpendingAccountID) {
-                    SpendingAccounts.Get(order.SpendingAccountID)
+                    OrderCloud.SpendingAccounts.Get(order.SpendingAccountID)
                         .then(function(sa) {
                             order.SpendingAccount = sa;
                             deferred.resolve(order);
@@ -139,14 +181,14 @@ function OrderHistoryFactory( $q, Underscore, Orders, LineItems, Products, Spend
         var deferred = $q.defer();
         var lineItem;
 
-        LineItems.Get(orderID, lineItemID)
+        OrderCloud.LineItems.Get(orderID, lineItemID)
             .then(function(li) {
                 lineItem = li;
                 getProduct();
             });
 
         function getProduct() {
-            Products.Get(lineItem.ProductID)
+            OrderCloud.Products.Get(lineItem.ProductID)
                 .then(function(product) {
                     lineItem.Product = product;
                     deferred.resolve(lineItem);
@@ -156,7 +198,66 @@ function OrderHistoryFactory( $q, Underscore, Orders, LineItems, Products, Spend
         return deferred.promise;
     }
 
+    function _searchOrders(filters, userType) {
+        var deferred = $q.defer();
+
+        OrderCloud.Orders.List((userType == 'admin' ? 'incoming' : 'outgoing'), filters.FromCompanyID, filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, null, {ID: filters.OrderID, Status: filters.Status})
+            .then(function(data) {
+                deferred.resolve(data);
+            });
+
+        return deferred.promise;
+    }
+
     return service;
+}
+
+function ordercloudOrderSearch() {
+    return {
+        scope: {
+            controlleras: '=',
+            filters: '=',
+            usertype: '@',
+            buyercompanies: '='
+        },
+        restrict: 'E',
+        templateUrl: 'orderHistory/templates/orderHistory.search.tpl.html',
+        controller: 'OrderHistorySearchCtrl',
+        controllerAs: 'ocOrderSearch',
+        replace: true
+    }
+}
+
+function OrderHistorySearchController( $scope, $timeout, OrderHistoryFactory ) {
+    var vm = this;
+    $scope.statuses = [
+        {Name: 'Unsubmitted', Value: 'Unsubmitted'},
+        {Name: 'Open', Value: 'Open'},
+        {Name: 'Awaiting Approval', Value: 'AwaitingApproval'},
+        {Name: 'Completed', Value: 'Completed'},
+        {Name: 'Declined', Value: 'Declined'},
+        {Name: 'Cancelled', Value: 'Cancelled'}
+    ];
+
+    var searching;
+    $scope.$watch('filters', function(n,o) {
+        if (n == o) {
+            if (searching) $timeout.cancel(searching);
+        } else {
+            if (searching) $timeout.cancel(searching);
+            searching = $timeout(function() {
+                angular.forEach($scope.filters, function(value, key) {
+                   value == '' ? $scope.filters[key] = null : angular.noop();
+                });
+
+                OrderHistoryFactory.SearchOrders($scope.filters, $scope.usertype)
+                    .then(function(data) {
+                        $scope.controlleras.list = data;
+                    });
+
+            }, 300);
+        }
+    }, true);
 }
 
 function paymentmethods() {
