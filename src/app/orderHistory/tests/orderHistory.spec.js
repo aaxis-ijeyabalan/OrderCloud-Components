@@ -3,6 +3,7 @@ describe('Component: OrderHistory', function() {
         q,
         oc,
         order,
+        orderList,
         lineItemList,
         product,
         spendingAccount;
@@ -112,10 +113,21 @@ describe('Component: OrderHistory', function() {
             spyOn(oc.Auth, 'ReadToken').and.returnValue('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c3IiOiJDT05OT1JfSk9ITlNPTiIsImNpZCI6ImY1NjdjZTQ2LTNjMjQtNDZiZS1hOWM5LTMyN2ZhYmFkZWJiMyIsImltcCI6ImMxIiwidXNydHlwZSI6ImJ1eWVyIiwicm9sZSI6IkZ1bGxBY2Nlc3MiLCJpc3MiOiJodHRwczovL2F1dGgub3JkZXJjbG91ZC5pbyIsImF1ZCI6Imh0dHBzOi8vYXBpLm9yZGVyY2xvdWQuaW8iLCJleHAiOjE0NTQ5NzI2MDgsIm5iZiI6MTQ1NDk2OTAwOH0.RmWy4hoDzSLaWmlY3pxkOZ3OC2ZTRgzmpiEu_SN8YMk');
             spyOn(oc.Orders, 'List').and.returnValue(null);
         }));
+        it('should resolve UserType', inject(function($injector) {
+            var userType = $injector.invoke(state.resolve.UserType);
+            expect(userType).toBeDefined();
+        }));
         it('should resolve OrderList', inject(function($injector, Orders) {
             var userType = $injector.invoke(state.resolve.UserType);
             $injector.invoke(state.resolve.OrderList, scope, {OrderCloud: oc, UserType: userType});
             expect(oc.Orders.List).toHaveBeenCalled();
+        }));
+        it('should resolve BuyerCompanies', inject(function($injector) {
+            var userType = $injector.invoke(state.resolve.UserType);
+            $injector.invoke(state.resolve.BuyerCompanies, scope, {$q: q, OrderCloud: oc, UserType: userType});
+            if (userType == 'admin') {
+                expect(oc.Buyers.List).toHaveBeenCalled();
+            }
         }));
     });
 
@@ -145,18 +157,21 @@ describe('Component: OrderHistory', function() {
 
 
     describe('Factory: OrderHistoryFactory', function() {
-        var orderHistoryService, orderID, productID;
+        var orderHistoryService, orderID, productID, filters;
         beforeEach(inject(function(OrderHistoryFactory) {
             orderHistoryService = OrderHistoryFactory;
             var orderDefer = q.defer();
+            var orderListDefer = q.defer();
             var lineItemDefer = q.defer();
             var productDefer = q.defer();
             var spendingAccountDefer = q.defer();
             orderDefer.resolve(order);
+            orderListDefer.resolve(orderList);
             lineItemDefer.resolve(lineItemList);
             productDefer.resolve(product);
             spendingAccountDefer.resolve(spendingAccount);
             spyOn(oc.Orders, 'Get').and.returnValue(orderDefer.promise);
+            spyOn(oc.Orders, 'List').and.returnValue(orderListDefer.promise);
             spyOn(oc.LineItems, 'List').and.returnValue(lineItemDefer.promise);
             spyOn(oc.Products, 'Get').and.returnValue(productDefer.promise);
             spyOn(oc.SpendingAccounts, 'Get').and.returnValue(spendingAccountDefer.promise);
@@ -180,5 +195,17 @@ describe('Component: OrderHistory', function() {
                 expect(oc.Products.Get).toHaveBeenCalledWith(productID);
             });
         });
+
+        describe('SearchOrders', function() {
+            beforeEach(function() {
+                filters = {OrderID: "TestOrder123456789", Status: "Open", FromCompanyID: "TestCompany", FromDate: new Date(), ToDate: new Date(), searchTerm: "TestTerm"};
+                orderHistoryService.SearchOrders(filters, 'admin');
+                scope.$digest();
+
+            });
+            it ('should call an Order List', function() {
+                expect(oc.Orders.List).toHaveBeenCalledWith('incoming', filters.FromCompanyID, filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, null, {ID: filters.OrderID, Status: filters.Status});
+            });
+        })
     });
 });
