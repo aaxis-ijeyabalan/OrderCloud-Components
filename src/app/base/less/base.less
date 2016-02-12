@@ -75,6 +75,27 @@
     background-color:@navbar-default-bg;
     padding:@padding-base-horizontal;
   }
+  ul li ul {
+    background-color: #ffffff;
+    border-radius: 0 0 4px 4px;
+    border-left:2px solid #ebebeb;
+    li {
+      margin-left:15px !important;
+      margin-right: 5px !important;
+      a {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      &.active {
+        > a {
+          background-color:@brand-primary;
+        }
+      }
+    }
+  }
+
+
 }
 
 .navbar-flex {
