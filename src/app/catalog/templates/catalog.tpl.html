@@ -5,7 +5,6 @@
             <button class="btn btn-default pull-left" ng-click="catalog.toggleTree()">
                 <i class="fa" ng-class="[{'fa-caret-square-o-left': catalog.showTree}, {'fa-caret-square-o-right': !catalog.showTree}]"></i> {{catalog.showTree ? 'Hide' : 'Show'}} Category Tree
             </button>
-            <ordercloud-minicart order="catalog.currentOrder" class="pull-right"></ordercloud-minicart>
         </div>
         <ui-view>
             <ordercloud-category-list categorylist="catalog.categories.Items"></ordercloud-category-list>

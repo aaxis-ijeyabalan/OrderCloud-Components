@@ -11,26 +11,16 @@ function CartConfig($stateProvider) {
     $stateProvider
         .state('cart', {
             parent: 'base',
-            data: {componentName: 'Cart'},
+            //data: {componentName: 'Cart'},
             url: '/cart',
             templateUrl: 'cart/templates/cart.tpl.html',
             controller: 'CartCtrl',
             controllerAs: 'cart',
             resolve: {
-                Order: function($q, $state, toastr, CurrentOrder) {
-                    var dfd = $q.defer();
-                    CurrentOrder.Get()
-                        .then(function(order) {
-                            dfd.resolve(order)
-                        })
-                        .catch(function() {
-                            toastr.error('You do not have an active open order.', 'Error');
-                            if ($state.current.name === 'cart') {
-                                $state.go('home');
-                            }
-                            dfd.reject();
-                        });
-                    return dfd.promise;
+                CurrentOrderResolve: function(/* Resolve from base */ Order, $state) {
+                    if (!Order) {
+                        $state.go('home');
+                    }
                 },
                 LineItemsList: function($q, $state, Order, Underscore, OrderCloud, toastr, LineItemHelpers) {
                     var dfd = $q.defer();
@@ -93,7 +83,7 @@ function CartController($q, $rootScope, OrderCloud, Order, LineItemsList, LineIt
     });
 }
 
-function MiniCartController($q, $rootScope, OrderCloud, LineItemHelpers, CurrentOrder) {
+function MiniCartController($q, $state, $rootScope, OrderCloud, LineItemHelpers, CurrentOrder) {
     var vm = this;
     vm.LineItems = {};
     vm.Order = null;
@@ -104,6 +94,10 @@ function MiniCartController($q, $rootScope, OrderCloud, LineItemHelpers, Current
             vm.Order = data;
             if (data) getLineItems(data);
         });
+
+    vm.goToCart = function() {
+        $state.go('cart', {}, {reload: true});
+    };
 
     function getLineItems(order) {
         var dfd = $q.defer();
@@ -136,6 +130,12 @@ function MiniCartController($q, $rootScope, OrderCloud, LineItemHelpers, Current
                 getLineItems(order);
                 vm.showLineItems = true;
             });
+    });
+
+
+    $rootScope.$on('OC:OrderDeleted', function(){ //broadcast is in build > src > app > common > line items
+        vm.Order = null;
+        vm.LineItems = {};
     });
 }
 

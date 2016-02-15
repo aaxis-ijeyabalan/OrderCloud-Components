@@ -71,7 +71,8 @@ describe('Component: Base', function() {
             };
         beforeEach(inject(function($controller) {
             baseLeftCtrl = $controller('BaseLeftCtrl', {
-                ComponentList: fake_components
+                ComponentList: fake_components,
+                Order: null
             });
         }));
         it ('should initialize the components lists', function() {

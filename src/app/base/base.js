@@ -4,7 +4,6 @@ angular.module( 'orderCloud' )
 	.controller( 'BaseCtrl', BaseController )
     .controller( 'BaseLeftCtrl', BaseLeftController )
     .controller( 'BaseTopCtrl', BaseTopController )
-
 ;
 
 function BaseConfig( $stateProvider ) {
@@ -73,6 +72,17 @@ function BaseConfig( $stateProvider ) {
                     });
                     deferred.resolve(components);
                     return deferred.promise;
+                },
+                Order: function($q, $state, toastr, CurrentOrder) {
+                    var dfd = $q.defer();
+                    CurrentOrder.Get()
+                      .then(function(order) {
+                          dfd.resolve(order)
+                      })
+                      .catch(function() {
+                          dfd.resolve(null);
+                      });
+                    return dfd.promise;
                 }
             }
 		});
@@ -81,15 +91,23 @@ function BaseConfig( $stateProvider ) {
 function BaseController(CurrentUser) {
 	var vm = this;
     vm.currentUser = CurrentUser;
+
 }
 
-function BaseLeftController(ComponentList) {
+function BaseLeftController(ComponentList, Order) {
     var vm = this;
     vm.catalogItems = ComponentList.nonSpecific;
     vm.organizationItems = ComponentList.buyerSpecific;
     vm.isCollapsed = true;
+    vm.order =  Order;
+
 }
 
-function BaseTopController() {
+
+function BaseTopController($rootScope, $state) {
     var vm = this;
+
 }
+
+
+
