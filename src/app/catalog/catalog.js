@@ -139,7 +139,7 @@ function CatalogNode($compile) {
         },
         template: '<li ui-sref-active="active"><a ui-sref="catalog.category({categoryid:node.ID})" ng-bind-html="node.Name"></a></li>',
         link: function(scope, element) {
-            if (angular.isArray(scope.node.children)) {
+            if (angular.isArray(scope.node.children) && scope.node.children.length) {
                 element.append("<catalog-tree tree='node.children' />");
                 $compile(element.contents())(scope);
             }
