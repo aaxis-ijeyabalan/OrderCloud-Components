@@ -1,17 +1,17 @@
 angular.module( 'orderCloud' )
 
-	.config( BaseConfig )
-	.controller( 'BaseCtrl', BaseController )
+    .config( BaseConfig )
+    .controller( 'BaseCtrl', BaseController )
     .controller( 'BaseLeftCtrl', BaseLeftController )
     .controller( 'BaseTopCtrl', BaseTopController )
 ;
 
 function BaseConfig( $stateProvider ) {
-	$stateProvider
-		.state( 'base', {
-			url: '',
-			abstract: true,
-			templateUrl:'base/templates/base.tpl.html',
+    $stateProvider
+        .state( 'base', {
+            url: '',
+            abstract: true,
+            templateUrl:'base/templates/base.tpl.html',
             views: {
                 '': {
                     templateUrl: 'base/templates/base.tpl.html',
@@ -73,41 +73,29 @@ function BaseConfig( $stateProvider ) {
                     deferred.resolve(components);
                     return deferred.promise;
                 },
-                Order: function($q, $state, toastr, CurrentOrder) {
-                    var dfd = $q.defer();
-                    CurrentOrder.Get()
-                      .then(function(order) {
-                          dfd.resolve(order)
-                      })
-                      .catch(function() {
-                          dfd.resolve(null);
-                      });
-                    return dfd.promise;
+
+                Tree: function(CatalogTreeService) {
+                    return CatalogTreeService.GetCatalogTree();
                 }
             }
-		});
+        });
 }
 
 function BaseController(CurrentUser) {
-	var vm = this;
+    var vm = this;
     vm.currentUser = CurrentUser;
-
 }
 
-function BaseLeftController(ComponentList, Order) {
+function BaseLeftController(ComponentList, Tree, Order) {
     var vm = this;
+    vm.tree = Tree;
     vm.catalogItems = ComponentList.nonSpecific;
     vm.organizationItems = ComponentList.buyerSpecific;
     vm.isCollapsed = true;
-    vm.order =  Order;
+    vm.order = Order;
 
 }
 
-
-function BaseTopController($rootScope, $state) {
+function BaseTopController() {
     var vm = this;
-
 }
-
-
-

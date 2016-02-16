@@ -1,4 +1,4 @@
-describe('Component: Base', function() {
+xdescribe('Component: Base', function() {
     var q,
         scope,
         oc;
