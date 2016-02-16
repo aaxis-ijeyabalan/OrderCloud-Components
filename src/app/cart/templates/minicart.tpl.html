@@ -11,6 +11,16 @@
     <div id="minicart_line_item_list" uib-dropdown-menu role="menu" class="panel panel-default">
         <div class="minicart-body">
             <table class="table table-hover">
+
+
+                <button type = "button" class = "btn btn-xwide center-block">
+                    <ng-pluralize count="minicart.LineItems.Meta.TotalCount"
+                                  when="{
+                     'one': '1 item in your cart',
+                     'other': '{} items in your cart'}">
+                    </ng-pluralize>
+                </button>
+
                 <tr ng-repeat="lineItem in minicart.LineItems.Items">
                     <td>{{lineItem.Quantity}}</td>
                     <td>
