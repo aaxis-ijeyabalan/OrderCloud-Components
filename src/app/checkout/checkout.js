@@ -15,13 +15,13 @@ function checkoutConfig($stateProvider) {
 	$stateProvider
 		.state('checkout', {
 			parent: 'base',
-            data: {componentName: 'Checkout'},
+            //data: {componentName: 'Checkout'},
 			url: '/checkout',
 			templateUrl: 'checkout/templates/checkout.tpl.html',
 			controller: 'CheckoutCtrl',
 			controllerAs: 'checkout',
 			resolve: {
-                Order: function($q, $state, toastr, CurrentOrder) {
+                Order: function($rootScope, $q, $state, toastr, CurrentOrder) {
                     var dfd = $q.defer();
                     CurrentOrder.Get()
                         .then(function(order) {
@@ -69,7 +69,7 @@ function checkoutConfig($stateProvider) {
         })
 		.state('orderReview', {
             parent: 'base',
-            data: {componentName: 'Checkout'},
+            //data: {componentName: 'Checkout'},
 			url: '/order/:orderid/review',
             templateUrl: 'checkout/templates/review.tpl.html',
             controller: 'OrderReviewCtrl',

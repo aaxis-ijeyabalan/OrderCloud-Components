@@ -4,7 +4,6 @@ angular.module( 'orderCloud' )
     .controller( 'BaseCtrl', BaseController )
     .controller( 'BaseLeftCtrl', BaseLeftController )
     .controller( 'BaseTopCtrl', BaseTopController )
-
 ;
 
 function BaseConfig( $stateProvider ) {
@@ -74,6 +73,7 @@ function BaseConfig( $stateProvider ) {
                     deferred.resolve(components);
                     return deferred.promise;
                 },
+
                 Tree: function(CatalogTreeService) {
                     return CatalogTreeService.GetCatalogTree();
                 }
@@ -86,12 +86,14 @@ function BaseController(CurrentUser) {
     vm.currentUser = CurrentUser;
 }
 
-function BaseLeftController(ComponentList, Tree) {
+function BaseLeftController(ComponentList, Tree, Order) {
     var vm = this;
     vm.tree = Tree;
     vm.catalogItems = ComponentList.nonSpecific;
     vm.organizationItems = ComponentList.buyerSpecific;
     vm.isCollapsed = true;
+    vm.order = Order;
+
 }
 
 function BaseTopController() {
