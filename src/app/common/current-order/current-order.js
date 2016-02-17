@@ -10,7 +10,8 @@ function CurrentOrderService($q, appname, $localForage, OrderCloud) {
         Get: Get,
         GetID: GetID,
         Set: Set,
-        Remove: Remove
+        Remove: Remove,
+        GetLineItems: GetLineItems
     };
 
     function Get() {
@@ -61,5 +62,30 @@ function CurrentOrderService($q, appname, $localForage, OrderCloud) {
 
     function Remove() {
         return $localForage.removeItem(StorageName);
+    }
+
+    function GetLineItems(orderID) {
+        var deferred = $q.defer();
+        var lineItems = [];
+        var queue = [];
+
+        GetID()
+            .then(function(OrderID) {
+                OrderCloud.LineItems.List(OrderID, 1, 100)
+                    .then(function(data) {
+                        lineItems = lineItems.concat(data.Items);
+                        for (var i = 2; i <= data.Meta.TotalPages; i++) {
+                            queue.push(OrderCloud.LineItems.List(OrderID, i, 100));
+                        }
+                        $q.all(queue).then(function(results) {
+                            angular.forEach(results, function(result) {
+                                lineItems = lineItems.concat(result.Items);
+                            });
+                            deferred.resolve(lineItems);
+                        });
+                    });
+            });
+
+        return deferred.promise;
     }
 }
