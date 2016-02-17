@@ -18,7 +18,7 @@ function OrderCloudOrderInputDirective() {
     };
 }
 
-function OrderInputController($state, appname, $scope, $rootScope, $localForage, OrderCloud, LineItemHelpers, CurrentOrder) {
+function OrderInputController($state, appname, $scope, $rootScope, $localForage, OrderCloud, LineItemHelpers, Underscore, CurrentOrder) {
     var vm = this,
         orderid;
     vm.currentState = $state.current.name;
@@ -54,7 +54,11 @@ function OrderInputController($state, appname, $scope, $rootScope, $localForage,
     function AddToCart() {
         CurrentOrder.Get()
             .then(function(order) {
-                AddLineItem(order, $scope.product);
+                CurrentOrder.GetLineItems(order.ID)
+                    .then(function(lineItems) {
+                        order.LineItems = lineItems;
+                        AddLineItem(order, $scope.product);
+                    });
             })
             .catch(function() {
                 OrderCloud.Orders.Create({})
@@ -66,12 +70,22 @@ function OrderInputController($state, appname, $scope, $rootScope, $localForage,
     }
 
     function AddLineItem(order, product) {
-        OrderCloud.LineItems.Create(order.ID, {
+        var li = {
             ProductID: product.ID,
             Quantity: vm.Quantity,
             Specs: LineItemHelpers.SpecConvert(product.Specs)
-        }).then(function(lineItem) {
+        };
+        li.ShippingAddressID = isSingleShipping(order) ? getSingleShippingAddressID(order) : null;
+        OrderCloud.LineItems.Create(order.ID, li).then(function(lineItem) {
             $rootScope.$broadcast('LineItemAddedToCart', order.ID, lineItem);
         });
+    }
+
+    function isSingleShipping(order) {
+        return Underscore.pluck(order.LineItems, 'ShippingAddressID').length == 1;
+    }
+
+    function getSingleShippingAddressID(order) {
+        return order.LineItems[0].ShippingAddressID;
     }
 }
