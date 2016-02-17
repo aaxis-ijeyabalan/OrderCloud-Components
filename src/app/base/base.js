@@ -86,14 +86,12 @@ function BaseController(CurrentUser) {
     vm.currentUser = CurrentUser;
 }
 
-function BaseLeftController(ComponentList, Tree, Order) {
+function BaseLeftController(ComponentList, Tree) {
     var vm = this;
     vm.tree = Tree;
     vm.catalogItems = ComponentList.nonSpecific;
     vm.organizationItems = ComponentList.buyerSpecific;
     vm.isCollapsed = true;
-    vm.order = Order;
-
 }
 
 function BaseTopController() {

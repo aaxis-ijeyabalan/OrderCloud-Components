@@ -4,7 +4,7 @@ describe('Component: AdminUsers', function() {
         adminUser,
         oc;
     beforeEach(module('orderCloud'));
-    beforeEach(module('orderCloud.newsdk'));
+    beforeEach(module('orderCloud.sdk'));
     beforeEach(inject(function($q, $rootScope, OrderCloud) {
         q = $q;
         scope = $rootScope.$new();

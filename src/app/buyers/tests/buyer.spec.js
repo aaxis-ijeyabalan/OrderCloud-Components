@@ -1,10 +1,11 @@
 describe('Component: Buyers', function() {
     var scope,
         q,
-        buyer;
+        buyer,
+        oc;
     beforeEach(module('orderCloud'));
     beforeEach(module('orderCloud.sdk'));
-    beforeEach(inject(function($q, $rootScope) {
+    beforeEach(inject(function($q, $rootScope, OrderCloud) {
         q = $q;
         scope = $rootScope.$new();
         buyer = {
@@ -12,31 +13,32 @@ describe('Component: Buyers', function() {
             Name: "TestBuyerTest",
             Active: true
         };
+        oc = OrderCloud;
     }));
 
     describe('State: buyers', function() {
         var state;
-        beforeEach(inject(function($state, Buyers) {
+        beforeEach(inject(function($state) {
             state = $state.get('buyers');
-            spyOn(Buyers, 'List').and.returnValue(null);
+            spyOn(oc.Buyers, 'List').and.returnValue(null);
         }));
-        it('should resolve BuyerList', inject(function ($injector, Buyers) {
+        it('should resolve BuyerList', inject(function ($injector) {
             $injector.invoke(state.resolve.BuyerList);
-            expect(Buyers.List).toHaveBeenCalled();
+            expect(oc.Buyers.List).toHaveBeenCalled();
         }));
     });
 
     describe('State: buyers.edit', function() {
         var state;
-        beforeEach(inject(function($state, Buyers) {
+        beforeEach(inject(function($state) {
             state = $state.get('buyers.edit');
             var defer = q.defer();
             defer.resolve();
-            spyOn(Buyers, 'Get').and.returnValue(defer.promise);
+            spyOn(oc.Buyers, 'Get').and.returnValue(defer.promise);
         }));
-        it('should resolve SelectedBuyer', inject(function ($injector, $stateParams, Buyers) {
+        it('should resolve SelectedBuyer', inject(function ($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedBuyer);
-            expect(Buyers.Get).toHaveBeenCalledWith($stateParams.buyerid);
+            expect(oc.Buyers.Get).toHaveBeenCalledWith($stateParams.buyerid);
         }));
     });
 
@@ -51,17 +53,17 @@ describe('Component: Buyers', function() {
         }));
 
         describe('Submit', function() {
-            beforeEach(inject(function(Buyers) {
+            beforeEach(function() {
                 buyerEditCtrl.buyer = buyer;
                 var defer = q.defer();
                 defer.resolve(buyer);
-                spyOn(Buyers, 'Update').and.returnValue(defer.promise);
+                spyOn(oc.Buyers, 'Update').and.returnValue(defer.promise);
                 buyerEditCtrl.Submit();
                 scope.$digest();
-            }));
-            it ('should call the Buyers Update method', inject(function(Buyers) {
-                expect(Buyers.Update).toHaveBeenCalledWith(buyerEditCtrl.buyer);
-            }));
+            });
+            it ('should call the Buyers Update method', function() {
+                expect(oc.Buyers.Update).toHaveBeenCalledWith(buyerEditCtrl.buyer);
+            });
             it ('should enter the buyers state', inject(function($state) {
                 expect($state.go).toHaveBeenCalledWith('buyers', {}, {reload:true});
             }));
@@ -78,17 +80,17 @@ describe('Component: Buyers', function() {
         }));
 
         describe('Submit', function() {
-            beforeEach(inject(function(Buyers) {
+            beforeEach(function() {
                 buyerCreateCtrl.buyer = buyer;
                 var defer = q.defer();
                 defer.resolve(buyer);
-                spyOn(Buyers, 'Create').and.returnValue(defer.promise);
+                spyOn(oc.Buyers, 'Create').and.returnValue(defer.promise);
                 buyerCreateCtrl.Submit();
                 scope.$digest();
-            }));
-            it ('should call the Buyers Create method', inject(function(Buyers) {
-                expect(Buyers.Create).toHaveBeenCalledWith(buyer);
-            }));
+            });
+            it ('should call the Buyers Create method', function() {
+                expect(oc.Buyers.Create).toHaveBeenCalledWith(buyer);
+            });
             it ('should enter the buyers state', inject(function($state) {
                 expect($state.go).toHaveBeenCalledWith('buyers', {}, {reload:true});
             }));

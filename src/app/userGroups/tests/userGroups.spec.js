@@ -31,7 +31,7 @@ describe('Component: UserGroups', function() {
 
     describe('State: userGroups.edit', function() {
         var state;
-        beforeEach(inject(function($state, UserGroups) {
+        beforeEach(inject(function($state) {
             state = $state.get('userGroups.edit');
             spyOn(oc.UserGroups, 'Get').and.returnValue(null);
         }));

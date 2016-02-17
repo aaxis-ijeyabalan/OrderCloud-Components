@@ -4,7 +4,7 @@ describe('Component: Categories', function() {
         category,
         oc;
     beforeEach(module('orderCloud'));
-    beforeEach(module('orderCloud.newsdk'));
+    beforeEach(module('orderCloud.sdk'));
     beforeEach(inject(function($q, $rootScope, OrderCloud) {
         q = $q;
         scope = $rootScope.$new();
@@ -121,7 +121,7 @@ describe('Component: Categories', function() {
         });
 
         describe('Delete', function() {
-            beforeEach(inject(function(Categories) {
+            beforeEach((function() {
                 var defer = q.defer();
                 defer.resolve(category);
                 spyOn(oc.Categories, 'Delete').and.returnValue(defer.promise);
@@ -188,7 +188,7 @@ describe('Component: Categories', function() {
 
         describe('toggle', function() {
             var test;
-            beforeEach(inject(function() {
+            beforeEach(function() {
                 var bool = {
                     toggle: function() {
                         test = true;
@@ -196,7 +196,7 @@ describe('Component: Categories', function() {
                 };
                 categoryTreeCtrl.toggle(bool);
 
-            }));
+            });
             it ('should call scope toggle method', function() {
                 expect(test).toBe(true);
             });

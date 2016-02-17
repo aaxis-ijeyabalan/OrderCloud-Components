@@ -17,8 +17,8 @@ function BuyerConfig( $stateProvider ) {
             controllerAs: 'buyers',
             data: { componentName: 'Buyers' },
             resolve: {
-                BuyerList: function(Buyers) {
-                    return Buyers.List();
+                BuyerList: function(OrderCloud) {
+                    return OrderCloud.Buyers.List();
                 }
             }
         })
@@ -28,8 +28,8 @@ function BuyerConfig( $stateProvider ) {
             controller: 'BuyerEditCtrl',
             controllerAs: 'buyerEdit',
             resolve: {
-                SelectedBuyer: function($stateParams, Buyers) {
-                    return Buyers.Get($stateParams.buyerid);
+                SelectedBuyer: function($stateParams, OrderCloud) {
+                    return OrderCloud.Buyers.Get($stateParams.buyerid);
                 }
             }
         })
@@ -46,13 +46,13 @@ function BuyerController(BuyerList) {
     vm.list = BuyerList;
 }
 
-function BuyerEditController($exceptionHandler, $state, SelectedBuyer, Buyers) {
+function BuyerEditController($exceptionHandler, $state, SelectedBuyer, OrderCloud) {
     var vm = this;
     vm.buyer = SelectedBuyer;
     vm.buyerName = SelectedBuyer.Name;
 
     vm.Submit = function() {
-        Buyers.Update(vm.buyer)
+        OrderCloud.Buyers.Update(vm.buyer)
             .then(function() {
                 $state.go('buyers', {}, {reload:true});
             })
@@ -62,11 +62,11 @@ function BuyerEditController($exceptionHandler, $state, SelectedBuyer, Buyers) {
     }
 }
 
-function BuyerCreateController($exceptionHandler, $state, Buyers) {
+function BuyerCreateController($exceptionHandler, $state, OrderCloud) {
     var vm = this;
 
     vm.Submit = function () {
-        Buyers.Create(vm.buyer)
+        OrderCloud.Buyers.Create(vm.buyer)
             .then(function() {
                 $state.go('buyers', {}, {reload:true});
             })
