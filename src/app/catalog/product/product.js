@@ -17,11 +17,6 @@ function ProductConfig($stateProvider) {
                     templateUrl: 'catalog/product/templates/product.tpl.html',
                     controller: 'ProductCtrl',
                     controllerAs: 'product'
-                },
-                'view@catalog.product': {
-                    templateUrl: 'catalog/product/templates/product.view.tpl.html',
-                    controller: 'ProductCtrl',
-                    controllerAs: 'product'
                 }
             },
             resolve: {
