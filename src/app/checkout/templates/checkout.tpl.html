@@ -16,7 +16,7 @@
 						<a ui-sref=".payment">Payment</a>
 					</li>
 					<li role="presentation" ui-sref-active="active" ng-hide="!checkout.orderIsValid">
-						<a ui-sref=".confirmation">Confirmation</a>
+						<a ng-click="checkout.checkShippingAddresses()">Confirmation</a>
 					</li>
 				</ul>
 			</nav>

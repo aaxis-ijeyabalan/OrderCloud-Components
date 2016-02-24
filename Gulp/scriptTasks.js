@@ -48,8 +48,8 @@ gulp.task('b_m:configjs', function() {
             name:'orderCloud',
             deps: false,
             constants: {
-                authurl: process.env.authurl || 'https://testauth.ordercloud.io/oauth/token',
-                apiurl: process.env.apiurl || 'https://testapi.ordercloud.io'
+                authurl: process.env.authurl || 'https://auth.ordercloud.io/oauth/token',
+                apiurl: process.env.apiurl || 'https://api.ordercloud.io'
             }
         }))
         .pipe(gulp.dest(config.build + 'src/app'))
@@ -80,7 +80,8 @@ gulp.task('b_c:templateCache', function() {
 
 gulp.task('c_m:js', function() {
     return gulp
-        .src([
+        .src([config.build + 'vendor/jquery.js',
+            config.build + 'vendor/localforage.js',
             config.build + 'vendor/angular.js',
             config.build + 'vendor/**/*.js',
             config.build + 'src/templates-app.js',

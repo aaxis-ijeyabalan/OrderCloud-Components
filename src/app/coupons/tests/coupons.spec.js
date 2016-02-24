@@ -4,7 +4,7 @@ describe('Component: Coupons', function() {
         coupon,
         oc;
     beforeEach(module('orderCloud'));
-    beforeEach(module('orderCloud.newsdk'));
+    beforeEach(module('orderCloud.sdk'));
     beforeEach(inject(function($q, $rootScope, OrderCloud) {
         q = $q;
         scope = $rootScope.$new();
@@ -43,7 +43,7 @@ describe('Component: Coupons', function() {
 
     describe('State: coupons.edit', function() {
         var state;
-        beforeEach(inject(function($state, Coupons) {
+        beforeEach(inject(function($state) {
             state = $state.get('coupons.edit');
             var defer = q.defer();
             defer.resolve();

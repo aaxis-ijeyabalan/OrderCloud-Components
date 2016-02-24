@@ -1,4 +1,4 @@
-describe('Component: ApprovalRules', function() {
+xdescribe('Component: ApprovalRules', function() {
     var scope,
         q,
         approvalRule;

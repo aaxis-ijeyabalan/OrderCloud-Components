@@ -44,7 +44,7 @@ describe('Component: Specs', function() {
 
     describe('State: specs.edit', function() {
         var state;
-        beforeEach(inject(function($state, Specs) {
+        beforeEach(inject(function($state) {
             state = $state.get('specs.edit');
             spyOn(oc.Specs, 'Get').and.returnValue(null);
         }));

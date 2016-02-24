@@ -1,6 +1,7 @@
 angular.module('orderCloud')
 	.config(checkoutConfig)
 	.controller('CheckoutCtrl', CheckoutController)
+	.factory('CheckoutService', CheckoutService)
 	.controller('OrderReviewCtrl', OrderReviewController)
 	.controller('OrderConfirmationCtrl', OrderConfirmationController)
     .directive('ordercloudCheckoutLineitems', CheckoutLineItemsListDirective)
@@ -15,13 +16,13 @@ function checkoutConfig($stateProvider) {
 	$stateProvider
 		.state('checkout', {
 			parent: 'base',
-            data: {componentName: 'Checkout'},
+            //data: {componentName: 'Checkout'},
 			url: '/checkout',
 			templateUrl: 'checkout/templates/checkout.tpl.html',
 			controller: 'CheckoutCtrl',
 			controllerAs: 'checkout',
 			resolve: {
-                Order: function($q, $state, toastr, CurrentOrder) {
+                Order: function($rootScope, $q, $state, toastr, CurrentOrder) {
                     var dfd = $q.defer();
                     CurrentOrder.Get()
                         .then(function(order) {
@@ -69,7 +70,7 @@ function checkoutConfig($stateProvider) {
         })
 		.state('orderReview', {
             parent: 'base',
-            data: {componentName: 'Checkout'},
+            //data: {componentName: 'Checkout'},
 			url: '/order/:orderid/review',
             templateUrl: 'checkout/templates/review.tpl.html',
             controller: 'OrderReviewCtrl',
@@ -95,7 +96,23 @@ function checkoutConfig($stateProvider) {
 
 }
 
-function CheckoutController($state, $rootScope, Order, OrderCloud, ShippingAddresses, OrderShipAddress, OrderShippingAddress) {
+function CheckoutService() {
+    var lineItems = [];
+    return {
+        StoreLineItems: StoreLineItems,
+        GetLineItems: GetLineItems
+    };
+
+    function StoreLineItems(items) {
+        lineItems = items;
+    }
+
+    function GetLineItems() {
+        return lineItems;
+    }
+}
+
+function CheckoutController($state, $rootScope, toastr, Order, OrderCloud, ShippingAddresses, OrderShipAddress, OrderShippingAddress, CheckoutService) {
     var vm = this;
     vm.currentOrder = Order;
     vm.currentOrder.ShippingAddressID = OrderShipAddress ? OrderShipAddress.ID : null;
@@ -131,6 +148,27 @@ function CheckoutController($state, $rootScope, Order, OrderCloud, ShippingAddre
         vm.currentOrder.ShippingAddressID = null;
         OrderShippingAddress.Clear();
     });
+
+    vm.checkShippingAddresses = function() {
+        var lineItems = CheckoutService.GetLineItems();
+        var orderValid = true;
+        angular.forEach(lineItems, function(li) {
+            var itemValid = false;
+            if (li.ShippingAddressID) {
+                itemValid = true;
+            }
+            else if (li.ShippingAddress && li.ShippingAddress.Street1) {
+                itemValid = true;
+            }
+            if (!itemValid) orderValid = false;
+        });
+        if (orderValid) {
+            $state.go('checkout.confirmation');
+        }
+        else {
+            toastr.error('Please select a shipping address for all line items');
+        }
+    };
 }
 
 function OrderConfirmationController(Order, CurrentOrder, OrderCloud, $state, isMultipleAddressShipping, $exceptionHandler) {
@@ -197,7 +235,7 @@ function CheckoutLineItemsListDirective() {
     };
 }
 
-function CheckoutLineItemsController($scope, $q, OrderCloud, LineItemHelpers, Underscore) {
+function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineItemHelpers, Underscore, CheckoutService) {
     var vm = this;
     vm.lineItems = {};
     vm.UpdateQuantity = LineItemHelpers.UpdateQuantity;
@@ -227,6 +265,7 @@ function CheckoutLineItemsController($scope, $q, OrderCloud, LineItemHelpers, Un
             .then(function(data) {
                 vm.lineItems = data;
                 LineItemHelpers.GetProductInfo(vm.lineItems.Items);
+                CheckoutService.StoreLineItems(vm.lineItems.Items);
             });
     }
 
@@ -238,11 +277,12 @@ function CheckoutLineItemsController($scope, $q, OrderCloud, LineItemHelpers, Un
                     vm.lineItems.Meta = data.Meta;
                     vm.lineItems.Items = [].concat(vm.lineItems.Items, data.Items);
                     LineItemHelpers.GetProductInfo(vm.lineItems.Items);
+                    CheckoutService.StoreLineItems(vm.lineItems.Items);
                 });
             return dfd.promise;
         }
         else return null;
-    }
+    };
 }
 
 function ConfirmationLineItemsListDirective() {
