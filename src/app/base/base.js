@@ -74,8 +74,19 @@ function BaseConfig( $stateProvider ) {
                     return deferred.promise;
                 },
 
-                Tree: function(CatalogTreeService) {
-                    return CatalogTreeService.GetCatalogTree();
+                Tree: function(CatalogTreeService, OrderCloud) {
+                    if (OrderCloud.Auth.ReadToken) {
+                        var tokenInfo = atob(OrderCloud.Auth.ReadToken().split('.')[1]);
+                        if (tokenInfo.usrtype === "buyer") {
+                            return CatalogTreeService.GetCatalogTree();
+                        }
+                        else {
+                            return null;
+                        }
+                    }
+                    else {
+                        return null;
+                    }
                 }
             }
         });
