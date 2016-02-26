@@ -30,6 +30,17 @@ function BaseConfig( $stateProvider ) {
                 }
             },
             resolve: {
+                Order: function($rootScope, $q, $state, toastr, CurrentOrder) {
+                    var dfd = $q.defer();
+                    CurrentOrder.Get()
+                        .then(function(order) {
+                            dfd.resolve(order)
+                        })
+                        .catch(function() {
+                            dfd.resolve(null);
+                        });
+                    return dfd.promise;
+                },
                 CurrentUser: function($q, $state, OrderCloud) {
                     var dfd = $q.defer();
                     OrderCloud.Me.Get()
