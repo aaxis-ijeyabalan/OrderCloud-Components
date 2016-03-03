@@ -26,6 +26,9 @@
                         <th>
                             <div>Total</div>
                         </th>
+                        <th>
+                            <div>Reorder</div>
+                        </th>
                     </tr>
                     </thead>
                     <tbody>
@@ -34,6 +37,9 @@
                         <td>{{order.Status}}</td>
                         <td>{{(order.DateSubmitted ||  order.DateCreated) | date}}</td>
                         <td>{{order.Total | currency}}</td>
+                        <td>
+                            <ordercloud-repeat-order orderid="order.ID" ng-show="order.Subtotal > 0"></ordercloud-repeat-order>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

@@ -12,7 +12,8 @@ function LineItemFactory($rootScope, $q, $state, $uibModal, Underscore, OrderClo
         UpdateQuantity: UpdateQuantity,
         GetProductInfo: GetProductInfo,
         CustomShipping: CustomShipping,
-        UpdateShipping: UpdateShipping
+        UpdateShipping: UpdateShipping,
+        ListAll: ListAll
     };
 
     function SpecConvert(specs) {
@@ -111,6 +112,35 @@ function LineItemFactory($rootScope, $q, $state, $uibModal, Underscore, OrderClo
                 $rootScope.$broadcast('LineItemAddressUpdated', LineItem.ID, address);
             });
     }
+
+    function ListAll(orderID) {
+
+        var li;
+
+        var dfd = $q.defer();
+        var queue = [];
+        OrderCloud.LineItems.List(orderID, 1, 100)
+            .then(function (data) {
+                li = data;
+                if (data.Meta.TotalPages > data.Meta.Page) {
+                    var page = data.Meta.Page;
+                    while (page < data.Meta.TotalPages) {
+                        page += 1;
+                        queue.push(OrderCloud.LineItems.List(orderID, page, 100));
+                    }
+                }
+                $q.all(queue)
+                    .then(function (results) {
+                        angular.forEach(results, function (result) {
+                            li.Items = [].concat(li.Items, result.Items);
+                            li.Meta = result.Meta;
+                        });
+                        dfd.resolve(li.Items);
+                    });
+            });
+        return dfd.promise;
+
+    }
 }
 
 function LineItemModalController($uibModalInstance) {
@@ -125,4 +155,8 @@ function LineItemModalController($uibModalInstance) {
         vm.address = {};
         $uibModalInstance.dismiss('cancel');
     };
+
+
 }
+
+
