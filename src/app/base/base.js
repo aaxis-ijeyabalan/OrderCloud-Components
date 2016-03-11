@@ -45,17 +45,6 @@ function BaseConfig( $stateProvider ) {
                         });
                     return dfd.promise;
                 },
-                Order: function($rootScope, $q, $state, toastr, CurrentOrder, CurrentUser) {
-                    var dfd = $q.defer();
-                    CurrentOrder.Get()
-                        .then(function(order) {
-                            dfd.resolve(order)
-                        })
-                        .catch(function() {
-                            dfd.resolve(null);
-                        });
-                    return dfd.promise;
-                },
                 ComponentList: function($state, $q, Underscore, CurrentUser) {
                     var deferred = $q.defer();
                     var nonSpecific = ['Products', 'Specs', 'Price Schedules', 'Admin Users'];

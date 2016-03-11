@@ -17,7 +17,18 @@ function CartConfig($stateProvider) {
             controller: 'CartCtrl',
             controllerAs: 'cart',
             resolve: {
-                CurrentOrderResolve: function(/* Resolve from base */ Order, $state) {
+                Order: function($rootScope, $q, $state, toastr, CurrentOrder) {
+                    var dfd = $q.defer();
+                    CurrentOrder.Get()
+                        .then(function(order) {
+                            dfd.resolve(order)
+                        })
+                        .catch(function() {
+                            dfd.resolve(null);
+                        });
+                    return dfd.promise;
+                },
+                CurrentOrderResolve: function(Order, $state) {
                     if (!Order) {
                         $state.go('home');
                     }
