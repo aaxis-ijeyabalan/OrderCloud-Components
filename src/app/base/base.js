@@ -30,17 +30,6 @@ function BaseConfig( $stateProvider ) {
                 }
             },
             resolve: {
-                Order: function($rootScope, $q, $state, toastr, CurrentOrder) {
-                    var dfd = $q.defer();
-                    CurrentOrder.Get()
-                        .then(function(order) {
-                            dfd.resolve(order)
-                        })
-                        .catch(function() {
-                            dfd.resolve(null);
-                        });
-                    return dfd.promise;
-                },
                 CurrentUser: function($q, $state, OrderCloud) {
                     var dfd = $q.defer();
                     OrderCloud.Me.Get()
@@ -56,7 +45,18 @@ function BaseConfig( $stateProvider ) {
                         });
                     return dfd.promise;
                 },
-                ComponentList: function($state, $q, Underscore) {
+                Order: function($rootScope, $q, $state, toastr, CurrentOrder, CurrentUser) {
+                    var dfd = $q.defer();
+                    CurrentOrder.Get()
+                        .then(function(order) {
+                            dfd.resolve(order)
+                        })
+                        .catch(function() {
+                            dfd.resolve(null);
+                        });
+                    return dfd.promise;
+                },
+                ComponentList: function($state, $q, Underscore, CurrentUser) {
                     var deferred = $q.defer();
                     var nonSpecific = ['Products', 'Specs', 'Price Schedules', 'Admin Users'];
                     var components = {
@@ -84,8 +84,7 @@ function BaseConfig( $stateProvider ) {
                     deferred.resolve(components);
                     return deferred.promise;
                 },
-
-                Tree: function(CatalogTreeService, OrderCloud) {
+                Tree: function(CatalogTreeService, OrderCloud, CurrentUser) {
                     if (OrderCloud.Auth.ReadToken) {
                         var tokenInfo = atob(OrderCloud.Auth.ReadToken().split('.')[1]);
                         if (tokenInfo.usrtype === "buyer") {
