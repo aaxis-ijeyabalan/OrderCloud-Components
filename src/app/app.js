@@ -25,6 +25,7 @@ angular.module( 'orderCloud', [
 	.run( SetBuyerID )
 	.config( Routing )
 	.config( ErrorHandling )
+	.config( Interceptor )
 	.controller( 'AppCtrl', AppCtrl )
 ;
 
@@ -72,5 +73,22 @@ function AppCtrl( $rootScope, $state, appname, OrderCloud ) {
 		} else {
 			vm.title = appname;
 		}
+	});
+
+	$rootScope.$on('OC:AccessInvalidOrExpired', function() {
+		vm.logout();
+	});
+}
+
+function Interceptor( $httpProvider ) {
+	$httpProvider.interceptors.push(function($q, $rootScope) {
+		return {
+			'responseError': function(rejection) {
+				if (rejection.config.url.indexOf('ordercloud.io') > -1 && rejection.status == 401) {
+					$rootScope.$broadcast('OC:AccessInvalidOrExpired');
+				}
+				return $q.reject(rejection);
+			}
+		};
 	});
 }

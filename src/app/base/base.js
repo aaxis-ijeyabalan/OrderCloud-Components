@@ -45,7 +45,7 @@ function BaseConfig( $stateProvider ) {
                         });
                     return dfd.promise;
                 },
-                ComponentList: function($state, $q, Underscore) {
+                ComponentList: function($state, $q, Underscore, CurrentUser) {
                     var deferred = $q.defer();
                     var nonSpecific = ['Products', 'Specs', 'Price Schedules', 'Admin Users'];
                     var components = {
@@ -73,9 +73,19 @@ function BaseConfig( $stateProvider ) {
                     deferred.resolve(components);
                     return deferred.promise;
                 },
-
-                Tree: function(CatalogTreeService) {
-                    return CatalogTreeService.GetCatalogTree();
+                Tree: function(CatalogTreeService, OrderCloud, CurrentUser) {
+                    if (OrderCloud.Auth.ReadToken) {
+                        var tokenInfo = atob(OrderCloud.Auth.ReadToken().split('.')[1]);
+                        if (tokenInfo.usrtype === "buyer") {
+                            return CatalogTreeService.GetCatalogTree();
+                        }
+                        else {
+                            return null;
+                        }
+                    }
+                    else {
+                        return null;
+                    }
                 }
             }
         });

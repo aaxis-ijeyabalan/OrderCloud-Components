@@ -8,6 +8,9 @@ angular.module( 'orderCloud' )
     .directive( 'ordercloudOrderSearch', ordercloudOrderSearch )
     .controller( 'OrderHistorySearchCtrl', OrderHistorySearchController )
     .filter('paymentmethods', paymentmethods)
+    .factory('RepeatOrderFactory', RepeatOrderFactory)
+    .controller('RepeatOrderCtrl', RepeatOrderController)
+    .directive('ordercloudRepeatOrder', OrderCloudRepeatOrderDirective)
 ;
 
 function OrderHistoryConfig( $stateProvider ) {
@@ -271,4 +274,80 @@ function paymentmethods() {
         if (!map[method]) return method;
         return map[method];
     }
+}
+
+function RepeatOrderFactory($q, OrderCloud, LineItemHelpers, CurrentOrder) {
+
+    return {
+        Reorder: Reorder
+    };
+
+    function Reorder(orderID) {
+
+        var deferred = $q.defer();
+        var lineItems;
+        var order;
+
+        OrderCloud.Orders.Create({})
+            .then(function (data) {
+                order = data;
+                CurrentOrder.Set(order.ID);
+                listLineItems();
+
+            });
+
+        function listLineItems() {
+            LineItemHelpers.ListAll(orderID)
+                .then(function (li) {
+                    lineItems = li;
+                    createLineItems();
+                });
+        }
+
+        function createLineItems() {
+            var queue = [];
+
+            angular.forEach(lineItems, function (lineItem) {
+                delete lineItem.OrderID;
+                delete lineItem.ID;
+                delete lineItem.QuantityShipped;
+                queue.push(OrderCloud.LineItems.Create(order.ID, lineItem));
+            });
+
+            $q.all(queue).then(function () {
+                deferred.resolve();
+            });
+
+        }
+
+        return deferred.promise;
+
+
+    }
+
+
+}
+
+function RepeatOrderController($state, RepeatOrderFactory) {
+
+    var vm = this;
+
+    vm.reorder = function(orderID){
+        RepeatOrderFactory.Reorder(orderID).then(function(){
+            $state.go('cart', {}, {reload:true});
+        });
+    }
+}
+
+function OrderCloudRepeatOrderDirective() {
+    return {
+        restrict: 'E',
+        templateUrl: 'orderHistory/templates/repeatOrder.tpl.html',
+        controller: 'RepeatOrderCtrl',
+        controllerAs: 'repeat',
+        scope: {
+            orderid: '='
+        }
+    }
+
 }
