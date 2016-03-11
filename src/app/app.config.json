@@ -1,6 +1,6 @@
 {
-  "appname": "DevCenter",
-  "ocscope": "FullAccess DevCenter",
+  "appname": "OrderCloud Components",
+  "ocscope": "FullAccess",
   "clientid": "82A8E4E4-80CB-4021-95A2-724F173528D5",
   "buyerid": "test01"
 }
