@@ -2,7 +2,6 @@ angular.module('orderCloud')
 
     .config(CatalogConfig)
     .controller('CatalogCtrl', CatalogController)
-    .controller('CatalogTreeCtrl', CatalogTreeController)
     .directive('ordercloudCategoryList', CategoryListDirective)
     .directive('ordercloudProductList', ProductListDirective)
     .factory('CatalogTreeService', CatalogTreeService)
@@ -17,26 +16,14 @@ function CatalogConfig($stateProvider) {
             parent: 'base',
             url: '/catalog',
             data: {componentName: 'Catalog'},
-            views: {
-                '': {
-                    templateUrl: 'catalog/templates/catalog.tpl.html',
-                    controller: 'CatalogCtrl',
-                    controllerAs: 'catalog'
-                },
-                'left@catalog': {
-                    templateUrl: 'catalog/templates/catalog.tree.tpl.html',
-                    controller: 'CatalogTreeCtrl',
-                    controllerAs: 'catalogTree'
-                }
-            },
+            templateUrl: 'catalog/templates/catalog.tpl.html',
+            controller: 'CatalogCtrl',
+            controllerAs: 'catalog',
             resolve: {
-                Tree: function(CatalogTreeService) {
-                    return CatalogTreeService.GetCatalogTree();
-                },
-                Catalog: function($q, OrderCloud, Tree) {
+                Catalog: function($q, OrderCloud) {
                     return OrderCloud.Me.ListCategories(null, 1);
                 },
-                Order: function($q, CurrentOrder, Tree) {
+                Order: function($q, CurrentOrder) {
                     var dfd = $q.defer();
                     CurrentOrder.Get()
                         .then(function(order) {
@@ -59,11 +46,6 @@ function CatalogController(Catalog, Order) {
         vm.showTree = !vm.showTree;
     };
     vm.categories = Catalog;
-}
-
-function CatalogTreeController(Tree) {
-    var vm = this;
-    vm.tree = Tree;
 }
 
 function CategoryListDirective() {
@@ -119,12 +101,25 @@ function CatalogTreeService($q, Underscore, OrderCloud) {
     }
 }
 
-function CatalogTree() {
+function CatalogTree($q, CatalogTreeService) {
     return {
         restrict: 'E',
         replace: true,
         scope: {
-            tree: '='
+            tree: '=?'
+        },
+        link: function(scope) {
+            var d = $q.defer();
+            if (scope.tree == undefined) {
+                CatalogTreeService.GetCatalogTree().then(function(tree) {
+                    scope.tree = tree;
+                    d.resolve();
+                });
+            } else {
+                d.resolve();
+
+            }
+            return d.promise;
         },
         template: "<ul class='nav nav-pills nav-stacked'><catalog-node ng-repeat='node in tree' node='node'></catalog-node></ul>"
     };
