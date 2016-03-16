@@ -35,7 +35,7 @@ function CartConfig($stateProvider) {
                 },
                 LineItemsList: function($q, $state, Order, Underscore, OrderCloud, toastr, LineItemHelpers) {
                     var dfd = $q.defer();
-                    OrderCloud.LineItems.Get(Order.ID)
+                    OrderCloud.LineItems.List(Order.ID)
                         .then(function(data) {
                             if (!data.Items.length) {
                                 toastr.error("Your order does not contain any line items.", 'Error');

@@ -114,9 +114,7 @@ function LineItemFactory($rootScope, $q, $state, $uibModal, Underscore, OrderClo
     }
 
     function ListAll(orderID) {
-
         var li;
-
         var dfd = $q.defer();
         var queue = [];
         OrderCloud.LineItems.List(orderID, 1, 100)
