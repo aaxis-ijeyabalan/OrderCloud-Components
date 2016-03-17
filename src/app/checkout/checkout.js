@@ -304,7 +304,7 @@ function ConfirmationLineItemsController($scope, $q, OrderCloud, LineItemHelpers
     $scope.$watch(function() {
         return $scope.order.ID;
     }, function() {
-        OrderCloud.LineItems.Get($scope.order.ID)
+        OrderCloud.LineItems.List($scope.order.ID)
             .then(function(data) {
                 vm.lineItems = data;
                 LineItemHelpers.GetProductInfo(vm.lineItems.Items);
