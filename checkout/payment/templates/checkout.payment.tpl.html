@@ -2,15 +2,15 @@
     <div class="panel-heading">Payment</div>
     <div class="panel-body">
         <label for="payment_method">Payment Method</label>
-        <select id="payment_method" required="true" ng-change="checkoutPayment.setPaymentMethod(checkout.currentOrder)" class="form-control" ng-model="checkout.currentOrder.PaymentMethod" ng-options="paymentMethod.Value as paymentMethod.Display for paymentMethod in checkoutPayment.paymentMethods"></select>
-        <div ng-switch="checkout.currentOrder.PaymentMethod">
+        <select id="payment_method" required="true" ng-change="checkoutPayment.setPaymentMethod(checkout.currentOrder)" class="form-control" ng-model="checkoutPayment.currentOrderPayments[0].Type" ng-options="paymentMethod.Value as paymentMethod.Display for paymentMethod in checkoutPayment.paymentMethods"></select>
+        <div ng-switch="checkoutPayment.currentOrderPayments[0].Type">
             <div ng-switch-when="PurchaseOrder">
                 <!--Nothing to do here yet-->
             </div>
             <div ng-switch-when="CreditCard">
                 <div ng-if="!checkoutPayment.createNewCard">
                     <label for="credit_card">Credit Card</label>
-                    <select id="credit_card" ng-required="checkout.PaymentMethod === 'CreditCard'" ng-change="checkoutPayment.setCreditCard(checkout.currentOrder)" class="form-control" ng-model="checkout.currentOrder.CreditCardID" ng-options="creditCard.ID as ('XXXX-XXXX-XXXX-' + creditCard.PartialAccountNumber) for creditCard in checkoutPayment.creditCards"></select>
+                    <select id="credit_card" ng-required="checkout.PaymentMethod === 'CreditCard'" ng-change="checkoutPayment.setCreditCard(checkout.currentOrder)" class="form-control" ng-model="checkoutPayment.currentOrderPayments[0].CreditCardID" ng-options="creditCard.ID as ('XXXX-XXXX-XXXX-' + creditCard.PartialAccountNumber) for creditCard in checkoutPayment.creditCards"></select>
                     </br>
                     <button class="btn btn-success" ng-click="checkoutPayment.createNewCard = true"><i class="fa fa-plus-circle"></i> Create New</button>
                 </div>
@@ -55,7 +55,7 @@
             </div>
             <div ng-switch-when="SpendingAccount">
                 <label for="spending_account">Spending Account</label>
-                <select id="spending_account" ng-required="checkout.PaymentMethod === 'SpendingAccount'" ng-change="checkoutPayment.setSpendingAccount(checkout.currentOrder)" class="form-control" ng-model="checkout.currentOrder.SpendingAccountID" ng-options="spendingAccount.ID as spendingAccount.Name for spendingAccount in checkoutPayment.spendingAccounts"></select>
+                <select id="spending_account" ng-required="checkout.PaymentMethod === 'SpendingAccount'" ng-change="checkoutPayment.setSpendingAccount(checkout.currentOrder)" class="form-control" ng-model="checkoutPayment.currentOrderPayments[0].SpendingAccountID" ng-options="spendingAccount.ID as spendingAccount.Name for spendingAccount in checkoutPayment.spendingAccounts"></select>
             </div>
         </div>
     </div>
