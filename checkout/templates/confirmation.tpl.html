@@ -21,15 +21,15 @@
     <div class="panel panel-default">
         <div class="panel-heading"><b>Payment Information</b></div>
         <div class="panel-body">
-            <div ng-if="orderConfirmation.currentOrder.PaymentMethod == 'CreditCard'">
-                <p>Cardholder Name: {{orderConfirmation.currentOrder.CreditCard.CardholderName}}</p>
-                <p><i class="fa fa-cc-visa fa-2x"></i> ending in {{orderConfirmation.currentOrder.CreditCard.PartialAccountNumber}}</p>
+            <div ng-if="orderConfirmation.orderPayments[0].Type == 'CreditCard'">
+                <p>Cardholder Name: {{orderConfirmation.creditCardDetails.CardholderName}}</p>
+                <p><i class="fa fa-cc-visa fa-2x"></i> ending in {{orderConfirmation.creditCardDetails.PartialAccountNumber}}</p>
             </div>
-            <div ng-if="orderConfirmation.currentOrder.PaymentMethod == 'SpendingAccount'">
-                Spending Account ID: {{orderConfirmation.currentOrder.SpendingAccountID}}
+            <div ng-if="orderConfirmation.orderPayments[0].Type == 'SpendingAccount'">
+                Spending Account ID: {{orderConfirmation.spendingAccountDetails.ID}}
             </div>
-            <div ng-if="orderConfirmation.currentOrder.PaymentMethod == 'PurchaseOrder'">
-                <!--need info for each payment type-->
+            <div ng-if="orderConfirmation.orderPayments[0].Type == 'PurchaseOrder'">
+                Purchase Order
             </div>
         </div>
     </div>

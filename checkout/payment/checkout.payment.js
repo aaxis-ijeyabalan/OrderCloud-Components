@@ -12,8 +12,7 @@ function checkoutPaymentConfig($stateProvider) {
 			controllerAs: 'checkoutPayment',
 			resolve: {
                 AvailableCreditCards: function(OrderCloud) {
-                    // TODO: Needs to be refactored to work with Me Service
-                    return OrderCloud.CreditCards.List();
+                    return OrderCloud.Me.ListCreditCards();
                 },
                 AvailableSpendingAccounts: function(OrderCloud) {
                     // TODO: Needs to be refactored to work with Me Service
@@ -23,8 +22,9 @@ function checkoutPaymentConfig($stateProvider) {
 		});
 }
 
-function CheckoutPaymentController($state, AvailableCreditCards, AvailableSpendingAccounts, OrderCloud, toastr) {
+function CheckoutPaymentController($state, AvailableCreditCards, AvailableSpendingAccounts, OrderCloud, toastr, OrderPayments) {
 	var vm = this;
+    vm.currentOrderPayments = OrderPayments.Items;
     vm.paymentMethods = [
         {Display: 'Purchase Order', Value: 'PurchaseOrder'},
         {Display: 'Credit Card', Value: 'CreditCard'},
@@ -47,12 +47,21 @@ function CheckoutPaymentController($state, AvailableCreditCards, AvailableSpendi
     vm.setPaymentMethod = SetPaymentMethod;
 
     function SetPaymentMethod(order) {
-        if (order.PaymentMethod) {
+        if (!vm.currentOrderPayments[0].Amount) {
             // When Order Payment Method is changed it will clear out all saved payment information
-            OrderCloud.Orders.Patch(order.ID, {PaymentMethod: order.PaymentMethod, CreditCardID: '', SpendingAccountID: ''})
+            OrderCloud.Payments.Create(order.ID, {Type: vm.currentOrderPayments[0].Type})
                 .then(function() {
                     $state.reload();
                 });
+        }
+        else {
+            OrderCloud.Payments.Delete(order.ID, vm.currentOrderPayments[0].ID)
+                .then(function(){
+                    OrderCloud.Payments.Create(order.ID, {Type: vm.currentOrderPayments[0].Type})
+                        .then(function() {
+                            $state.reload();
+                        });
+                })
         }
     }
 
@@ -72,7 +81,7 @@ function CheckoutPaymentController($state, AvailableCreditCards, AvailableSpendi
                                         UserID: me.ID
                                     })
                                     .then(function() {
-                                        OrderCloud.Orders.Patch(order.ID, {CreditCardID: CreditCard.ID})
+                                        OrderCloud.Payments.Patch(order.ID, vm.currentOrderPayments[0].ID, {CreditCardID: CreditCard.ID})
                                             .then(function() {
                                                 $state.reload();
                                             });
@@ -87,8 +96,8 @@ function CheckoutPaymentController($state, AvailableCreditCards, AvailableSpendi
     }
 
     function SetCreditCard(order) {
-        if (order.CreditCardID && order.PaymentMethod === 'CreditCard') {
-            OrderCloud.Orders.Patch(order.ID, {CreditCardID: order.CreditCardID})
+        if (vm.currentOrderPayments[0].CreditCardID && vm.currentOrderPayments[0].Type === "CreditCard") {
+            OrderCloud.Payments.Patch(order.ID, vm.currentOrderPayments[0].ID, {CreditCardID: vm.currentOrderPayments[0].CreditCardID})
                 .then(function() {
                     $state.reload();
                 });
@@ -96,10 +105,17 @@ function CheckoutPaymentController($state, AvailableCreditCards, AvailableSpendi
     }
 
     function SetSpendingAccount(order) {
-        if (order.SpendingAccountID && order.PaymentMethod === 'SpendingAccount') {
-            OrderCloud.Orders.Patch(order.ID, {SpendingAccountID: order.SpendingAccountID})
+        if (vm.currentOrderPayments[0].SpendingAccountID && vm.currentOrderPayments[0].Type ==='SpendingAccount') {
+            OrderCloud.Payments.Patch(order.ID, vm.currentOrderPayments[0].ID, {SpendingAccountID: vm.currentOrderPayments[0].SpendingAccountID})
                 .then(function() {
                     $state.reload();
+                })
+                .catch(function(err) {
+                    OrderCloud.Payments.Delete(order.ID, vm.currentOrderPayments[0].ID)
+                        .then(function() {
+                            $state.reload();
+                            toastr.error(err.data.Errors[0].Message + ' Please choose another payment method, or another spending account.', 'Error:')
+                        })
                 });
         }
     }
