@@ -55,6 +55,9 @@ function checkoutConfig($stateProvider) {
                             dfd.resolve(Underscore.where(data.Items, {Shipping:true}));
                         });
                     return dfd.promise;
+                },
+                OrderPayments: function(OrderCloud, Order) {
+                    return OrderCloud.Payments.List(Order.ID);
                 }
 			}
 		})
@@ -112,17 +115,20 @@ function CheckoutService() {
     }
 }
 
-function CheckoutController($state, $rootScope, toastr, Order, OrderCloud, ShippingAddresses, OrderShipAddress, OrderShippingAddress, CheckoutService) {
+function CheckoutController($state, $rootScope, toastr, Order, OrderCloud, ShippingAddresses, OrderShipAddress, OrderShippingAddress, CheckoutService, OrderPayments) {
     var vm = this;
     vm.currentOrder = Order;
     vm.currentOrder.ShippingAddressID = OrderShipAddress ? OrderShipAddress.ID : null;
     vm.currentOrder.ShippingAddress = OrderShipAddress;
     vm.shippingAddresses = ShippingAddresses;
     vm.isMultipleAddressShipping = true;
+    vm.currentOrderPayments = OrderPayments.Items;
 
     vm.orderIsValid = false;
-    if(vm.currentOrder.BillingAddress && vm.currentOrder.BillingAddress.ID != null && vm.currentOrder.PaymentMethod != null){
-        vm.orderIsValid = true;
+    if(vm.currentOrder.BillingAddress && vm.currentOrder.BillingAddress.ID != null && vm.currentOrderPayments[0] && vm.currentOrderPayments[0].Amount == vm.currentOrder.Total){
+        if(vm.currentOrderPayments.length && ((vm.currentOrderPayments[0].Type == 'SpendingAccount' && vm.currentOrderPayments[0].SpendingAccountID != null) || (vm.currentOrderPayments[0].Type == 'CreditCard' && vm.currentOrderPayments[0].CreditCardID != null) || vm.currentOrderPayments[0].Type == 'PurchaseOrder')) {
+            vm.orderIsValid = true;
+        }
     }
 
     // default state (if someone navigates to checkout -> checkout.shipping)
@@ -171,10 +177,28 @@ function CheckoutController($state, $rootScope, toastr, Order, OrderCloud, Shipp
     };
 }
 
-function OrderConfirmationController(Order, CurrentOrder, OrderCloud, $state, isMultipleAddressShipping, $exceptionHandler) {
+function OrderConfirmationController(Order, CurrentOrder, OrderCloud, $state, isMultipleAddressShipping, $exceptionHandler, OrderPayments) {
     var vm = this;
     vm.currentOrder = Order;
     vm.isMultipleAddressShipping = isMultipleAddressShipping;
+    vm.orderPayments = OrderPayments.Items;
+
+    vm.checkPaymentType = function() {
+        if(vm.orderPayments[0].Type == 'CreditCard') {
+            OrderCloud.CreditCards.Get(vm.orderPayments[0].CreditCardID)
+                .then(function(cc){
+                    vm.creditCardDetails = cc;
+                })
+        }
+        if(vm.orderPayments[0].Type == 'SpendingAccount') {
+            OrderCloud.SpendingAccounts.Get(vm.orderPayments[0].SpendingAccountID)
+                .then(function(sa){
+                    vm.spendingAccountDetails = sa;
+                })
+        }
+    }
+
+    vm.checkPaymentType();
 
     vm.submitOrder = function() {
         OrderCloud.Orders.Submit(vm.currentOrder.ID)
