@@ -26,7 +26,7 @@
             </div>
             <div class="form-group col-sm-6">
                 <label for="productShipWeightInput">Ship Weight</label>
-                <input id="productShipWeightInput" type="number" class="form-control" ng-model="productCreate.product.ShipWeight"/>
+                <input id="productShipWeightInput" type="number" step="0.01" class="form-control" ng-model="productCreate.product.ShipWeight"/>
             </div>
         </div>
         <div class="row">
@@ -38,7 +38,7 @@
                     <option value="Kit">Kit</option>
                 </select>
             </div>
-            <div class="form-group col-sm-6">
+            <div class="form-group col-sm-6" ng-show="productCreate.product.InventoryEnabled">
                 <label for="productInventoryInput">Inventory Notification Point</label>
                 <input id="productInventoryInput" type="number" class="form-control" ng-model="productCreate.product.InventoryNotificationPoint"/>
             </div>
@@ -58,7 +58,7 @@
                         </label>
                     </div>
                 </div>
-                <div class="row">
+                <div ng-show="productCreate.product.InventoryEnabled"><div class="row">
                     <div class="col-sm-6 form-group">
                         <label for="productInventory3Input">
                             <input id="productInventory3Input" type="checkbox" ng-model="productCreate.product.VariantLevelInventory"/>
@@ -81,7 +81,7 @@
                             Display Inventory
                         </label>
                     </div>
-                </div>
+                </div></div>
             </div>
         </div>
         <div class="col-sm-6">
