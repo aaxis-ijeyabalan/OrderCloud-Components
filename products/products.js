@@ -153,6 +153,8 @@ function ProductCreateAssignmentController($q, $stateParams, $state, Underscore,
     var vm = this;
     vm.list = UserGroupList;
     vm.priceSchedules = PriceScheduleList.Items;
+    vm.replenishmentSchedules = Underscore.where(vm.priceSchedules, {OrderType: "Replenishment"});
+    vm.standardSchedules = Underscore.where(vm.priceSchedules, {OrderType: "Standard"});
     vm.assignBuyer = false;
     vm.model = {
         ProductID:$stateParams.productid,
@@ -174,7 +176,7 @@ function ProductCreateAssignmentController($q, $stateParams, $state, Underscore,
         if (!(vm.model.StandardPriceScheduleID || vm.model.ReplenishmentPriceScheduleID) || (!vm.assignBuyer && !Underscore.where(vm.list.Items, {selected:true}).length)) return;
         if (vm.assignBuyer) {
             OrderCloud.Products.SaveAssignment(vm.model).then(function() {
-                $state.go('base.productAssignments', {productid:$stateParams.productid});
+                $state.go('products.assignments', {productid:$stateParams.productid});
             })
         } else {
             var assignmentQueue = [];
@@ -190,7 +192,7 @@ function ProductCreateAssignmentController($q, $stateParams, $state, Underscore,
                 })())
             });
             $q.all(assignmentQueue).then(function() {
-                $state.go('base.productAssignments', {productid:$stateParams.productid});
+                $state.go('products.assignments', {productid:$stateParams.productid});
             })
         }
     };
