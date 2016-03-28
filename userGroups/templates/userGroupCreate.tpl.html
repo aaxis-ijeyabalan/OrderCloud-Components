@@ -2,7 +2,7 @@
     <h3 class="page-header">
         <b>New User Group</b>
     </h3>
-    <form name="UserGroupCreateForm" ng-submit="userGroupCreate.Submit()">
+    <form name="UserGroupCreateForm" ng-submit="userGroupCreate.Submit()" novalidate>
         <div class="row">
             <div class="form-group col-sm-6">
                 <label for="UserGroupIDInput">User Group ID</label>
@@ -10,7 +10,7 @@
             </div>
             <div class="col-sm-6 form-group">
                 <label for="UserGroupNameInput">User Group Name</label>
-                <input id="UserGroupNameInput" type="text" class="form-control" ng-model="userGroupCreate.userGroup.Name"/>
+                <input id="UserGroupNameInput" type="text" class="form-control" ng-model="userGroupCreate.userGroup.Name" required="true"/>
             </div>
         </div>
         <div class="row">

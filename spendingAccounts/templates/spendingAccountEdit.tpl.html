@@ -2,7 +2,7 @@
     <h3 class="page-header">
         <b>Edit Spending Account:</b> {{spendingAccountEdit.spendingAccountName}}
     </h3>
-    <form name="SpendingAccountEditForm" ng-submit="spendingAccountEdit.Submit()">
+    <form name="SpendingAccountEditForm" ng-submit="spendingAccountEdit.Submit()" novalidate>
         <div class="row">
             <div class="form-group col-sm-6">
                 <label for="spendingAccountIDInput">Spending Account ID</label>
@@ -10,13 +10,13 @@
             </div>
             <div class="form-group col-sm-6">
                 <label for="spendingAccountNameInput">Spending Account Name</label>
-                <input id="spendingAccountNameInput" type="text" class="form-control" ng-model="spendingAccountEdit.spendingAccount.Name"/>
+                <input id="spendingAccountNameInput" type="text" class="form-control" ng-model="spendingAccountEdit.spendingAccount.Name" required="true"/>
             </div>
         </div>
         <div class="row">
             <div class="form-group col-sm-6">
                 <label for="spendingAccountBalanceInput">Spending Account Balance</label>
-                <input id="spendingAccountBalanceInput" type="number" step="any" class="form-control" ng-model="spendingAccountEdit.spendingAccount.Balance"/>
+                <input id="spendingAccountBalanceInput" type="number" step="any" class="form-control" ng-model="spendingAccountEdit.spendingAccount.Balance" required="true"/>
             </div>
             <div class="form-group col-sm-6">
                 <label for="spendingAccountAllowInput">

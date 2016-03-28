@@ -2,7 +2,7 @@
     <h3 class="page-header">
         <b>Edit Gift Card:</b> {{giftCardEdit.giftCard.Name}}
     </h3>
-    <form name="GiftCardEditForm" ng-submit="giftCardEdit.Submit(giftCardEdit.giftCard)">
+    <form name="GiftCardEditForm" ng-submit="giftCardEdit.Submit(giftCardEdit.giftCard)" novalidate>
         <div class="row">
             <div class="form-group col-md-6">
                 <label for="giftcardIDInput">Gift Card ID</label>
@@ -26,7 +26,7 @@
         <div class="row">
             <div class="form-group col-md-6">
                 <label for="giftcardBalance">Balance</label>
-                <input required id="giftcardBalance" type="text" class="form-control" ng-model="giftCardEdit.giftCard.Balance">
+                <input required id="giftcardBalance" type="number" class="form-control" ng-model="giftCardEdit.giftCard.Balance">
             </div>
             <div class="form-group col-md-6">
                 <label for="giftcardMaxPercentOfTotal">Redemption Code</label>
@@ -34,7 +34,7 @@
             </div>
         </div>
         <div class="form-group">
-            <button type="submit" class="btn btn-primary" ng-disabled="giftCardEditForm.$invalid">Save</button>
+            <button type="submit" class="btn btn-primary" ng-disabled="GiftCardEditForm.$invalid">Save</button>
             <button type="button" class="btn btn-default" ui-sref="^">Cancel</button>
             <button type="button" class="btn btn-default" ng-click="giftCardEdit.Delete(giftCardEdit.giftCard)"><i class="fa fa-trash text-danger"></i></button>
         </div>
