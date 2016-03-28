@@ -2,7 +2,7 @@
     <h3 class="page-header">
         <b>New Spec</b>
     </h3>
-    <form name="SpecCreateForm" ng-submit="specCreate.Submit()">
+    <form name="SpecCreateForm" ng-submit="specCreate.Submit()" novalidate>
         <div class="row">
             <div class="form-group col-sm-6">
                 <label for="specIDInput">Spec ID</label>
@@ -48,7 +48,7 @@
                     </div>
                     <div class="col-sm-3 form-group">
                         <label for="specMarkupInput">Markup</label>
-                        <input id="specMarkupInput" type="number" step="any" class="form-control" ng-disabled="!specCreate.SpecOptMarkupType || specCreate.SpecOptMarkupType =='None'" ng-model="specCreate.Option.Markup"/>
+                        <input id="specMarkupInput" type="number" step="any" class="form-control" ng-disabled="!specCreate.Option.MarkupType || specCreate.Option.MarkupType =='None'" ng-model="specCreate.Option.Markup"/>
                     </div>
                 </div>
                 <div class="row">
@@ -69,7 +69,8 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-2 form-group">
-                        <button type="button" class="btn btn-primary" ng-click="specCreate.addSpecOpt()" ng-disabled="specCreate.Option.ID == null || specCreate.Option.Value == null">Add Spec Option</button>
+                        <button type="button" ng-if="!specCreate.overwrite" class="btn btn-primary" ng-click="specCreate.addSpecOpt()" ng-disabled="!(specCreate.Option.ID && specCreate.Option.Value)">Add Spec Option</button>
+                        <button type="button" ng-if="specCreate.overwrite" class="btn btn-primary" ng-click="specCreate.updateSpecOpt()" ng-disabled="!(specCreate.Option.ID && specCreate.Option.Value)">Update Spec Option</button>
                     </div>
                 </div>
             </div>

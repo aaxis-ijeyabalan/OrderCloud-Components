@@ -2,7 +2,7 @@
     <h3 class="page-header">
         <b>Edit User Groups: </b> {{userGroupEdit.userGroupName}}
     </h3>
-    <form name="userGroupEditForm" ng-submit="userGroupEdit.Submit()">
+    <form name="userGroupEditForm" ng-submit="userGroupEdit.Submit()" novalidate>
         <div class="row">
             <div class="form-group col-sm-5">
                 <label for="UserGroupIDInput">User Group ID</label>
@@ -10,7 +10,7 @@
             </div>
             <div class="col-sm-5 form-group">
                 <label for="UserGroupNameInput">User Group Name</label>
-                <input id="UserGroupNameInput" type="text" class="form-control" ng-model="userGroupEdit.userGroup.Name"/>
+                <input id="UserGroupNameInput" type="text" class="form-control" ng-model="userGroupEdit.userGroup.Name" required="true"/>
             </div>
         </div>
         <div class="row">

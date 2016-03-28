@@ -2,7 +2,7 @@
     <h3 class="page-header">
         <b>New Credit Card</b>
     </h3>
-    <form name="CreditCardCreateForm" ng-submit="creditCardCreate.Submit()">
+    <form name="CreditCardCreateForm" ng-submit="creditCardCreate.Submit()" novalidate>
         <div class="row">
             <div class="form-group col-sm-6">
                 <label for="creditCardIDInput">Credit Card ID</label>
@@ -30,6 +30,7 @@
             <div class="form-group col-sm-2">
                 <label for="creditCardExpirationInput">Expiration Date</label>
                 <input class="form-control"
+                       required
                        type="text"
                        is-open="open1"
                        uib-datepicker-popup="MM/yy"
