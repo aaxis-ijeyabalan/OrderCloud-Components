@@ -64,30 +64,79 @@ function SpecsController( SpecList ) {
     vm.list = SpecList;
 }
 
-function SpecEditController( $exceptionHandler, $state, OrderCloud, SelectedSpec ) {
+function SpecEditController( $exceptionHandler, $state, Underscore, OrderCloud, SelectedSpec, toastr ) {
     var vm = this,
         specid = angular.copy(SelectedSpec.ID);
     vm.specName = angular.copy(SelectedSpec.Name);
     vm.spec = SelectedSpec;
     vm.Option = {};
     vm.Options = vm.spec.Options;
+    vm.overwrite = false;
 
     vm.addSpecOpt = function() {
-        if (vm.DefaultOptionID) {
-            vm.spec.DefaultOptionID = vm.Option.ID;
+
+        if (Underscore.where(vm.Options, {ID: vm.Option.ID}).length) {
+            vm.overwrite = true;
+            toastr.warning('There is already a spec option with that ID, select Update Spec Option to continue', 'Warning');
+
         }
-        OrderCloud.Specs.CreateOption(specid, vm.Option)
-            .then(function() {
+
+        if (!Underscore.where(vm.Options, {ID: vm.Option.ID}).length) {
+            vm.Options.push(vm.Option);
+            if (vm.DefaultOptionID) {
+                vm.spec.DefaultOptionID = vm.Option.ID;
+            }
+            OrderCloud.Specs.CreateOption(specid, vm.Option)
+                .then(function () {
                     vm.Option = null;
                 })
-            };
+        }
+
+    };
+
+    vm.updateSpecOpt = function () {
+
+        var specOptIndex;
+
+        if (Underscore.where(vm.Options, {ID: vm.Option.ID}).length) {
+
+            angular.forEach(vm.Options, function (option, index) {
+                if (option.ID == vm.Option.ID) {
+
+                    specOptIndex = index;
+                }
+            });
+
+
+            vm.Options.splice(specOptIndex, 1);
+            vm.Options.push(vm.Option);
+            if (vm.DefaultOptionID) {
+                vm.spec.DefaultOptionID = vm.Option.ID;
+            }
+            OrderCloud.Specs.UpdateOption(specid, vm.Option.ID, vm.Option)
+                .then(function () {
+                    vm.Option = null;
+                    vm.overwrite = false;
+                })
+        } else {
+            vm.addSpecOpt();
+
+
+        }
+    };
+
+
 
     vm.deleteSpecOpt = function($index) {
         if (vm.spec.DefaultOptionID == vm.spec.Options[$index].ID) {
             vm.spec.DefaultOptionID = null;
         }
-        vm.Options.splice($index, 1);
         OrderCloud.Specs.DeleteOption(specid, vm.spec.Options[$index].ID)
+            .then(function(){
+                vm.Options.splice($index, 1);
+            });
+
+
     };
 
     vm.Submit = function() {
@@ -111,19 +160,56 @@ function SpecEditController( $exceptionHandler, $state, OrderCloud, SelectedSpec
     }
 }
 
-function SpecCreateController( $exceptionHandler, $q, $state, OrderCloud) {
+function SpecCreateController( $exceptionHandler, $q, $state, OrderCloud, Underscore, toastr) {
     var vm = this;
     vm.spec = {};
     vm.Options = [];
     var DefaultOptionID;
+    vm.overwrite = false;
 
     vm.addSpecOpt = function() {
-        vm.Options.push(vm.Option);
-        if (vm.DefaultOptionID) {
-            DefaultOptionID = vm.Option.ID;
+        if (Underscore.where(vm.Options, {ID: vm.Option.ID}).length) {
+            vm.overwrite = true;
+            toastr.warning('There is already a spec option with that ID, select Update Spec Option to continue', 'Warning');
+
         }
-        vm.Option = null;
-        vm.DefaultOptionID = null;
+        if (!Underscore.where(vm.Options, {ID: vm.Option.ID}).length) {
+            vm.Options.push(vm.Option);
+            if (vm.DefaultOptionID) {
+                DefaultOptionID = vm.Option.ID;
+            }
+            vm.Option = null;
+            vm.DefaultOptionID = null;
+        }
+    };
+
+    vm.updateSpecOpt = function () {
+
+        var specOptIndex;
+
+        if (Underscore.where(vm.Options, {ID: vm.Option.ID}).length) {
+
+            angular.forEach(vm.Options, function (option, index) {
+                if (option.ID == vm.Option.ID) {
+
+                    specOptIndex = index;
+                }
+            });
+
+
+            vm.Options.splice(specOptIndex, 1);
+            vm.Options.push(vm.Option);
+            if (vm.DefaultOptionID) {
+                vm.spec.DefaultOptionID = vm.Option.ID;
+            }
+            vm.Option = null;
+            vm.overwrite = false;
+
+        } else {
+            vm.addSpecOpt();
+
+
+        }
     };
 
     vm.deleteSpecOpt = function($index) {
