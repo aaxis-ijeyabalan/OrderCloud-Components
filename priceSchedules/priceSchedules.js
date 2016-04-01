@@ -51,6 +51,7 @@ function PriceScheduleEditController( $exceptionHandler, $state, OrderCloud, Sel
         priceScheduleid = angular.copy(SelectedPriceSchedule.ID);
     vm.priceScheduleName = angular.copy(SelectedPriceSchedule.Name);
     vm.priceSchedule = SelectedPriceSchedule;
+    vm.priceSchedule.MinQuantity =1;
 
     vm.addPriceBreak = function() {
         PriceBreak.addPriceBreak(vm.priceSchedule, vm.price, vm.quantity);
@@ -88,6 +89,7 @@ function PriceScheduleCreateController( $exceptionHandler, $state, OrderCloud, P
     vm.priceSchedule = {};
     vm.priceSchedule.RestrictedQuantity = false;
     vm.priceSchedule.PriceBreaks = new Array();
+    vm.priceSchedule.MinQuantity =1;
 
     vm.addPriceBreak = function() {
         PriceBreak.addPriceBreak(vm.priceSchedule, vm.price, vm.quantity);
