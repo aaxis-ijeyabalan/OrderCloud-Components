@@ -1,0 +1,88 @@
+<ui-view>
+    <article class="container-fluid">
+        <div class="col-sm-6">
+            <h3 class="page-header">
+                Create Facets
+            </h3>
+            <div class="form-group">
+                <label for="facet">Facet</label>
+                <input id="facet" type="text" class="form-control" ng-model="facetedCatMgmtCreate.facet">
+            </div>
+            <div class="form-group">
+                <label for="facetValue">Add Facet Value</label>
+                <div class="input-group">
+                    <input id="facetValue" type="text" class="form-control" ng-model="facetedCatMgmtCreate.facetValue">
+                    <span class="input-group-btn">
+                        <button class="btn btn-success" type="button" ng-click="facetedCatMgmtCreate.addValue()"><i class="fa fa-plus-circle"></i></button>
+                    </span>
+                </div>
+            </div>
+            <section class="table-fixed-header" ng-if="facetedCatMgmtCreate.facetValues.length">
+                <div class="table-header-bg"></div>
+                <div class="table-container">
+                    <table class="table table-hover">
+                        <colgroup>
+                            <col class="action-column"/>
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>
+                                <div>Facet Value</div>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="value in facetedCatMgmtCreate.facetValues track by $index">
+                            <td><i class="fa fa-trash warning" ng-click="facetedCatMgmtCreate.removeValue($index)"></i></td>
+                            <td>{{value}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <div class="form-group">
+                <label><input type="checkbox" ng-model="facetedCatMgmtCreate.isRequired"> Required</label>
+            </div>
+            <button class="btn btn-primary" ng-click="facetedCatMgmtCreate.save()" ng-disabled="!facetedCatMgmtCreate.facet || !facetedCatMgmtCreate.facetValues.length || facetedCatMgmtCreate.noCatSelected">Save</button>
+        </div>
+        <div class="col-sm-6">
+            <h3 class="page-header">
+                Select Categories
+            </h3>
+            <ordercloud-search servicename="Categories" controlleras="facetedCatMgmtCreate"></ordercloud-search>
+            <div class="well well-lg text-center" ng-if="!facetedCatMgmtCreate.list.Items.length">
+                <b ng-if="!facetedCatMgmtCreate.searching()">The selected buyer does not have any categories.</b>
+                <b ng-if="facetedCatMgmtCreate.searching()"><i class="fa fa-search"></i> No categories match your search.</b>
+            </div>
+            <section class="table-fixed-header" ng-if="facetedCatMgmtCreate.list.Items.length">
+                <div class="table-header-bg"></div>
+                <div class="table-container" ordercloud-infinite-scroll servicename="Categories" controlleras="facetedCatMgmtCreate">
+                    <table class="table table-hover">
+                        <colgroup>
+                            <col class="action-column"/>
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>
+                                <div>Category ID</div>
+                            </th>
+                            <th>
+                                <div>Category Name</div>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="category in facetedCatMgmtCreate.list.Items track by $index">
+                                <td><input type="checkbox" ng-model="facetedCatMgmtCreate.list.Items[$index].selected" ng-click="facetedCatMgmtCreate.catSelected()"></td>
+                                <td>{{category.ID}}</td>
+                                <td>{{category.Name}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </article>
+</ui-view>
