@@ -15,7 +15,7 @@
 					<i class="fa" ng-class="{'fa-square-o':!productCreateAssignment.assignBuyer, 'fa-check-square-o':productCreateAssignment.assignBuyer}"></i> Assign at the Buyer Level
 				</button>
 			</div>
-			<div uib-collapse="productCreateAssignment.assignBuyer" ng-if="productCreateAssignment.list.Items.length || (!productCreateAssignment.list.Items.length && productCreateAssignment.groupSearchTerm)">
+			<div uib-collapse="productCreateAssignment.assignBuyer">
 				<ordercloud-search servicename="UserGroups" controlleras="productCreateAssignment"></ordercloud-search>
 				<div class="well well-lg text-center" ng-if="!productCreateAssignment.list.Items.length">
 					<b><i class="fa fa-search"></i> No UserGroups match your search</b>
