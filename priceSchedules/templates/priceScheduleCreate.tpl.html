@@ -2,7 +2,7 @@
     <h3 class="page-header">
         <b>New Price Schedule</b>
     </h3>
-    <form name="PriceScheduleCreateForm" ng-submit="priceScheduleCreate.Submit()">
+    <form name="PriceScheduleCreateForm" ng-submit="priceScheduleCreate.Submit()" novalidate>
         <div class="row">
             <div class="form-group col-sm-6">
                 <label for="priceScheduleIDInput">Price Schedule ID</label>
@@ -49,11 +49,11 @@
             <div class="col-md-6 col-no-padding">
                 <div class="col-sm-6">
                     <label for="priceScheduleMinQInput">Minumum Quantity</label>
-                    <input id="priceScheduleMinQInput" ng-class="{'input-disabled': priceScheduleCreate.priceSchedule.RestrictedQuantity}" ng-disabled="priceScheduleCreate.priceSchedule.RestrictedQuantity" type="text" class="form-control" ng-model="priceScheduleCreate.priceSchedule.MinQuantity"/>
+                    <input id="priceScheduleMinQInput" ng-class="{'input-disabled': priceScheduleCreate.priceSchedule.RestrictedQuantity}" pattern="^[0-9]*[1-9][0-9]*$" pattern-err-type="positiveInteger" ng-disabled="priceScheduleCreate.priceSchedule.RestrictedQuantity" type="number" class="form-control" ng-model="priceScheduleCreate.priceSchedule.MinQuantity"/>
                 </div>
                 <div class="col-sm-6">
                     <label for="priceScheduleMaxQInput">Maximum Quantity</label>
-                    <input id="priceScheduleMaxQInput" ng-class="{'input-disabled': priceScheduleCreate.priceSchedule.RestrictedQuantity}" ng-disabled="priceScheduleCreate.priceSchedule.RestrictedQuantity" type="text" class="form-control" ng-model="priceScheduleCreate.priceSchedule.MaxQuantity"/>
+                    <input id="priceScheduleMaxQInput" ng-class="{'input-disabled': priceScheduleCreate.priceSchedule.RestrictedQuantity}" pattern="^[0-9]*[1-9][0-9]*$" pattern-err-type="positiveInteger" ng-disabled="priceScheduleCreate.priceSchedule.RestrictedQuantity" type="number" class="form-control" ng-model="priceScheduleCreate.priceSchedule.MaxQuantity"/>
                 </div>
             </div>
         </div>
@@ -68,7 +68,7 @@
             </div>
             <div class="col-sm-2 form-group">
                 <label for="priceSchedulePBQInput">Quantity</label>
-                <input id="priceSchedulePBQInput" type="number" class="form-control" ng-model="priceScheduleCreate.quantity"/>
+                <input id="priceSchedulePBQInput" type="number" pattern="^[0-9]*[1-9][0-9]*$" pattern-err-type="positiveInteger" class="form-control" ng-model="priceScheduleCreate.quantity"/>
             </div>
             <div class="col-sm-2 form-group">
                 <label for="priceSchedulePBPInput">Price (each)</label>

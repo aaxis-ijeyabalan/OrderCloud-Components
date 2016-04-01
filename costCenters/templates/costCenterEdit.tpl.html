@@ -2,7 +2,7 @@
     <h3 class="page-header">
         <b>Edit Cost Center:</b> {{costCenterEdit.costCenterName}}
     </h3>
-    <form name="CostCenterEditForm" ng-submit="costCenterEdit.Submit()">
+    <form name="CostCenterEditForm" ng-submit="costCenterEdit.Submit()" novalidate>
         <div class="row">
             <div class="form-group col-sm-6">
                 <label for="CostCenterIDInput">CostCenter ID</label>
@@ -10,7 +10,7 @@
             </div>
             <div class="col-sm-6 form-group">
                 <label for="CostCenterNameInput">CostCenter Name</label>
-                <input id="CostCenterNameInput" type="text" class="form-control" ng-model="costCenterEdit.costCenter.Name"/>
+                <input id="CostCenterNameInput" type="text" class="form-control" ng-model="costCenterEdit.costCenter.Name" required="true"/>
             </div>
         </div>
         <div class="row">

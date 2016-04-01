@@ -2,7 +2,7 @@
     <h3 class="page-header">
         <b>New Product</b>
     </h3>
-    <form name="CreateForm" ng-submit="productCreate.Submit()">
+    <form name="CreateForm" ng-submit="productCreate.Submit()" novalidate>
         <div class="row">
             <div class="form-group col-sm-6">
                 <label for="productIDInput">Product ID</label>
@@ -22,11 +22,11 @@
         <div class="row">
             <div class="form-group col-sm-6">
                 <label for="productQuantityMultInput">Quantity Multiplier</label>
-                <input id="productQuantityMultInput" type="number" class="form-control" ng-model="productCreate.product.QuantityMultiplier" ng-required="true"/>
+                <input id="productQuantityMultInput" type="number" pattern="^[0-9]*[1-9][0-9]*$" pattern-err-type="positiveInteger" class="form-control" ng-model="productCreate.product.QuantityMultiplier" ng-required="true"/>
             </div>
             <div class="form-group col-sm-6">
                 <label for="productShipWeightInput">Ship Weight</label>
-                <input id="productShipWeightInput" type="number" class="form-control" ng-model="productCreate.product.ShipWeight"/>
+                <input id="productShipWeightInput" type="number" step="any" class="form-control" ng-model="productCreate.product.ShipWeight"/>
             </div>
         </div>
         <div class="row">
@@ -38,7 +38,7 @@
                     <option value="Kit">Kit</option>
                 </select>
             </div>
-            <div class="form-group col-sm-6">
+            <div class="form-group col-sm-6" ng-show="productCreate.product.InventoryEnabled">
                 <label for="productInventoryInput">Inventory Notification Point</label>
                 <input id="productInventoryInput" type="number" class="form-control" ng-model="productCreate.product.InventoryNotificationPoint"/>
             </div>
@@ -58,7 +58,7 @@
                         </label>
                     </div>
                 </div>
-                <div class="row">
+                <div ng-show="productCreate.product.InventoryEnabled"><div class="row">
                     <div class="col-sm-6 form-group">
                         <label for="productInventory3Input">
                             <input id="productInventory3Input" type="checkbox" ng-model="productCreate.product.VariantLevelInventory"/>
@@ -81,7 +81,7 @@
                             Display Inventory
                         </label>
                     </div>
-                </div>
+                </div></div>
             </div>
         </div>
         <div class="col-sm-6">
@@ -96,7 +96,7 @@
             </div>
         </div>
         <div class="form-group">
-            <button type="submit" class="btn btn-primary" ng-disabled="ProductCreateForm.$invalid">Save</button>
+            <button type="submit" class="btn btn-primary" ng-disabled="CreateForm.$invalid">Save</button>
             <button type="button" class="btn btn-default" ui-sref="^">Cancel</button>
         </div>
     </form>

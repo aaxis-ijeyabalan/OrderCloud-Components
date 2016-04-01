@@ -2,7 +2,7 @@
     <h3 class="page-header">
         <b>New Spending Account</b>
     </h3>
-    <form name="SpendingAccountCreateForm" ng-submit="spendingAccountCreate.Submit()">
+    <form name="SpendingAccountCreateForm" ng-submit="spendingAccountCreate.Submit()" novalidate>
         <div class="row">
             <div class="form-group col-sm-6">
                 <label for="spendingAccountIDInput">ID</label>
@@ -10,13 +10,13 @@
             </div>
             <div class="form-group col-sm-6">
                 <label for="spendingAccountNameInput">Spending Account Name</label>
-                <input id="spendingAccountNameInput" type="text" class="form-control" ng-model="spendingAccountCreate.spendingAccount.Name"/>
+                <input id="spendingAccountNameInput" type="text" class="form-control" ng-model="spendingAccountCreate.spendingAccount.Name" required="true"/>
             </div>
         </div>
         <div class="row">
             <div class="form-group col-sm-6">
                 <label for="spendingAccountUserIDInput">Balance</label>
-                <input id="spendingAccountUserIDInput" type="number" class="form-control" ng-model="spendingAccountCreate.spendingAccount.Balance"/>
+                <input id="spendingAccountUserIDInput" type="number" class="form-control" ng-model="spendingAccountCreate.spendingAccount.Balance" required="true"/>
             </div>
             <div class="form-group col-sm-6">
                 <label for="spendingAccountBalanceInput">
