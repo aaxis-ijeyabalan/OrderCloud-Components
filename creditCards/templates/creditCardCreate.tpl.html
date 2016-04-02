@@ -28,24 +28,38 @@
                 </select>
             </div>
             <div class="form-group col-sm-2">
-                <label for="creditCardExpirationInput">Expiration Date</label>
-                <input class="form-control"
-                       required
-                       type="text"
-                       is-open="open1"
-                       uib-datepicker-popup="MM/yy"
-                       datepicker-mode="'year'"
-                       min-mode="'month'"
-                       ng-click="open1 = !open1"
-                       id="creditCardExpirationInput"
-                       datepicker-append-to-body="true"
-                       show-weeks="false"
-                       ng-model="creditCardCreate.creditCard.ExpirationDate"/>
+                <label >Expiration Date</label>
+                <br>
+                <select  ng-model="creditCardCreate.selectedExpireMonth" ng-options="cc.string for cc in creditCardCreate.expireMonth"></select>
+                <select  ng-model="creditCardCreate.selectedExpireYear" ng-options="cc for cc in creditCardCreate.expireYear"></select>
+
             </div>
         </div>
         <div class="form-group">
             <button type="submit" class="btn btn-primary" ng-disabled="CreditCardCreateForm.$invalid">Save</button>
             <button type="button" class="btn btn-default" ui-sref="^">Cancel</button>
         </div>
+
+
+
+
+
+
+        <!--<div class="form-group col-sm-2">-->
+            <!--<label for="creditCardExpirationInput">Expiration Date</label>-->
+            <!--<input class="form-control"-->
+                   <!--type="text"-->
+                   <!--is-open="open1"-->
+                   <!--uib-datepicker-popup="MM/yy"-->
+                   <!--datepicker-mode="'year'"-->
+                   <!--min-mode="'month'"-->
+                   <!--ng-click="open1 = !open1"-->
+                   <!--id="creditCardExpirationInput"-->
+                   <!--datepicker-append-to-body="true"-->
+                   <!--show-weeks="false"-->
+                   <!--ng-model="creditCardCreate.creditCard.ExpirationDate"/>-->
+        <!--</div>-->
     </form>
+
+
 </article>
