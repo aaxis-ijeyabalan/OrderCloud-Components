@@ -43,7 +43,7 @@ function OrdersController(OrderList) {
     vm.list = OrderList;
 }
 
-function OrderEditController( $scope, $q, $exceptionHandler, $state, OrderCloud, SelectedOrder, OrdersTypeAheadSearchFactory, LineItemList) {
+function OrderEditController( $scope, $q, $exceptionHandler, $state, OrderCloud, SelectedOrder, OrdersTypeAheadSearchFactory, LineItemList, toastr) {
     var vm = this,
     orderid = SelectedOrder.ID;
     vm.order = SelectedOrder;
@@ -96,6 +96,7 @@ function OrderEditController( $scope, $q, $exceptionHandler, $state, OrderCloud,
                 dfd.resolve();
                 OrderCloud.Orders.Update(orderid, vm.order)
                     .then(function() {
+                        toastr.success('Order Updated', 'Success');
                         $state.go('orders', {}, {reload:true});
                     })
                     .catch(function(ex) {
@@ -113,6 +114,7 @@ function OrderEditController( $scope, $q, $exceptionHandler, $state, OrderCloud,
         OrderCloud.Orders.Delete(orderid)
             .then(function() {
                 $state.go('orders', {}, {reload:true});
+                toastr.success('Order Deleted', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)

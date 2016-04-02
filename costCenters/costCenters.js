@@ -75,7 +75,7 @@ function CostCentersController( CostCenterList, TrackSearch ) {
 
 }
 
-function CostCenterEditController( $exceptionHandler, $state, SelectedCostCenter, OrderCloud ) {
+function CostCenterEditController( $exceptionHandler, $state, SelectedCostCenter, OrderCloud, toastr ) {
     var vm = this,
         costCenterid = SelectedCostCenter.ID;
     vm.costCenterName = SelectedCostCenter.Name;
@@ -84,7 +84,8 @@ function CostCenterEditController( $exceptionHandler, $state, SelectedCostCenter
     vm.Submit = function() {
         OrderCloud.CostCenters.Update(costCenterid, vm.costCenter)
             .then(function() {
-                $state.go('costCenters', {}, {reload:true})
+                $state.go('costCenters', {}, {reload:true});
+                toastr.success('Cost Center Updated', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
@@ -95,6 +96,7 @@ function CostCenterEditController( $exceptionHandler, $state, SelectedCostCenter
         OrderCloud.CostCenters.Delete(SelectedCostCenter.ID)
             .then(function() {
                 $state.go('costCenters', {}, {reload:true})
+                toastr.success('Cost Center Deleted', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
@@ -102,7 +104,7 @@ function CostCenterEditController( $exceptionHandler, $state, SelectedCostCenter
     }
 }
 
-function CostCenterCreateController( $exceptionHandler,$state, OrderCloud) {
+function CostCenterCreateController( $exceptionHandler,$state, OrderCloud, toastr) {
     var vm = this;
     vm.costCenter = {};
 
@@ -110,6 +112,7 @@ function CostCenterCreateController( $exceptionHandler,$state, OrderCloud) {
         OrderCloud.CostCenters.Create(vm.costCenter)
             .then(function() {
                 $state.go('costCenters', {}, {reload:true})
+                toastr.success('Cost Center Created', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
@@ -117,7 +120,7 @@ function CostCenterCreateController( $exceptionHandler,$state, OrderCloud) {
     }
 }
 
-function CostCenterAssignController(Assignments, Paging, UserGroupList, AssignedUserGroups, SelectedCostCenter, OrderCloud) {
+function CostCenterAssignController(Assignments, Paging, UserGroupList, AssignedUserGroups, SelectedCostCenter, OrderCloud, toastr) {
     var vm = this;
     vm.CostCenter = SelectedCostCenter;
     vm.list = UserGroupList;
@@ -138,6 +141,7 @@ function CostCenterAssignController(Assignments, Paging, UserGroupList, Assigned
     }
 
     function SaveAssignment() {
+        toastr.success('Assignment Updated', 'Success');
         return Assignments.saveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc);
     }
 

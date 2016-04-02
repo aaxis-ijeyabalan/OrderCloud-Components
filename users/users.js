@@ -46,7 +46,7 @@ function UsersController( UserList ) {
     vm.list = UserList;
 }
 
-function UserEditController( $exceptionHandler, $state, OrderCloud, SelectedUser ) {
+function UserEditController( $exceptionHandler, $state, OrderCloud, SelectedUser, toastr ) {
     var vm = this,
         userid = SelectedUser.ID;
     vm.userName = SelectedUser.Username;
@@ -60,7 +60,8 @@ function UserEditController( $exceptionHandler, $state, OrderCloud, SelectedUser
         vm.user.TermsAccepted = today;
         OrderCloud.Users.Update(userid, vm.user)
             .then(function() {
-                $state.go('users', {}, {reload:true})
+                $state.go('users', {}, {reload:true});
+                toastr.success('User Updated', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
@@ -70,7 +71,8 @@ function UserEditController( $exceptionHandler, $state, OrderCloud, SelectedUser
     vm.Delete = function() {
         OrderCloud.Users.Delete(userid)
             .then(function() {
-                $state.go('users', {}, {reload:true})
+                $state.go('users', {}, {reload:true});
+                toastr.success('User Deleted', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
@@ -78,7 +80,7 @@ function UserEditController( $exceptionHandler, $state, OrderCloud, SelectedUser
     }
 }
 
-function UserCreateController( $exceptionHandler, $state, OrderCloud ) {
+function UserCreateController( $exceptionHandler, $state, OrderCloud, toastr ) {
     var vm = this;
     vm.user = {Email:"", Password:""};
     vm.Submit = function() {
@@ -86,7 +88,8 @@ function UserCreateController( $exceptionHandler, $state, OrderCloud ) {
         vm.user.TermsAccepted = today;
         OrderCloud.Users.Create( vm.user)
             .then(function() {
-                $state.go('users', {}, {reload:true})
+                $state.go('users', {}, {reload:true});
+                toastr.success('User Created', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)

@@ -115,7 +115,7 @@ function CouponsController( CouponList, TrackSearch ) {
     };
 }
 
-function CouponEditController( $exceptionHandler, $state, SelectedCoupon, OrderCloud ) {
+function CouponEditController( $exceptionHandler, $state, SelectedCoupon, OrderCloud, toastr ) {
     var vm = this,
         couponid = SelectedCoupon.ID;
     vm.couponName = SelectedCoupon.Label;
@@ -124,7 +124,8 @@ function CouponEditController( $exceptionHandler, $state, SelectedCoupon, OrderC
     vm.Submit = function() {
         OrderCloud.Coupons.Update(couponid, vm.coupon)
             .then(function() {
-                $state.go('coupons', {}, {reload:true})
+                $state.go('coupons', {}, {reload:true});
+                toastr.success('Coupon Edited', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
@@ -134,7 +135,8 @@ function CouponEditController( $exceptionHandler, $state, SelectedCoupon, OrderC
     vm.Delete = function() {
         OrderCloud.Coupons.Delete(SelectedCoupon.ID)
             .then(function() {
-                $state.go('coupons', {}, {reload:true})
+                $state.go('coupons', {}, {reload:true});
+                toastr.success('Coupon Deleted', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
@@ -142,7 +144,7 @@ function CouponEditController( $exceptionHandler, $state, SelectedCoupon, OrderC
     }
 }
 
-function CouponCreateController( $exceptionHandler, $state, OrderCloud) {
+function CouponCreateController( $exceptionHandler, $state, OrderCloud, toastr) {
     var vm = this;
     vm.coupon = {};
 
@@ -159,7 +161,8 @@ function CouponCreateController( $exceptionHandler, $state, OrderCloud) {
     vm.Submit = function() {
         OrderCloud.Coupons.Create(vm.coupon)
             .then(function() {
-                $state.go('coupons', {}, {reload:true})
+                $state.go('coupons', {}, {reload:true});
+                toastr.success('Coupon Created', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
@@ -167,7 +170,7 @@ function CouponCreateController( $exceptionHandler, $state, OrderCloud) {
     }
 }
 
-function CouponAssignController(OrderCloud, Buyer, UserGroupList, AssignedUserGroups, SelectedCoupon, Assignments, Paging) {
+function CouponAssignController(OrderCloud, Buyer, UserGroupList, AssignedUserGroups, SelectedCoupon, Assignments, Paging, toastr) {
     var vm = this;
     vm.coupon = SelectedCoupon;
     vm.buyer = Buyer;
@@ -189,6 +192,7 @@ function CouponAssignController(OrderCloud, Buyer, UserGroupList, AssignedUserGr
     }
 
     function saveAssignments() {
+        toastr.success('Assignment Updated', 'Success');
         return Assignments.saveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc, 'UserGroupID');
     }
 
@@ -201,7 +205,7 @@ function CouponAssignController(OrderCloud, Buyer, UserGroupList, AssignedUserGr
     }
 }
 
-function CouponAssignProductController(OrderCloud, ProductList, ProductAssignments, SelectedCoupon, Assignments, Paging) {
+function CouponAssignProductController(OrderCloud, ProductList, ProductAssignments, SelectedCoupon, Assignments, Paging, toastr) {
     var vm = this;
     vm.list = ProductList;
     vm.assignments = ProductAssignments;
@@ -221,6 +225,7 @@ function CouponAssignProductController(OrderCloud, ProductList, ProductAssignmen
     }
 
     function SaveAssignment() {
+        toastr.success('Assignment Updated', 'Success');
         return Assignments.saveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc, 'ProductID');
     }
 
@@ -233,7 +238,7 @@ function CouponAssignProductController(OrderCloud, ProductList, ProductAssignmen
     }
 }
 
-function CouponAssignCategoryController(OrderCloud, CategoryList, CategoryAssignments, SelectedCoupon, Assignments, Paging) {
+function CouponAssignCategoryController(OrderCloud, CategoryList, CategoryAssignments, SelectedCoupon, Assignments, Paging, toastr) {
     var vm = this;
     vm.list = CategoryList;
     vm.assignments = CategoryAssignments;
@@ -253,6 +258,7 @@ function CouponAssignCategoryController(OrderCloud, CategoryList, CategoryAssign
     }
 
     function SaveAssignment() {
+        toastr.success('Assignment Updated', 'Success');
         return Assignments.saveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc, 'CategoryID');
     }
 

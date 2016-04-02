@@ -79,7 +79,7 @@ function ProductsController(ProductList, TrackSearch) {
     };
 }
 
-function ProductEditController($exceptionHandler, $state, OrderCloud, SelectedProduct) {
+function ProductEditController($exceptionHandler, $state, OrderCloud, SelectedProduct, toastr) {
     var vm = this,
         productid = angular.copy(SelectedProduct.ID);
     vm.productName = angular.copy(SelectedProduct.Name);
@@ -88,7 +88,8 @@ function ProductEditController($exceptionHandler, $state, OrderCloud, SelectedPr
     vm.Submit = function () {
         OrderCloud.Products.Update(productid, vm.product)
             .then(function () {
-                $state.go('products', {}, {reload:true})
+                $state.go('products', {}, {reload:true});
+                toastr.success('Product Edited', 'Success')
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
@@ -98,7 +99,8 @@ function ProductEditController($exceptionHandler, $state, OrderCloud, SelectedPr
     vm.Delete = function () {
         OrderCloud.Products.Delete(productid)
             .then(function () {
-                $state.go('products', {}, {reload:true})
+                $state.go('products', {}, {reload:true});
+                toastr.success('Product Deleted', 'Success')
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
@@ -106,14 +108,16 @@ function ProductEditController($exceptionHandler, $state, OrderCloud, SelectedPr
     }
 }
 
-function ProductCreateController($exceptionHandler, $state, OrderCloud) {
+function ProductCreateController($exceptionHandler, $state, OrderCloud, toastr) {
     var vm = this;
     vm.product = {};
 
     vm.Submit = function () {
         OrderCloud.Products.Create(vm.product)
             .then(function () {
-                $state.go('products', {}, {reload:true})
+                $state.go('products', {}, {reload:true});
+                toastr.success('Product Created', 'Success');
+
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
@@ -121,7 +125,7 @@ function ProductCreateController($exceptionHandler, $state, OrderCloud) {
     }
 }
 
-function ProductAssignmentsController($exceptionHandler, $stateParams, $state, OrderCloud, SelectedProduct, Assignments) {
+function ProductAssignmentsController($exceptionHandler, $stateParams, $state, OrderCloud, SelectedProduct, Assignments, toastr) {
     var vm = this;
     vm.list = Assignments.Items;
     vm.productID = $stateParams.productid;
@@ -132,11 +136,12 @@ function ProductAssignmentsController($exceptionHandler, $stateParams, $state, O
         OrderCloud.Products.DeleteAssignment($stateParams.productid, null, scope.assignment.UserGroupID)
             .then(function() {
                 $state.reload();
+                toastr.success('Product Assignment Deleted', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
             })
-    }
+    };
 
     function PagingFunction() {
         if (vm.list.Meta.Page < vm.list.Meta.TotalPages) {
@@ -149,7 +154,7 @@ function ProductAssignmentsController($exceptionHandler, $stateParams, $state, O
     }
 }
 
-function ProductCreateAssignmentController($q, $stateParams, $state, Underscore, OrderCloud, UserGroupList, PriceScheduleList) {
+function ProductCreateAssignmentController($q, $stateParams, $state, Underscore, OrderCloud, UserGroupList, PriceScheduleList, toastr) {
     var vm = this;
     vm.list = UserGroupList;
     vm.priceSchedules = PriceScheduleList.Items;
@@ -192,6 +197,7 @@ function ProductCreateAssignmentController($q, $stateParams, $state, Underscore,
             });
             $q.all(assignmentQueue).then(function() {
                 $state.go('products.assignments', {productid:$stateParams.productid});
+                toastr.success('Assignment Updated', 'Success');
             })
         }
     };
