@@ -30,6 +30,11 @@ function OrdersConfig( $stateProvider ) {
                 SelectedOrder: function($stateParams, OrderCloud) {
                     return OrderCloud.Orders.Get($stateParams.orderid);
                 },
+
+                SelectedPayments: function($stateParams, OrderCloud){
+                    return OrderCloud.Payments.List($stateParams.orderid, null, 1, 100);
+                },
+
                 LineItemList: function($stateParams, OrderCloud) {
                     return OrderCloud.LineItems.List($stateParams.orderid);
                 }
@@ -43,16 +48,28 @@ function OrdersController(OrderList) {
     vm.list = OrderList;
 }
 
-function OrderEditController( $scope, $q, $exceptionHandler, $state, OrderCloud, SelectedOrder, OrdersTypeAheadSearchFactory, LineItemList, toastr) {
+function OrderEditController( $scope, $q, $exceptionHandler, $state, OrderCloud, SelectedOrder, SelectedPayments, OrdersTypeAheadSearchFactory, LineItemList, toastr) {
     var vm = this,
     orderid = SelectedOrder.ID;
     vm.order = SelectedOrder;
     vm.orderID = SelectedOrder.ID;
     vm.list = LineItemList;
+    vm.paymentList = SelectedPayments;
+
     vm.pagingfunction = PagingFunction;
     $scope.isCollapsedPayment = true;
     $scope.isCollapsedBilling = true;
     $scope.isCollapsedShipping = true;
+
+    vm.deletePayment = function(payment){
+        OrderCloud.Payments.Delete(orderid, payment.ID)
+            .then(function(){
+                $state.go($state.current, {}, {reload:true});
+            })
+            .catch(function(ex){
+                $exceptionHandler(ex)
+            });
+    };
 
     vm.deleteLineItem = function(lineitem) {
         OrderCloud.LineItems.Delete(orderid, lineitem.ID)
@@ -77,7 +94,7 @@ function OrderEditController( $scope, $q, $exceptionHandler, $state, OrderCloud,
     };
 
     vm.updateShippingAddress = function(){
-        OrderCloud.Orders.SetShippingAddress(orderid, vm.ShippingAddress)
+        OrderCloud.Orders.SetShippingAddress(orderid, vm.ShippingAddress);
             //.then(function() {
             //    $state.go($state.current, {}, {reload: true});
             //});
