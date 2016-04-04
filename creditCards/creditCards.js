@@ -70,34 +70,54 @@ function CreditCardsController( CreditCardList ) {
 
 }
 
-function CreditCardEditController( $exceptionHandler, $state, OrderCloud, SelectedCreditCard ) {
+function CreditCardEditController( $exceptionHandler, $state, OrderCloud, SelectedCreditCard ,Underscore) {
 
 
     var vm = this,
         creditcardid = SelectedCreditCard.ID;
+
     vm.expireMonth = [{number:1,string:'01'}, {number:2,string:'02'},{number:3,string:'03'},{number:4,string:'04'},{number:5,string:'05'},{number:6,string:'06'},{number:7,string:'07'},{number:8,string:'08'},{number:9,string:'09'},{number:10,string:'10'},{number:11,string:'11'},{number:12,string:'12'}];
 
     vm.creditCardName = SelectedCreditCard.ID;
     vm.creditCard = SelectedCreditCard;
+
+    vm.expireYear =[];
+
+    vm.ccExpireYears=function(){
+        var today = new Date();
+        today = today.getFullYear();
+
+        for(var x=today; x < today+21; x++) {
+            vm.expireYear.push(x);
+        }
+
+        vm.selectedExpireYear = vm.expireYear[0];
+        return vm.expireYear;
+    };
+
+    vm.ccExpireYears();
 
 
     if(vm.creditCard.ExpirationDate != null){
         vm.creditCard.ExpirationDate = new Date(vm.creditCard.ExpirationDate);
     }
 
-    vm.selectedExpireMonth= vm.creditCard.ExpirationDate;
+   vm.creditCard.selectedExpireMonth = Underscore.findWhere(vm.expireMonth,{number: vm.creditCard.ExpirationDate.getMonth() +1});
+    vm.creditCard.selectedExpireYear = vm.expireYear[vm.expireYear.indexOf(vm.creditCard.ExpirationDate.getFullYear())];
 
 
-    console.log("this is selected Credit Card expirationDate",vm.creditCard.ExpirationDate.getMonth()+1);
-
-
+   
 
     vm.creditCard.Token = "token";
+
     vm.Submit = function() {
-        var expiration = vm.creditCard.ExpirationDate;
-        expiration.setMonth(expiration.getMonth() + 1);
-        expiration.setDate(expiration.getDate() - 1);
+
+        var expiration = new Date();
+        expiration.setMonth(vm.creditCard.selectedExpireMonth.number -1);
+        expiration.setYear(vm.creditCard.selectedExpireYear);
+
         vm.creditCard.ExpirationDate = expiration;
+
         OrderCloud.CreditCards.Update(creditcardid, vm.creditCard)
             .then(function() {
                 $state.go('creditCards', {}, {reload:true});

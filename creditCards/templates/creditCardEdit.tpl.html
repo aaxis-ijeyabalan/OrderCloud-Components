@@ -34,23 +34,9 @@
             <br>
             <select  ng-model="creditCardEdit.creditCard.selectedExpireMonth" ng-options="cc.string for cc in creditCardEdit.expireMonth"></select>
             <select  ng-model="creditCardEdit.creditCard.selectedExpireYear" ng-options="cc for cc in creditCardEdit.expireYear"></select>
-
-        </div>
-            <div class="form-group col-sm-2">
-                <label for="creditCardExpirationInput">Expiration Date</label>
-                <input class="form-control"
-                       required
-                       type="text"
-                       is-open="open1"
-                       uib-datepicker-popup="MM/yy"
-                       datepicker-mode="'year'"
-                       min-mode="'month'"
-                       ng-click="open1 = !open1"
-                       id="creditCardExpirationInput"
-                       datepicker-append-to-body="true"
-                       show-weeks="false"
-                       ng-model="creditCardEdit.creditCard.ExpirationDate"/>
             </div>
+        </div>
+
         </div>
         <div class="form-group">
             <button type="submit" class="btn btn-primary" ng-disabled="CreditCardEditForm.$invalid">Save</button>
