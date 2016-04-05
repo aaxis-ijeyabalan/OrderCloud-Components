@@ -1,0 +1,36 @@
+standardSearch > directive.html
+
+<div>
+    <form name="ProductCategorySearch" ng-submit="SS.searchMore(SS.searchTerm)">
+        <div class="input-group" style="width:400px">
+            <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Product Category Search"
+                    ng-model="SS.searchTerm"
+                    uib-typeahead="item as item.Name for item in SS.typeAhead($viewValue)"
+                    typeahead-template-url = "searchDisplay.html"
+                    typeahead-no-results="noResults"
+                    typeahead-on-select="SS.onSelect($item, $model, $label)"
+                    typeahead-focus-first="false"
+            />
+
+            <span ng-click="SS.searchMore(SS.searchTerm)" class="input-group-addon" id="basic-addon2">Search</span>
+        </div>
+
+        <div ng-show="noResults">
+            <strong>No results match your search</strong>
+        </div>
+
+        <script type="text/ng-template" id="searchDisplay.html">
+
+            <div class="typeahead-group-header" ng-if="match.model.firstInGroup">
+                <strong>{{match.model.NameType}}</strong>
+            </div>
+            <a>
+                {{match.model.Name}}
+            </a>
+        </script>
+
+    </form>
+</div>
