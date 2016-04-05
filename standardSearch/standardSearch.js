@@ -1,5 +1,3 @@
-standardSearch.js
-
 angular.module('orderCloud')
     .config (SearchConfig)
     .directive( 'ordercloudStandardSearch', ordercloudStandardSearch)
@@ -17,10 +15,10 @@ function SearchConfig($stateProvider) {
             controllerAs: 'results',
             resolve:{
                 CategoryList: function(OrderCloud, $stateParams) {
-                    return OrderCloud.Categories.List($stateParams.searchterm, 'all');
+                    return OrderCloud.Me.ListCategories($stateParams.searchterm, 'all');
                 },
                 ProductList: function (OrderCloud, $stateParams) {
-                    return OrderCloud.Products.List($stateParams.searchterm);
+                    return OrderCloud.Me.ListProducts($stateParams.searchterm);
                 }
             }
         });
@@ -40,16 +38,16 @@ function ordercloudStandardSearch () {
 }
 
 
-function ordercloudStandardSearchController($state, $scope, $q, OrderCloud, selectedResultService) {
+function ordercloudStandardSearchController($state, $scope, $q, OrderCloud) {
 
     var vm = this;
     vm.typeAhead = function(term){
 
         var maxProducts = $scope.maxprod || 5;
         var maxCategories = $scope.maxcat || 5;
-
         var dfd = $q.defer();
-        $q.all([OrderCloud.Products.List(term, 1, maxProducts), OrderCloud.Categories.List(term, 'all', 1, maxCategories)])
+
+        $q.all([OrderCloud.Me.ListProducts(term, null, 1, maxProducts), OrderCloud.Me.ListCategories(term, 'all', 1, maxCategories)])
             .then(function (responses) {
 
                 var productData = responses[0].Items;
@@ -78,7 +76,6 @@ function ordercloudStandardSearchController($state, $scope, $q, OrderCloud, sele
     };
 
     vm.searchMore = function(search){
-        selectedResultService.Set(search);
         $state.go('results', {searchterm:search}, {reload:true} );
     };
 }
@@ -95,7 +92,7 @@ function SearchResultsController($q, OrderCloud, CategoryList, ProductList, Trac
 
     vm.updateResults = function(term){
         var dfd = $q.defer();
-        $q.all([OrderCloud.Products.List(term), OrderCloud.Categories.List(term, 'all')])
+        $q.all([OrderCloud.Me.ListProducts(term), OrderCloud.Me.ListCategories(term, 'all')])
             .then(function (responses) {
 
                 vm.products.list = responses[0];

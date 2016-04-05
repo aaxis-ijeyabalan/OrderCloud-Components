@@ -1,100 +1,40 @@
-<input class="form-control" ng-model="results.searchTerm" ng-change="results.updateResults(results.searchTerm)" placeholder="Search Products & Categories"/>
-
-
-<h3 class="page-header">
-    Products
-</h3>
-
-
-<div class="well well-lg text-center" ng-if="!results.products.list.Items.length">
-    <b ng-if="!results.searching()">The selected buyer does not have any products.</b>
-    <b ng-if="results.searching()"><i class="fa fa-search"></i> No products match your search.</b>
-</div>
-
-<section class="table-fixed-header" ng-if="results.products.list.Items.length">
-    <div class="table-header-bg"></div>
-    <div class="table-container" ordercloud-infinite-scroll servicename="Products" controlleras="results">
-        <table class="table table-hover">
-            <colgroup>
-                <col class="action-column"/>
-            </colgroup>
-            <thead>
-            <tr>
-                <th>
-                </th>
-                <th>
-                    <div>ID</div>
-                </th>
-                <th>
-                    <div>Name</div>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="product in results.products.list.Items">
-                <td>
-                    <div class="btn-group btn-block" uib-dropdown dropdown-append-to-body>
-                        <button type="button" class="btn btn-default btn-block" uib-dropdown-toggle><i class="fa fa-cog"></i> <span class="caret"></span></button>
-                        <ul uib-dropdown-menu role="menu">
-                            <li role="menuitem"><a ui-sref="results.products.edit({productid:product.ID})">Edit Product</a></li>
-                            <li role="menuitem"><a ui-sref="results.products.assignments({productid:product.ID})">View Assignments</a></li>
-                        </ul>
-                    </div>
-                </td>
-                <td>{{product.ID}}</td>
-                <td>{{product.Name}}</td>
-            </tr>
-            </tbody>
-        </table>
+<article id="CategoryList">
+    <h3 ng-if="results.categories.list.Items.length > 0" class="page-header">
+        {{results.categories.list.length > 1 ? 'Categories' : 'Category'}}
+    </h3>
+    <div class="category-list">
+        <div class="category-list-item" ng-repeat="category in results.categories.list.Items">
+            <div class="thumbnail" ui-sref="catalog.category({categoryid: category.ID})">
+                <figure ng-if="category.xp.image">
+                    <img class="img-responsive" ng-src="{{category.xp.image.URL}}" alt="Category Image">
+                </figure>
+                <div class="caption">
+                    <h4 class="text-center">{{category.Name || category.ID}}</h4>
+                </div>
+            </div>
+        </div>
     </div>
-</section>
-</div>
 
-<h3 class="page-header">
-    Categories
-</h3>
-
-
-
-<div class="well well-lg text-center" ng-if="!results.categories.list.Items.length">
-    <b ng-if="!results.searching()">The selected buyer does not have any categories.</b>
-    <b ng-if="results.searching()"><i class="fa fa-search"></i> No categories match your search.</b>
-</div>
-<section class="table-fixed-header" ng-if="results.categories.list.Items.length">
-    <div class="table-header-bg"></div>
-    <div class="table-container" ordercloud-infinite-scroll servicename="Categories" controlleras="results">
-        <table class="table table-hover">
-            <colgroup>
-                <col class="action-column"/>
-            </colgroup>
-            <thead>
-            <tr>
-                <th>
-                </th>
-                <th>
-                    <div>ID</div>
-                </th>
-                <th>
-                    <div>Name</div>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="category in results.categories.list.Items track by $index">
-                <td>
-                    <div class="btn-group btn-block" uib-dropdown dropdown-append-to-body>
-                        <button type="button" class="btn btn-default btn-block" uib-dropdown-toggle><i class="fa fa-cog"></i> <span class="caret"></span></button>
-                        <ul uib-dropdown-menu role="menu">
-                            <li role="menuitem"><a ui-sref="categories.edit({categoryid: category.ID})">Edit Category</a></li>
-                            <li role="menuitem"><a ui-sref="categories.assignParty({categoryid: category.ID})">Party Assignment</a></li>
-                            <li role="menuitem"><a ui-sref="categories.assignProduct({categoryid: category.ID})">Product Assignment</a></li>
-                        </ul>
+    <h3 ng-if="results.products.list.Items.length > 0" class="page-header">
+        {{results.products.list.Items.length > 1 ? 'Products' : 'Product'}}
+    </h3>
+    <div class="product-list row">
+        <div class="col-md-3" ng-repeat="product in results.products.list.Items">
+            <div class="product-item" ui-sref="catalog.product({productid: product.ID})">
+                <h3 class="item-name">{{product.Name || product.ID}}</h3>
+                <p class="item-id" ng-if="product.Name">{{product.ID}}</p>
+                <div class="thumbnail-image">
+                    <span class="fa-stack fa-5x" ng-if="!product.xp.image">
+                        <i class="fa fa-camera fa-stack-1x"></i>
+                        <i class="fa fa-ban fa-stack-2x text-danger"></i>
+                    </span>
+                    <div ng-if="product.xp.image">
+                        <img class="img-responsive" ng-src="{{product.xp.image.URL}}" alt="Product Image">
                     </div>
-                </td>
-                <td>{{category.ID}}</td>
-                <td>{{category.Name}}</td>
-            </tr>
-            </tbody>
-        </table>
+                </div>
+                <div class="item-price"><p>{{product.StandardPriceSchedule.PriceBreaks[0].Price | currency}} x {{product.StandardPriceSchedule.PriceBreaks[0].Quantity}}</p></div>
+                <div class="item-description" ng-if="product.Description"><p>{{product.Description}}</p></div>
+            </div>
+        </div>
     </div>
-</section>
+</article>
