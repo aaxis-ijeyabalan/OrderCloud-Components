@@ -1,0 +1,86 @@
+<ui-view>
+    <article class="container-fluid">
+        <div class="col-sm-12">
+            <h3 class="page-header">
+                Existing Facets for {{facetedCatManage.category.Name}}
+            </h3>
+            <div class="well well-lg text-center" ng-if="!facetedCatManage.category.xp.Facets">
+                <b>The selected category does not have any existing facets.</b>
+            </div>
+            <uib-accordion ng-if="facetedCatManage.category.xp.Facets">
+                <uib-accordion-group class="capitalize" ng-repeat="(facetName, facet) in facetedCatManage.list track by $index">
+                    <uib-accordion-heading>{{facetName}}<i class="fa fa-minus-circle pull-right text-danger" ng-click="facetedCatManage.deleteFacet(facetName, $event); $event.preventDefault()"></i></uib-accordion-heading>
+                    <ul>
+                        <li class="no-bullets" ng-repeat="facetValue in facet.Values"><i class="fa fa-minus-circle text-danger" ng-click="facetedCatManage.removeValueExisting(facetName, $index)"></i> {{facetValue}}</li>
+                        <hr>
+                        <li class="no-bullets">
+                            <i class="fa fa-plus-circle text-success" ng-if="!facetedCatManage.addingNewValue" ng-click="facetedCatManage.addingNewValue = !facetedCatManage.addingNewValue"></i>
+                            <i class="fa fa-minus-circle text-danger" ng-if="facetedCatManage.addingNewValue" ng-click="facetedCatManage.addingNewValue = !facetedCatManage.addingNewValue"></i>
+                            Add new value
+                        </li>
+                        <li class="no-bullets">
+                            <div class="input-group col-sm-2" ng-if="facetedCatManage.addingNewValue">
+                                <input id="newFacetValue" type="text" class="form-control" ng-model="facetedCatManage.newFacetValue">
+                            <span class="input-group-btn">
+                                <button class="btn btn-success" type="button" ng-click="facetedCatManage.addValueExisting(facetName)"><i class="fa fa-plus-circle"></i></button>
+                            </span>
+                            </div>
+                        </li>
+                        <hr>
+                        <li class="no-bullets">
+                            <div class="form-group">
+                                <label><input type="checkbox" ng-model="facetedCatManage.category.xp.Facets[facetName].isRequired" ng-click="facetedCatManage.toggleFacetRequired()"> Required</label>
+                            </div>
+                        </li>
+                    </ul>
+                </uib-accordion-group>
+            </uib-accordion>
+        </div>
+        <div class="col-sm-12">
+            <h3 class="page-header">
+                Create Facets
+            </h3>
+            <div class="form-group">
+                <label for="facet">Facet</label>
+                <input id="facet" type="text" class="form-control" ng-model="facetedCatManage.facet">
+            </div>
+            <div class="form-group">
+                <label for="facetValue">Add Facet Value</label>
+                <div class="input-group">
+                    <input id="facetValue" type="text" class="form-control" ng-model="facetedCatManage.facetValue">
+                    <span class="input-group-btn">
+                        <button class="btn btn-success" type="button" ng-click="facetedCatManage.addValue()"><i class="fa fa-plus-circle"></i></button>
+                    </span>
+                </div>
+            </div>
+            <section class="table-fixed-header" ng-if="facetedCatManage.facetValues.length">
+                <div class="table-header-bg"></div>
+                <div class="table-container">
+                    <table class="table table-hover">
+                        <colgroup>
+                            <col class="action-column"/>
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>
+                                <div>Facet Value</div>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="value in facetedCatManage.facetValues track by $index">
+                            <td><i class="fa fa-trash warning" ng-click="facetedCatManage.removeValue($index)"></i></td>
+                            <td>{{value}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <div class="form-group">
+                <label><input type="checkbox" ng-model="facetedCatManage.isRequired"> Required</label>
+            </div>
+            <button class="btn btn-primary" ng-click="facetedCatManage.save()" ng-disabled="!facetedCatManage.facet || !facetedCatManage.facetValues.length || facetedCatManage.noCatSelected">Add</button>
+        </div>
+    </article>
+</ui-view>
