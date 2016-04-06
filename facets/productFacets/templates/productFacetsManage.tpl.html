@@ -1,0 +1,50 @@
+<ui-view>
+    <article class="container-fluid">
+        <div class="col-sm-12">
+            <h3 class="page-header">
+                Configure Facets for {{facetedProdManage.product.Name}}
+            </h3>
+            <div class="well well-lg text-center" ng-if="!facetedProdManage.assignedCategories.length">
+                <b>The selected product does not have any category assignments.</b>
+            </div>
+            <div ng-repeat="cat in facetedProdManage.assignedCategories">
+            <h4 class="page-header">
+                {{cat.Name}}
+            </h4>
+            <div ng-if="cat.xp.Facets">
+                <form name="prodxpForm" ng-submit="facetedProdManage.saveSelections()">
+                    <uib-accordion>
+                        <uib-accordion-group class="capitalize" ng-repeat="(facetName, facet) in cat.xp.Facets">
+                            <uib-accordion-heading>{{facetName}}</uib-accordion-heading>
+                            <div class="form-group">
+                                <select multiple class="form-control" ng-options="facetValue as facetValue for facetValue in facet.Values" ng-required="cat.xp.Facets[facetName].isRequired" ng-model="facetedProdManage.product.xp.Facets[cat.ID][facetName]">
+                                </select>
+                            </div>
+                            <hr>
+                            <div>
+                                <i class="fa fa-plus-circle text-success" ng-if="!facetedProdManage.addingNewValue" ng-click="facetedProdManage.addingNewValue = !facetedProdManage.addingNewValue"></i>
+                                <i class="fa fa-minus-circle text-danger" ng-if="facetedProdManage.addingNewValue" ng-click="facetedProdManage.addingNewValue = !facetedProdManage.addingNewValue"></i>
+                                Add new value
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group col-sm-2" ng-if="facetedProdManage.addingNewValue">
+                                    <input id="newFacetValue" type="text" class="form-control" ng-model="facetedProdManage.newFacetValue">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-success" type="button" ng-click="facetedProdManage.addValueExisting(cat, facetName)"><i class="fa fa-plus-circle"></i></button>
+                                    </span>
+                                </div>
+                            </div>
+                        </uib-accordion-group>
+                    </uib-accordion>
+                    <div class="form-group">
+                        <button class="btn btn-primary" type="submit" ng-disabled="prodxpForm.$invalid">Save</button>
+                    </div>
+                </form>
+            </div>
+                <div class="well well-lg text-center" ng-if="!cat.xp.Facets">
+                    <b>This category does not have any facets to configure.</b>
+                </div>
+            </div>
+        </div>
+    </article>
+</ui-view>
