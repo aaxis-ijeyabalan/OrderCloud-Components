@@ -30,11 +30,28 @@ function OrdersConfig( $stateProvider ) {
                 SelectedOrder: function($stateParams, OrderCloud) {
                     return OrderCloud.Orders.Get($stateParams.orderid);
                 },
+                SelectedPayments: function($stateParams, $q, OrderCloud){
+                    var dfd = $q.defer();
+                    var paymentList = {};
 
-                SelectedPayments: function($stateParams, OrderCloud){
-                    return OrderCloud.Payments.List($stateParams.orderid, null, 1, 100);
+
+                    OrderCloud.Payments.List($stateParams.orderid, null, 1, 100)
+                        .then(function(data) {
+                            paymentList = data.Items;
+                            dfd.resolve(paymentList);
+                            angular.forEach(paymentList, function(payment){
+                                if(payment.Type === 'CreditCard'){
+                                    OrderCloud.CreditCards.Get(payment.CreditCardID)
+                                        .then(function(cc){
+                                            payment.creditCards = cc;
+                                        })
+                                }
+                            });
+                            dfd.resolve(paymentList);
+                        });
+                    return dfd.promise;
+
                 },
-
                 LineItemList: function($stateParams, OrderCloud) {
                     return OrderCloud.LineItems.List($stateParams.orderid);
                 }
