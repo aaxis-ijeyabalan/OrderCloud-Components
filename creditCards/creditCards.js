@@ -30,6 +30,7 @@ function CreditCardsConfig( $stateProvider ) {
             controllerAs: 'creditCardEdit',
             resolve: {
                 SelectedCreditCard: function($stateParams, OrderCloud) {
+                    console.log($stateParams);
                     return OrderCloud.CreditCards.Get($stateParams.creditCardid);
                 }
             }
