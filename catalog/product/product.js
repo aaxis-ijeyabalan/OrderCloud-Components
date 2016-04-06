@@ -4,7 +4,7 @@ angular.module('orderCloud')
     .directive('specSelectField', SpecSelectionDirective)
     .controller('ProductCtrl', ProductController)
     .controller('LineItemEditCtrl', LineItemEditController)
-
+ 
 ;
 
 function ProductConfig($stateProvider) {

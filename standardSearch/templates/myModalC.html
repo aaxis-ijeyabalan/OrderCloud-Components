@@ -1,0 +1,28 @@
+<div ng-form="product_spec_form">
+
+    <div class="modal-header">
+        <i class="fa fa-times fa-3x fa-pull-right" ng-click="modalview.cancel()"></i>
+        <h3 class="modal-title">{{modalview.selectedProduct.Name}}</h3>
+        <h2 class="panel-title">{{modalview.selectedProduct.ID}}</h2>
+    </div>
+
+    <div class="col-md-6" ng-if="modalview.selectedProduct.xp.image">
+        <!--PRODUCT IMAGE-->
+        <img class="img-responsive" ng-src="{{modalview.selectedProduct.xp.image.URL}}" alt="Product Image">
+    </div>
+    <!--<ordercloud-order-input validationform="product_spec_form" ng-if="!modalview.items.xp.image" product="modalview.items"></ordercloud-order-input>-->
+
+    <div class="panel-heading">
+        <h3 class="panel-title">Description</h3>
+    </div>
+    <div class="panel-body">
+        {{modalview.selectedProduct.Description}}
+    </div>
+    <div class="modal-footer">
+        <ordercloud-order-input validationform="product_spec_form" product="modalview.selectedProduct" ></ordercloud-order-input>
+
+        <!--<button class="btn btn-primary" type="button" ng-click="modalview.ok()">OK</button>-->
+        <!--<button class="btn btn-warning" type="button" ng-click="modalview.cancel()">Cancel</button>-->
+    </div>
+
+</div>

@@ -3,6 +3,7 @@ angular.module('orderCloud')
     .directive( 'ordercloudStandardSearch', ordercloudStandardSearch)
     .controller( 'ordercloudStandardSearchCtrl', ordercloudStandardSearchController)
     .controller('SearchResultsCtrl', SearchResultsController)
+    .controller( 'ModalInstanceCtrl', ModalInstanceCtrl)
 ;
 
 function SearchConfig($stateProvider) {
@@ -81,7 +82,7 @@ function ordercloudStandardSearchController($state, $scope, $q, OrderCloud) {
 }
 
 
-function SearchResultsController($q, OrderCloud, CategoryList, ProductList, TrackSearch){
+function SearchResultsController($q, OrderCloud, CategoryList, ProductList, TrackSearch, $uibModal, $log){
 
     var vm =this;
     vm.products={};
@@ -105,6 +106,67 @@ function SearchResultsController($q, OrderCloud, CategoryList, ProductList, Trac
 
     vm.searching = function(){
         return TrackSearch.GetTerm() ? true : false;
+
+    };
+        
+    
+        
+        
+        vm.animationsEnabled = true;
+
+        vm.open = function (product){
+            console.log("here is product",product);
+
+            var modalInstance = $uibModal.open({
+                animation: vm.animationsEnabled,
+                size:'lg',
+                templateUrl: 'standardSearch/templates/myModalC.html',
+                controller: 'ModalInstanceCtrl',
+                controllerAs: 'modalview',
+
+                resolve: {
+                    selectedProduct: function () {
+                        return product;
+                    }
+                }
+            });
+
+
+            modalInstance.result.then(function (selectedProduct) {
+                //Here is what happens after the modal is exited out of?
+
+                vm.selected = selectedProduct;
+
+            }, function () {
+                $log.info('Modal dismissed at: ' + new Date());
+            });
+        };
+
+        vm.toggleAnimation = function () {
+            vm.animationsEnabled = !vm.animationsEnabled;
+        };
+
+
+
     };
 
+
+
+
+function ModalInstanceCtrl( $uibModalInstance, selectedProduct){
+    var vm = this;
+
+    console.log("Items is what", selectedProduct);
+    vm.selectedProduct = selectedProduct;
+    // vm.selected = {
+    //     item: vm.items[0]
+    // };
+
+    // vm.ok = function () {
+    //     $uibModalInstance.close(vm.selected.item);
+    // };
+
+    vm.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
 }
