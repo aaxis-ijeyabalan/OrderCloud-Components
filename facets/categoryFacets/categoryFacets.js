@@ -1,12 +1,12 @@
 angular.module('orderCloud')
 
-    .config( FacetedCategoryManagementConfig )
+    .config( CategoryFacetsConfig )
     .controller( 'CategoryFacetsCtrl', CategoryFacetsController)
     .controller( 'CategoryFacetsManageCtrl', FacetedCategoryManageController)
 
 ;
 
-function FacetedCategoryManagementConfig( $stateProvider ) {
+function CategoryFacetsConfig( $stateProvider ) {
     $stateProvider
         .state ('categoryFacets', {
         parent: 'base',
@@ -22,7 +22,6 @@ function FacetedCategoryManagementConfig( $stateProvider ) {
         }
     })
     .state ('categoryFacets.manage', {
-        parent: 'base',
         url: '/:categoryid/manage',
         templateUrl: 'facets/categoryFacets/templates/categoryFacetsManage.tpl.html',
         controller: 'CategoryFacetsManageCtrl',
@@ -45,7 +44,7 @@ function CategoryFacetsController( CategoryList, TrackSearch ) {
     };
 }
 
-function FacetedCategoryManageController ( Category, TrackSearch, OrderCloud, toastr, $state ) {
+function FacetedCategoryManageController ( Category, OrderCloud, toastr, $state ) {
     var vm = this;
     Category.xp.Facets ? vm.list = Category.xp.Facets : vm.list = null;
     vm.category = Category;
@@ -53,9 +52,6 @@ function FacetedCategoryManageController ( Category, TrackSearch, OrderCloud, to
     vm.isRequired = false;
     vm.addingNewValue = false;
 
-    vm.searching = function() {
-        return TrackSearch.GetTerm() ? true : false;
-    };
 
     vm.addValue = function() {
         if(vm.facetValue != null) {
@@ -112,7 +108,7 @@ function FacetedCategoryManageController ( Category, TrackSearch, OrderCloud, to
         vm.category.xp.Facets[vm.facet.toLowerCase()].isRequired = vm.isRequired;
         (OrderCloud.Categories.Update(vm.category.ID, vm.category))
             .then(function() {
-                toastr.success('Your Category Facet has been saved successfully')
+                toastr.success('Your category facet has been saved successfully')
                 vm.facetValues = [];
                 vm.facetValue = null;
                 vm.isRequired = false;
