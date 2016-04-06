@@ -147,6 +147,7 @@ function CouponEditController( $exceptionHandler, $state, SelectedCoupon, OrderC
 function CouponCreateController( $exceptionHandler, $state, OrderCloud, toastr) {
     var vm = this;
     vm.coupon = {};
+    vm.coupon.MinimumPurchase = 0;
 
     vm.GenerateCode = function(bits) {
         bits = typeof  bits !== 'undefined' ? bits : 16;
