@@ -83,6 +83,7 @@ function UserEditController( $exceptionHandler, $state, OrderCloud, SelectedUser
 function UserCreateController( $exceptionHandler, $state, OrderCloud, toastr ) {
     var vm = this;
     vm.user = {Email:"", Password:""};
+    vm.user.Active = false;
     vm.Submit = function() {
         var today = new Date();
         vm.user.TermsAccepted = today;
