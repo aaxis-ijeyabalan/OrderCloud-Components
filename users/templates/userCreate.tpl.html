@@ -37,13 +37,13 @@
         <div class="row">
             <div class="col-sm-6 form-group">
                 <label for="userPasswordInput">Password</label>
-                <input id="userPasswordInput" type="password" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" pattern-err-type="customPassword" class="form-control" ng-model="userCreate.user.Password" required/>
+                <input id="userPasswordInput" type="password" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!$%@#£€*?&]{8,}$" pattern-err-type="customPassword" class="form-control" ng-model="userCreate.user.Password" confirmpassword="{{userCreate.PasswordConfirm}}" required/>
             </div>
         </div>
         <div class="row">
             <div class="col-sm-6 form-group">
                 <label for="userPasswordConfirmInput">Confirm Password</label>
-                <input id="userPasswordConfirmInput" type="password" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" pattern-err-type="customPassword"  class="form-control" ng-model="userCreate.PasswordConfirm" required/>
+                <input id="userPasswordConfirmInput" type="password" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!$%@#£€*?&]{8,}$" pattern-err-type="customPassword"  class="form-control" ng-model="userCreate.PasswordConfirm" confirmpassword="{{userCreate.user.Password}}" required/>
             </div>
         </div>
         <div class="row">

@@ -54,7 +54,7 @@ function ShipmentsController( ShipmentList ) {
     vm.list = ShipmentList;
 }
 
-function ShipmentEditController( $exceptionHandler, $state, OrderCloud, SelectedShipment, OrderList) {
+function ShipmentEditController( $exceptionHandler, $state, OrderCloud, SelectedShipment, OrderList, toastr) {
     var vm = this,
         shipmentid = SelectedShipment.ID;
     vm.ShipmentID = SelectedShipment.ID;
@@ -109,6 +109,7 @@ function ShipmentEditController( $exceptionHandler, $state, OrderCloud, Selected
         OrderCloud.Shipments.Update(shipmentid, vm.shipment)
             .then(function() {
                 $state.go('shipments', {}, {reload:true});
+                toastr.success('Shipment Updated', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
@@ -119,6 +120,7 @@ function ShipmentEditController( $exceptionHandler, $state, OrderCloud, Selected
         OrderCloud.Shipments.Delete(shipmentid, false)
             .then(function() {
                 $state.go('shipments', {}, {reload:true});
+                toastr.success('Shipment Deleted', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
@@ -130,7 +132,7 @@ function ShipmentEditController( $exceptionHandler, $state, OrderCloud, Selected
     }
 }
 
-function ShipmentCreateController( $exceptionHandler, $state, OrderCloud, OrderList) {
+function ShipmentCreateController( $exceptionHandler, $state, OrderCloud, OrderList, toastr) {
     var vm = this;
     vm.shipment = {};
     vm.list = OrderList;
@@ -163,7 +165,8 @@ function ShipmentCreateController( $exceptionHandler, $state, OrderCloud, OrderL
         });
         OrderCloud.Shipments.Create(vm.shipment)
             .then(function() {
-                $state.go('shipments', {}, {reload:true})
+                $state.go('shipments', {}, {reload:true});
+                toastr.success('Shipment Created', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)

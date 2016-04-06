@@ -88,7 +88,7 @@ function SpendingAccountsController( SpendingAccountList, OrderCloud ) {
     }
 }
 
-function SpendingAccountEditController( $exceptionHandler, $state, OrderCloud, SelectedSpendingAccount ) {
+function SpendingAccountEditController( $exceptionHandler, $state, OrderCloud, SelectedSpendingAccount, toastr ) {
     var vm = this,
         spendingaccountid = SelectedSpendingAccount.ID;
     vm.spendingAccountName = SelectedSpendingAccount.Name;
@@ -97,7 +97,8 @@ function SpendingAccountEditController( $exceptionHandler, $state, OrderCloud, S
     vm.Submit = function() {
         OrderCloud.SpendingAccounts.Update(spendingaccountid, vm.spendingAccount)
             .then(function() {
-                $state.go('spendingAccounts', {}, {reload:true})
+                $state.go('spendingAccounts', {}, {reload:true});
+                toastr.success('Spending Account Updated', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
@@ -107,7 +108,8 @@ function SpendingAccountEditController( $exceptionHandler, $state, OrderCloud, S
     vm.Delete = function() {
         OrderCloud.SpendingAccounts.Delete(spendingaccountid)
             .then(function() {
-                $state.go('spendingAccounts', {}, {reload:true})
+                $state.go('spendingAccounts', {}, {reload:true});
+                toastr.success('Spending Account Deleted', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
@@ -115,14 +117,15 @@ function SpendingAccountEditController( $exceptionHandler, $state, OrderCloud, S
     }
 }
 
-function SpendingAccountCreateController( $exceptionHandler, $state, OrderCloud ) {
+function SpendingAccountCreateController( $exceptionHandler, $state, OrderCloud, toastr ) {
     var vm = this;
     vm.spendingAccount = {};
 
     vm.Submit = function() {
         OrderCloud.SpendingAccounts.Create(vm.spendingAccount)
             .then(function() {
-                $state.go('spendingAccounts', {}, {reload:true})
+                $state.go('spendingAccounts', {}, {reload:true});
+                toastr.success('Spending Account Created', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
@@ -130,7 +133,7 @@ function SpendingAccountCreateController( $exceptionHandler, $state, OrderCloud 
     }
 }
 
-function SpendingAccountAssignGroupController($scope, UserGroupList, AssignedUserGroups, SelectedSpendingAccount, SpendingAccountAssignment) {
+function SpendingAccountAssignGroupController($scope, UserGroupList, AssignedUserGroups, SelectedSpendingAccount, SpendingAccountAssignment, toastr) {
     var vm = this;
     vm.list = UserGroupList;
     vm.assignments = AssignedUserGroups;
@@ -145,6 +148,7 @@ function SpendingAccountAssignGroupController($scope, UserGroupList, AssignedUse
     });
 
     function SaveAssignments() {
+        toastr.success('Assignment Updated', 'Success');
         return SpendingAccountAssignment.saveAssignments(vm.spendingAccount.ID, vm.list.Items, vm.assignments.Items);
     }
 
@@ -153,7 +157,7 @@ function SpendingAccountAssignGroupController($scope, UserGroupList, AssignedUse
     }
 }
 
-function SpendingAccountAssignUserController($scope, UserList, AssignedUsers, SelectedSpendingAccount, SpendingAccountAssignment) {
+function SpendingAccountAssignUserController($scope, UserList, AssignedUsers, SelectedSpendingAccount, SpendingAccountAssignment, toastr) {
     var vm = this;
     vm.list = UserList;
     vm.assignments = AssignedUsers;
@@ -168,6 +172,7 @@ function SpendingAccountAssignUserController($scope, UserList, AssignedUsers, Se
     });
 
     function SaveAssignments() {
+        toastr.success('Assignment Updated', 'Success');
         return SpendingAccountAssignment.saveAssignments(vm.spendingAccount.ID, vm.list.Items, vm.assignments.Items, 'User');
     }
 

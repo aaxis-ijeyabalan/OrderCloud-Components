@@ -67,7 +67,7 @@ function CreditCardsController( CreditCardList ) {
     vm.list = CreditCardList;
 }
 
-function CreditCardEditController( $exceptionHandler, $state, OrderCloud, SelectedCreditCard ) {
+function CreditCardEditController( $exceptionHandler, $state, OrderCloud, SelectedCreditCard, toastr ) {
     var vm = this,
         creditcardid = SelectedCreditCard.ID;
     vm.creditCardName = SelectedCreditCard.ID;
@@ -85,6 +85,7 @@ function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Select
         OrderCloud.CreditCards.Update(creditcardid, vm.creditCard)
             .then(function() {
                 $state.go('creditCards', {}, {reload:true});
+                toastr.success('Credit Card Updated', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
@@ -95,6 +96,7 @@ function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Select
         OrderCloud.CreditCards.Delete(SelectedCreditCard.ID)
             .then(function() {
                 $state.go('creditCards', {}, {reload:true})
+                toastr.success('Credit Card Deleted', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
@@ -102,7 +104,7 @@ function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Select
     }
 }
 
-function CreditCardCreateController( $exceptionHandler, $state, OrderCloud) {
+function CreditCardCreateController( $exceptionHandler, $state, OrderCloud, toastr) {
     var vm = this;
     vm.creditCard = {};
     //TODO: stop faking the token
@@ -114,7 +116,8 @@ function CreditCardCreateController( $exceptionHandler, $state, OrderCloud) {
         vm.creditCard.ExpirationDate = expiration;
         OrderCloud.CreditCards.Create(vm.creditCard)
             .then(function() {
-                $state.go('creditCards', {}, {reload:true})
+                $state.go('creditCards', {}, {reload:true});
+                toastr.success('Credit Card Created', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
@@ -122,7 +125,7 @@ function CreditCardCreateController( $exceptionHandler, $state, OrderCloud) {
     }
 }
 
-function CreditCardAssignController(OrderCloud, Buyer, UserGroupList, AssignedUserGroups, SelectedCreditCard, Assignments, Paging) {
+function CreditCardAssignController(OrderCloud, Buyer, UserGroupList, AssignedUserGroups, SelectedCreditCard, Assignments, Paging, toastr) {
     var vm = this;
     vm.buyer = Buyer;
     vm.assignBuyer = false;
@@ -145,6 +148,7 @@ function CreditCardAssignController(OrderCloud, Buyer, UserGroupList, AssignedUs
     }
 
     function SaveAssignments() {
+        toastr.success('Assignment Updated', 'Success');
         return Assignments.saveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc, 'UserGroupID');
     }
 

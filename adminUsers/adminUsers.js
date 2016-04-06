@@ -51,7 +51,7 @@ function AdminUsersController( AdminUsersList, TrackSearch ) {
     };
 }
 
-function AdminUserEditController( $exceptionHandler, $state, OrderCloud, SelectedAdminUser ) {
+function AdminUserEditController( $exceptionHandler, $state, OrderCloud, SelectedAdminUser, toastr ) {
     var vm = this,
         adminuserid = SelectedAdminUser.ID;
     vm.adminUserName = SelectedAdminUser.Username;
@@ -63,7 +63,8 @@ function AdminUserEditController( $exceptionHandler, $state, OrderCloud, Selecte
     vm.Submit = function() {
         OrderCloud.AdminUsers.Update(adminuserid, vm.adminUser)
             .then(function() {
-                $state.go('adminUsers', {}, {reload:true})
+                $state.go('adminUsers', {}, {reload:true});
+                toastr.success('User Edited', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
@@ -73,7 +74,8 @@ function AdminUserEditController( $exceptionHandler, $state, OrderCloud, Selecte
     vm.Delete = function() {
         OrderCloud.AdminUsers.Delete(adminuserid)
             .then(function() {
-                $state.go('adminUsers', {}, {reload:true})
+                $state.go('adminUsers', {}, {reload:true});
+                toastr.success('User Deleted', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
@@ -81,7 +83,7 @@ function AdminUserEditController( $exceptionHandler, $state, OrderCloud, Selecte
     }
 }
 
-function AdminUserCreateController( $exceptionHandler, $state, OrderCloud ) {
+function AdminUserCreateController( $exceptionHandler, $state, OrderCloud, toastr ) {
     var vm = this;
     vm.adminUser = {Email:"", Password:""};
     vm.Submit = function() {
@@ -89,7 +91,8 @@ function AdminUserCreateController( $exceptionHandler, $state, OrderCloud ) {
         vm.adminUser.TermsAccepted = today;
         OrderCloud.AdminUsers.Create( vm.adminUser)
             .then(function() {
-                $state.go('adminUsers', {}, {reload:true})
+                $state.go('adminUsers', {}, {reload:true});
+                toastr.success('User Created', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
