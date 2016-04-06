@@ -1,6 +1,7 @@
 angular.module('orderCloud')
 
     .config(CatalogConfig)
+    .factory('AddToOrder', AddToOrder)
     .controller('CatalogCtrl', CatalogController)
     .directive('ordercloudCategoryList', CategoryListDirective)
     .directive('ordercloudProductList', ProductListDirective)
@@ -36,6 +37,58 @@ function CatalogConfig($stateProvider) {
                 }
             }
         });
+}
+
+function AddToOrder($q, $rootScope, Underscore, OrderCloud, CurrentOrder, LineItemHelpers) {
+    var service = {
+        Add: _add
+    };
+
+    function _add(product) {
+        var deferred = $q.defer();
+
+
+        CurrentOrder.Get()
+            .then(function(order) {
+                CurrentOrder.GetLineItems(order.ID)
+                    .then(function(lineItems) {
+                        order.LineItems = lineItems;
+                        AddLineItem(order, product);
+                    });
+            })
+            .catch(function() {
+                OrderCloud.Orders.Create({})
+                    .then(function(order) {
+                        CurrentOrder.Set(order.ID);
+                        AddLineItem(order, product);
+                    });
+            });
+
+        function AddLineItem(order, p) {
+            var li = {
+                ProductID: p.ID,
+                Quantity: p.Quantity,
+                Specs: LineItemHelpers.SpecConvert(p.Specs)
+            };
+            li.ShippingAddressID = isSingleShipping(order) ? getSingleShippingAddressID(order) : null;
+            OrderCloud.LineItems.Create(order.ID, li).then(function(lineItem) {
+                $rootScope.$broadcast('LineItemAddedToCart', order.ID, lineItem);
+                deferred.resolve();
+            });
+        }
+
+        function isSingleShipping(order) {
+            return Underscore.pluck(order.LineItems, 'ShippingAddressID').length == 1;
+        }
+
+        function getSingleShippingAddressID(order) {
+            return order.LineItems[0].ShippingAddressID;
+        }
+
+        return deferred.promise;
+    }
+
+    return service;
 }
 
 function CatalogController(Catalog, Order) {
