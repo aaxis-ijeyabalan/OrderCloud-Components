@@ -6,11 +6,11 @@
         <div class="row">
             <div class="col-sm-6 form-group">
                 <label for="addressIDInput">Address ID</label>
-                <input id="addressIDInput" type="text" class="form-control" ng-model="addressEdit.address.ID"/>
+                <input id="addressIDInput" type="text" class="form-control" pattern="([A-Za-z0-9\-\_]+)" pattern-err-type="ID_Name" ng-model="addressEdit.address.ID"/>
             </div>
             <div class="col-sm-6 form-group">
                 <label for="addressNameInput">Address Name</label>
-                <input id="addressNameInput" type="text" class="form-control" ng-model="addressEdit.address.AddressName" required/>
+                <input id="addressNameInput" type="text" class="form-control" pattern="([A-Za-z0-9\-\_]+)" pattern-err-type="ID_Name" ng-model="addressEdit.address.AddressName" required/>
             </div>
         </div>
         <div class="row">

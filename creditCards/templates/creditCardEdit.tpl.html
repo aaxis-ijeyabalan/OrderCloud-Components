@@ -6,7 +6,7 @@
         <div class="row">
             <div class="form-group col-sm-6">
                 <label for="creditCardIDInput">Credit Card ID</label>
-                <input id="creditCardIDInput" type="text" class="form-control" ng-model="creditCardEdit.creditCard.ID" required/>
+                <input id="creditCardIDInput" type="text" class="form-control" pattern="([A-Za-z0-9\-\_]+)" pattern-err-type="ID_Name" ng-model="creditCardEdit.creditCard.ID" required/>
             </div>
             <div class="col-sm-6 form-group">
                 <label for="creditCardNumberInput">Partial Account Number</label>

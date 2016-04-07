@@ -68,7 +68,7 @@ function UserGroupsController( UserGroupList, TrackSearch ) {
     };
 }
 
-function UserGroupEditController( $exceptionHandler, $state, OrderCloud, SelectedUserGroup ) {
+function UserGroupEditController( $exceptionHandler, $state, OrderCloud, SelectedUserGroup, toastr ) {
     var vm = this,
         groupID = SelectedUserGroup.ID;
     vm.userGroupName = SelectedUserGroup.Name;
@@ -77,7 +77,8 @@ function UserGroupEditController( $exceptionHandler, $state, OrderCloud, Selecte
     vm.Submit = function() {
         OrderCloud.UserGroups.Update(groupID, vm.userGroup)
             .then(function() {
-                $state.go('userGroups', {}, {reload:true})
+                $state.go('userGroups', {}, {reload:true});
+                toastr.success('User Group Updated', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
@@ -95,13 +96,14 @@ function UserGroupEditController( $exceptionHandler, $state, OrderCloud, Selecte
     }
 }
 
-function UserGroupCreateController( $exceptionHandler, $state, OrderCloud ) {
+function UserGroupCreateController( $exceptionHandler, $state, OrderCloud, toastr ) {
     var vm = this;
 
     vm.Submit = function() {
         OrderCloud.UserGroups.Create(vm.userGroup)
             .then(function() {
-                $state.go('userGroups', {}, {reload:true})
+                $state.go('userGroups', {}, {reload:true});
+                toastr.success('User Group Created', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
@@ -109,7 +111,7 @@ function UserGroupCreateController( $exceptionHandler, $state, OrderCloud ) {
     }
 }
 
-function UserGroupAssignController(OrderCloud, Assignments, Paging, UserList, AssignedUsers, SelectedUserGroup) {
+function UserGroupAssignController(OrderCloud, Assignments, Paging, UserList, AssignedUsers, SelectedUserGroup, toastr) {
     var vm = this;
     vm.UserGroup = SelectedUserGroup;
     vm.list = UserList;
@@ -129,6 +131,7 @@ function UserGroupAssignController(OrderCloud, Assignments, Paging, UserList, As
     }
 
     function SaveAssignment() {
+        toastr.success('Assignment Updated', 'Success');
         return Assignments.saveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc, 'UserID');
     }
 

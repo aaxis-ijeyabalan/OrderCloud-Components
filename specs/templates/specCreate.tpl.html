@@ -6,11 +6,11 @@
         <div class="row">
             <div class="form-group col-sm-6">
                 <label for="specIDInput">Spec ID</label>
-                <input id="specIDInput" ordercloud-auto-id type="text" class="form-control" ng-model="specCreate.spec.ID"/>
+                <input id="specIDInput" ordercloud-auto-id type="text" pattern="([A-Za-z0-9\-\_]+)" pattern-err-type="ID_Name" class="form-control" ng-model="specCreate.spec.ID"/>
             </div>
             <div class="form-group col-sm-3">
                 <label for="specNameInput">Spec Name</label>
-                <input id="specNameInput" type="text" class="form-control" ng-model="specCreate.spec.Name" ng-required="true"/>
+                <input id="specNameInput" type="text" class="form-control" pattern="([A-Za-z0-9\-\_]+)" pattern-err-type="ID_Name" ng-model="specCreate.spec.Name" ng-required="true"/>
             </div>
             <div class="col-sm-3 form-group">
                 <label for="specDefaultInput">Default Value</label>
@@ -25,7 +25,7 @@
                 <div class="row">
                     <div class="form-group col-sm-6">
                         <label for="specOptIDInput">Spec Option ID</label>
-                        <input id="specOptIDInput" type="text" class="form-control" ng-model="specCreate.Option.ID"/>
+                        <input id="specOptIDInput" type="text" pattern="([A-Za-z0-9\-\_]+)" pattern-err-type="ID_Name" class="form-control" ng-model="specCreate.Option.ID"/>
                     </div>
                     <div class="form-group col-sm-6">
                         <label for="specOptListOrderInput">List Order</label>

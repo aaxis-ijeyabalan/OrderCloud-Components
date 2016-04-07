@@ -1,7 +1,8 @@
 angular.module( 'orderCloud' )
 
-    .factory('creditCardExpirationDate', creditCardExpirationDate)
+
     .config( CreditCardsConfig )
+    .factory('creditCardExpirationDate', creditCardExpirationDate)
     .controller( 'CreditCardsCtrl', CreditCardsController )
     .controller( 'CreditCardEditCtrl', CreditCardEditController )
     .controller( 'CreditCardCreateCtrl', CreditCardCreateController )
@@ -98,8 +99,8 @@ function creditCardExpirationDate(){
     return expirationDate;
 }
 
-function CreditCardEditController( $exceptionHandler, $state, OrderCloud, SelectedCreditCard ,Underscore, creditCardExpirationDate) {
 
+function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Underscore, SelectedCreditCard, toastr , creditCardExpirationDate) {
 
     var vm = this,
         creditcardid = SelectedCreditCard.ID;
@@ -130,6 +131,7 @@ function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Select
         OrderCloud.CreditCards.Update(creditcardid, vm.creditCard)
             .then(function() {
                 $state.go('creditCards', {}, {reload:true});
+                toastr.success('Credit Card Updated', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
@@ -140,6 +142,7 @@ function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Select
         OrderCloud.CreditCards.Delete(SelectedCreditCard.ID)
             .then(function() {
                 $state.go('creditCards', {}, {reload:true})
+                toastr.success('Credit Card Deleted', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
@@ -147,7 +150,8 @@ function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Select
     }
 }
 
-function CreditCardCreateController( $exceptionHandler, $state, OrderCloud, creditCardExpirationDate) {
+function CreditCardCreateController( $exceptionHandler, $state, OrderCloud, toastr, creditCardExpirationDate) {
+
     var vm = this;
 
     vm.expireMonth = creditCardExpirationDate.expirationMonth;
@@ -169,18 +173,19 @@ function CreditCardCreateController( $exceptionHandler, $state, OrderCloud, cred
 
         console.log(expiration);
         OrderCloud.CreditCards.Create(vm.creditCard)
-                .then(function() {
-                    $state.go('creditCards', {}, {reload:true})
-                })
-                .catch(function(ex) {
-                    $exceptionHandler(ex);
-                });
 
-    };
+            .then(function() {
+                $state.go('creditCards', {}, {reload:true});
+                toastr.success('Credit Card Created', 'Success');
+            })
+            .catch(function(ex) {
+                $exceptionHandler(ex);
+            });
+    }
 
 }
 
-function CreditCardAssignController(OrderCloud, Buyer, UserGroupList, AssignedUserGroups, SelectedCreditCard, Assignments, Paging) {
+function CreditCardAssignController(OrderCloud, Buyer, UserGroupList, AssignedUserGroups, SelectedCreditCard, Assignments, Paging, toastr) {
     var vm = this;
     vm.buyer = Buyer;
     vm.assignBuyer = false;
@@ -203,6 +208,7 @@ function CreditCardAssignController(OrderCloud, Buyer, UserGroupList, AssignedUs
     }
 
     function SaveAssignments() {
+        toastr.success('Assignment Updated', 'Success');
         return Assignments.saveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc, 'UserGroupID');
     }
 
