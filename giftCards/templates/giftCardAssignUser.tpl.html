@@ -16,7 +16,9 @@
                     <th>
                         <div>ID</div>
                     </th>
-                    <th>Name</th>
+                    <th>
+                        <div>Name</div>
+                    </th>
                 </tr>
                 </thead>
                 <tbody>
@@ -25,7 +27,8 @@
                         <input name="{{'assignCheckbox' + $index}}" type="checkbox" ng-model="group.selected">
                     </td>
                     <td><p>{{group.ID}}</p></td>
-                    <td><p>{{group.Name}}</p></td>
+                    <td><p>{{group.Username}}</p></td>
+
                 </tr>
                 </tbody>
             </table>
