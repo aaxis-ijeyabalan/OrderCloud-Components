@@ -204,7 +204,7 @@ function OrderHistoryFactory( $q, Underscore, OrderCloud ) {
     function _searchOrders(filters, userType) {
         var deferred = $q.defer();
 
-        OrderCloud.Orders.List((userType == 'admin' ? 'incoming' : 'outgoing'), filters.FromCompanyID, filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, null, {ID: filters.OrderID, Status: filters.Status})
+        OrderCloud.Orders.List((userType == 'admin' ? 'incoming' : 'outgoing'), filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, null, {ID: filters.OrderID, Status: filters.Status}, filters.FromCompanyID)
             .then(function(data) {
                 deferred.resolve(data);
             });

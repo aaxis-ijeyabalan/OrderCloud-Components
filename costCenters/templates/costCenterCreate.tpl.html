@@ -6,11 +6,11 @@
         <div class="row">
             <div class="form-group col-sm-6">
                 <label for="costCenterIDInput">CostCenter ID</label>
-                <input id="costCenterIDInput" ordercloud-auto-id type="text" class="form-control" ng-model="costCenterCreate.costCenter.ID"/>
+                <input id="costCenterIDInput" ordercloud-auto-id type="text" class="form-control" pattern="([A-Za-z0-9\-\_]+)" pattern-err-type="ID_Name" ng-model="costCenterCreate.costCenter.ID"/>
             </div>
             <div class="col-sm-6 form-group">
                 <label for="costCenterNameInput">CostCenter Name</label>
-                <input id="costCenterNameInput" type="text" class="form-control" ng-model="costCenterCreate.costCenter.Name" required="true"/>
+                <input id="costCenterNameInput" type="text" class="form-control" pattern="([A-Za-z0-9\-\_]+)" pattern-err-type="ID_Name" ng-model="costCenterCreate.costCenter.Name" required="true"/>
             </div>
         </div>
         <div class="row">

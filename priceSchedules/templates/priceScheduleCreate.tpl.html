@@ -6,11 +6,11 @@
         <div class="row">
             <div class="form-group col-sm-6">
                 <label for="priceScheduleIDInput">Price Schedule ID</label>
-                <input id="priceScheduleIDInput" ordercloud-auto-id type="text" class="form-control" ng-model="priceScheduleCreate.priceSchedule.ID"/>
+                <input id="priceScheduleIDInput" ordercloud-auto-id type="text" pattern="([A-Za-z0-9\-\_]+)" pattern-err-type="ID_Name" class="form-control" ng-model="priceScheduleCreate.priceSchedule.ID"/>
             </div>
             <div class="form-group col-sm-6">
                 <label for="priceScheduleNameInput">Price Schedule Name</label>
-                <input id="priceScheduleNameInput" type="text" class="form-control" ng-model="priceScheduleCreate.priceSchedule.Name" ng-required="true"/>
+                <input id="priceScheduleNameInput" type="text" class="form-control" pattern="([A-Za-z0-9\-\_]+)" pattern-err-type="ID_Name" ng-model="priceScheduleCreate.priceSchedule.Name" ng-required="true"/>
             </div>
         </div>
         <div class="row form-group">

@@ -1,10 +1,14 @@
 angular.module('orderCloud')
 
     .config(ProductConfig)
+    .directive('ocSpecForm', OCSpecForm)
     .directive('specSelectField', SpecSelectionDirective)
+    .directive('ocAddToOrder', OCAddToOrder)
     .controller('ProductCtrl', ProductController)
     .controller('LineItemEditCtrl', LineItemEditController)
- 
+    .controller('OrderInputCtrl', OrderInputController)
+
+
 ;
 
 function ProductConfig($stateProvider) {
@@ -33,6 +37,10 @@ function ProductConfig($stateProvider) {
                             });
                             $q.all(queue)
                                 .then(function(result) {
+                                    angular.forEach(result, function(spec) {
+                                        spec.Value = spec.DefaultValue;
+                                        spec.OptionID = spec.DefaultOptionID;
+                                    });
                                     dfd.resolve(result);
                                 });
                         })
@@ -40,22 +48,6 @@ function ProductConfig($stateProvider) {
 
                         });
                     return dfd.promise;
-                }
-            }
-        })
-        .state('catalog.product.config', {
-            url: '/config/:specformid',
-            views: {
-                'view@catalog.product': {
-                    templateUrl: function($stateParams) {
-                        var spec_form = 'default-spec-form';
-                        if ($stateParams.specformid) {
-                            spec_form = $stateParams.specformid;
-                        }
-                        return 'catalog/product/templates/spec-forms/' + spec_form + '.tpl.html';
-                    },
-                    controller: 'ProductCtrl',
-                    controllerAs: 'product'
                 }
             }
         })
@@ -108,6 +100,50 @@ function ProductConfig($stateProvider) {
         });
 }
 
+function OrderInputController($state, appname, $scope, $localForage) {
+    var vm = this,
+        orderid;
+    vm.currentState = $state.current.name;
+    vm.price = null;
+
+    $localForage.getItem(appname + '.CurrentOrderID').then(function(data) {
+        orderid = data;
+    });
+
+    $scope.$on('$stateChangeSuccess', function(event, toState) {
+        vm.currentState = toState.name;
+    });
+
+    $scope.$watch(function() {
+        return vm.Quantity;
+    }, function(newValue, oldValue) {
+        if (newValue && newValue !== oldValue) {
+            var max_quantity = 0;
+            angular.forEach($scope.product.item.StandardPriceSchedule.PriceBreaks, function(PriceBreaks) {
+                if (vm.Quantity >= PriceBreaks.Quantity && PriceBreaks.Quantity > max_quantity) {
+                    max_quantity = PriceBreaks.Quantity;
+                    vm.price = PriceBreaks.Price * vm.Quantity;
+                }
+                else return null;
+            });
+        }
+        else if (!newValue) {
+            vm.price = null;
+        }
+    });
+}
+
+function OCSpecForm() {
+    return {
+        restrict: 'E',
+        scope: {
+            product: '='
+        },
+        templateUrl: 'catalog/product/templates/specform.tpl.html',
+        replace: true
+    }
+}
+
 function SpecSelectionDirective(OrderCloud) {
     return {
         scope: {
@@ -135,11 +171,28 @@ function SpecSelectionDirective(OrderCloud) {
     };
 }
 
-function ProductController(Product, SpecList, Order) {
+function OCAddToOrder() {
+    return {
+        scope: {
+            product: '=',
+            formname: '@'
+        },
+        templateUrl: 'catalog/product/templates/addToOrder.tpl.html',
+        controller: 'OrderInputCtrl',
+        controllerAs: 'orderInput',
+        replace: true
+    }
+}
+
+function ProductController(Product, SpecList, Order, AddToOrder) {
     var vm = this;
     vm.item = Product;
     vm.order = Order;
     vm.item.Specs = SpecList;
+
+    vm.addToCart = function(product) {
+        AddToOrder.Add(product);
+    };
 }
 
 function LineItemEditController($state, Underscore, LineItem, OrderCloud, LineItemHelpers, LI_Product, LI_SpecList) {

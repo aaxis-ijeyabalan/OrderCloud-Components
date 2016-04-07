@@ -46,7 +46,7 @@ function BuyerController(BuyerList) {
     vm.list = BuyerList;
 }
 
-function BuyerEditController($exceptionHandler, $state, SelectedBuyer, OrderCloud) {
+function BuyerEditController($exceptionHandler, $state, SelectedBuyer, OrderCloud, toastr) {
     var vm = this;
     vm.buyer = SelectedBuyer;
     vm.buyerName = SelectedBuyer.Name;
@@ -55,6 +55,7 @@ function BuyerEditController($exceptionHandler, $state, SelectedBuyer, OrderClou
         OrderCloud.Buyers.Update(vm.buyer)
             .then(function() {
                 $state.go('buyers', {}, {reload:true});
+                toastr.success('Buyer Updated', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
@@ -62,13 +63,14 @@ function BuyerEditController($exceptionHandler, $state, SelectedBuyer, OrderClou
     }
 }
 
-function BuyerCreateController($exceptionHandler, $state, OrderCloud) {
+function BuyerCreateController($exceptionHandler, $state, OrderCloud, toastr) {
     var vm = this;
 
     vm.Submit = function () {
         OrderCloud.Buyers.Create(vm.buyer)
             .then(function() {
                 $state.go('buyers', {}, {reload:true});
+                toastr.success('Buyer Created', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
