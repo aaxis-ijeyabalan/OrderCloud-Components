@@ -125,8 +125,30 @@ function SearchResultsController($q, OrderCloud, CategoryList, ProductList, Trac
                 controllerAs: 'modalview',
 
                 resolve: {
-                    selectedProduct: function () {
-                        return product;
+                    selectedProduct: function (OrderCloud) {
+                        return OrderCloud.Me.GetProduct(product.ID);
+                    },
+                    SpecList: function(OrderCloud, $q, $stateParams) {
+                        var queue = [];
+                        var dfd = $q.defer();
+                        OrderCloud.Specs.ListProductAssignments(null, product.ID)
+                            .then(function(data) {
+                                angular.forEach(data.Items, function(assignment) {
+                                    queue.push(OrderCloud.Specs.Get(assignment.SpecID));
+                                });
+                                $q.all(queue)
+                                    .then(function(result) {
+                                        angular.forEach(result, function(spec) {
+                                            spec.Value = spec.DefaultValue;
+                                            spec.OptionID = spec.DefaultOptionID;
+                                        });
+                                        dfd.resolve(result);
+                                    });
+                            })
+                            .catch(function(response) {
+
+                            });
+                        return dfd.promise;
                     }
                 }
             });
@@ -153,11 +175,13 @@ function SearchResultsController($q, OrderCloud, CategoryList, ProductList, Trac
 
 
 
-function ModalInstanceCtrl( $uibModalInstance, selectedProduct){
+function ModalInstanceCtrl( $uibModalInstance, selectedProduct, SpecList, AddToOrder){
     var vm = this;
 
     console.log("Items is what", selectedProduct);
     vm.selectedProduct = selectedProduct;
+    vm.selectedProduct.item = {Specs: SpecList};
+
     // vm.selected = {
     //     item: vm.items[0]
     // };
@@ -169,4 +193,13 @@ function ModalInstanceCtrl( $uibModalInstance, selectedProduct){
     vm.cancel = function () {
         $uibModalInstance.dismiss('cancel');
     };
+    
+    vm.addToCart = function(product) {
+        product.Quantity = product.item.Quantity;
+        product.Specs = product.item.Specs;
+        AddToOrder.Add(product).then(function(){
+            $uibModalInstance.close()
+        });
+    };
+    
 }
