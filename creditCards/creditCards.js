@@ -1,5 +1,6 @@
 angular.module( 'orderCloud' )
 
+    .factory('creditCardExpirationDate', creditCardExpirationDate)
     .config( CreditCardsConfig )
     .controller( 'CreditCardsCtrl', CreditCardsController )
     .controller( 'CreditCardEditCtrl', CreditCardEditController )
@@ -71,43 +72,50 @@ function CreditCardsController( CreditCardList ) {
 
 }
 
-function CreditCardEditController( $exceptionHandler, $state, OrderCloud, SelectedCreditCard ,Underscore) {
+function creditCardExpirationDate(){
+
+    //return the expirationMonth array and its function
+    var expirationDate={
+
+        expirationMonth : [{number:1,string:'01'}, {number:2,string:'02'},{number:3,string:'03'},{number:4,string:'04'},{number:5,string:'05'},{number:6,string:'06'},{number:7,string:'07'},{number:8,string:'08'},{number:9,string:'09'},{number:10,string:'10'},{number:11,string:'11'},{number:12,string:'12'}],
+        expirationYear : []
+    };
+
+    function _ccExpireYears(){
+
+        var today = new Date();
+        today = today.getFullYear();
+
+        for(var x=today; x < today+21; x++) {
+            expirationDate.expirationYear.push(x);
+        }
+        return expirationDate.expirationYear;
+    }
+
+
+    _ccExpireYears();
+
+    return expirationDate;
+}
+
+function CreditCardEditController( $exceptionHandler, $state, OrderCloud, SelectedCreditCard ,Underscore, creditCardExpirationDate) {
 
 
     var vm = this,
         creditcardid = SelectedCreditCard.ID;
 
-    vm.expireMonth = [{number:1,string:'01'}, {number:2,string:'02'},{number:3,string:'03'},{number:4,string:'04'},{number:5,string:'05'},{number:6,string:'06'},{number:7,string:'07'},{number:8,string:'08'},{number:9,string:'09'},{number:10,string:'10'},{number:11,string:'11'},{number:12,string:'12'}];
+    vm.expireMonth = creditCardExpirationDate.expirationMonth;
+    vm.expireYear =creditCardExpirationDate.expirationYear;
 
     vm.creditCardName = SelectedCreditCard.ID;
     vm.creditCard = SelectedCreditCard;
-
-    vm.expireYear =[];
-
-    vm.ccExpireYears=function(){
-        var today = new Date();
-        today = today.getFullYear();
-
-        for(var x=today; x < today+21; x++) {
-            vm.expireYear.push(x);
-        }
-
-        vm.selectedExpireYear = vm.expireYear[0];
-        return vm.expireYear;
-    };
-
-    vm.ccExpireYears();
-
 
     if(vm.creditCard.ExpirationDate != null){
         vm.creditCard.ExpirationDate = new Date(vm.creditCard.ExpirationDate);
     }
 
-   vm.creditCard.selectedExpireMonth = Underscore.findWhere(vm.expireMonth,{number: vm.creditCard.ExpirationDate.getMonth() +1});
+   vm.creditCard.selectedExpireMonth = Underscore.findWhere(vm.expireMonth,{number: vm.creditCard.ExpirationDate.getMonth() +1});// vm.creditCard.selectedExpireYear = vm.expireYear[vm.expireYear.indexOf(vm.creditCard.ExpirationDate.getFullYear())];
     vm.creditCard.selectedExpireYear = vm.expireYear[vm.expireYear.indexOf(vm.creditCard.ExpirationDate.getFullYear())];
-
-
-   
 
     vm.creditCard.Token = "token";
 
@@ -139,28 +147,13 @@ function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Select
     }
 }
 
-function CreditCardCreateController( $exceptionHandler, $state, OrderCloud) {
+function CreditCardCreateController( $exceptionHandler, $state, OrderCloud, creditCardExpirationDate) {
     var vm = this;
 
-    vm.expireMonth = [{number:1,string:'01'}, {number:2,string:'02'},{number:3,string:'03'},{number:4,string:'04'},{number:5,string:'05'},{number:6,string:'06'},{number:7,string:'07'},{number:8,string:'08'},{number:9,string:'09'},{number:10,string:'10'},{number:11,string:'11'},{number:12,string:'12'}];
-    vm.expireYear =[];
-
-    vm.ccExpireYears=function(){
-        var today = new Date();
-        today = today.getFullYear();
-
-        for(var x=today; x < today+21; x++) {
-            vm.expireYear.push(x);
-        }
-
-        vm.selectedExpireYear = vm.expireYear[0];
-        return vm.expireYear;
-    };
-
-    vm.ccExpireYears();
+    vm.expireMonth = creditCardExpirationDate.expirationMonth;
+    vm.expireYear = creditCardExpirationDate.expirationYear;
 
 
-    vm.selectedExpireMonth= vm.expireMonth[0];
     vm.creditCard = {};
 
 
@@ -185,19 +178,6 @@ function CreditCardCreateController( $exceptionHandler, $state, OrderCloud) {
 
     };
 
-    //vm.Submit = function() {
-    //    var expiration = vm.creditCard.ExpirationDate;
-    //    expiration.setMonth(expiration.getMonth() + 1);
-    //    expiration.setDate(expiration.getDate() - 1);
-    //    vm.creditCard.ExpirationDate = expiration;
-    //    OrderCloud.CreditCards.Create(vm.creditCard)
-    //        .then(function() {
-    //            $state.go('creditCards', {}, {reload:true})
-    //        })
-    //        .catch(function(ex) {
-    //            $exceptionHandler(ex);
-    //        });
-    //}
 }
 
 function CreditCardAssignController(OrderCloud, Buyer, UserGroupList, AssignedUserGroups, SelectedCreditCard, Assignments, Paging) {
