@@ -4,10 +4,10 @@
             <h3 class="page-header">
                 Existing Facets for {{facetedCatManage.category.Name}}
             </h3>
-            <div class="well well-lg text-center" ng-if="!facetedCatManage.category.xp.Facets">
+            <div class="well well-lg text-center" ng-if="!facetedCatManage.category.xp.OC_Facets">
                 <b>The selected category does not have any existing facets.</b>
             </div>
-            <uib-accordion ng-if="facetedCatManage.category.xp.Facets">
+            <uib-accordion ng-if="facetedCatManage.category.xp.OC_Facets">
                 <uib-accordion-group class="capitalize" ng-repeat="(facetName, facet) in facetedCatManage.list track by $index">
                     <uib-accordion-heading>{{facetName}}<i class="fa fa-minus-circle pull-right text-danger" ng-click="facetedCatManage.deleteFacet(facetName, $event); $event.preventDefault()"></i></uib-accordion-heading>
                     <ul>
@@ -29,7 +29,7 @@
                         <hr>
                         <li class="no-bullets">
                             <div class="form-group">
-                                <label><input type="checkbox" ng-model="facetedCatManage.category.xp.Facets[facetName].isRequired" ng-click="facetedCatManage.toggleFacetRequired()"> Required</label>
+                                <label><input type="checkbox" ng-model="facetedCatManage.category.xp.OC_Facets[facetName].isRequired" ng-click="facetedCatManage.toggleFacetRequired()"> Required</label>
                             </div>
                         </li>
                     </ul>

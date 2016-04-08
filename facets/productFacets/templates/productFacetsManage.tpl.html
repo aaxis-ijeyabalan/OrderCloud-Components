@@ -11,13 +11,13 @@
             <h4 class="page-header">
                 {{cat.Name}}
             </h4>
-            <div ng-if="cat.xp.Facets">
+            <div ng-if="cat.xp.OC_Facets">
                 <form name="prodxpForm" ng-submit="facetedProdManage.saveSelections()">
                     <uib-accordion>
-                        <uib-accordion-group class="capitalize" ng-repeat="(facetName, facet) in cat.xp.Facets">
+                        <uib-accordion-group class="capitalize" ng-repeat="(facetName, facet) in cat.xp.OC_Facets">
                             <uib-accordion-heading>{{facetName}}</uib-accordion-heading>
                             <div class="form-group">
-                                <select multiple class="form-control" ng-options="facetValue as facetValue for facetValue in facet.Values" ng-required="cat.xp.Facets[facetName].isRequired" ng-model="facetedProdManage.product.xp.Facets[cat.ID][facetName]">
+                                <select multiple class="form-control" ng-options="facetValue as facetValue for facetValue in facet.Values" ng-required="cat.xp.OC_Facets[facetName].isRequired" ng-model="facetedProdManage.product.xp.OC_Facets[cat.ID][facetName]">
                                 </select>
                             </div>
                             <hr>
@@ -41,8 +41,8 @@
                     </div>
                 </form>
             </div>
-                <div class="well well-lg text-center" ng-if="!cat.xp.Facets">
-                    <b>This category does not have any facets to configure.</b>
+                <div class="well well-lg text-center" ng-if="!cat.xp.OC_Facets">
+                    <b>This category does not have any facets to configure. <a ui-sref="categoryFacets.manage({categoryid:cat.ID})">Go add some!</a></b>
                 </div>
             </div>
         </div>

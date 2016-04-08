@@ -63,7 +63,7 @@ function CategoryFacetsController( CategoryList, TrackSearch ) {
 
 function FacetedCategoryManageController ( Category, OrderCloud, toastr, $state ) {
     var vm = this;
-    Category.xp.Facets ? vm.list = Category.xp.Facets : vm.list = null;
+    Category.xp && Category.xp.OC_Facets ? vm.list = Category.xp.OC_Facets : vm.list = null;
     vm.category = Category;
     vm.facetValues = [];
     vm.isRequired = false;
@@ -82,7 +82,7 @@ function FacetedCategoryManageController ( Category, OrderCloud, toastr, $state 
     };
 
     vm.addValueExisting = function (facetName) {
-        vm.category.xp.Facets[facetName].Values.push(vm.newFacetValue);
+        vm.category.xp.OC_Facets[facetName].Values.push(vm.newFacetValue);
         OrderCloud.Categories.Update(vm.category.ID, vm.category)
             .then(function() {
                vm.newFacetValue = null;
@@ -90,7 +90,7 @@ function FacetedCategoryManageController ( Category, OrderCloud, toastr, $state 
     };
 
     vm.removeValueExisting = function(facetName, facetValueIndex) {
-        vm.category.xp.Facets[facetName].Values.splice(facetValueIndex, 1);
+        vm.category.xp.OC_Facets[facetName].Values.splice(facetValueIndex, 1);
         OrderCloud.Categories.Update(vm.category.ID, vm.category);
     };
 
@@ -100,12 +100,12 @@ function FacetedCategoryManageController ( Category, OrderCloud, toastr, $state 
 
     vm.deleteFacet = function(facetName, event) {
         if(confirm('Are you sure you want to delete this facet?')) {
-            if(Object.keys(vm.category.xp.Facets).length === 1) {
-                delete vm.category.xp.Facets;
+            if(Object.keys(vm.category.xp.OC_Facets).length === 1) {
+                delete vm.category.xp.OC_Facets;
                 OrderCloud.Categories.Update(vm.category.ID, vm.category);
             }
             else {
-                delete vm.category.xp.Facets[facetName];
+                delete vm.category.xp.OC_Facets[facetName];
                 OrderCloud.Categories.Update(vm.category.ID, vm.category);
             }
             event.stopPropagation();
@@ -118,11 +118,11 @@ function FacetedCategoryManageController ( Category, OrderCloud, toastr, $state 
     };
 
     vm.save = function() {
-        if(vm.category.xp == null) vm.category.xp = { Facets: {}};
-        if (vm.category.xp && !vm.category.xp.Facets) vm.category.xp.Facets = {};
-        vm.category.xp.Facets[vm.facet.toLowerCase()] = {};
-        vm.category.xp.Facets[vm.facet.toLowerCase()].Values = vm.facetValues;
-        vm.category.xp.Facets[vm.facet.toLowerCase()].isRequired = vm.isRequired;
+        if(vm.category.xp == null) vm.category.xp = { OC_Facets: {}};
+        if (vm.category.xp && !vm.category.xp.OC_Facets) vm.category.xp.OC_Facets = {};
+        vm.category.xp.OC_Facets[vm.facet.toLowerCase()] = {};
+        vm.category.xp.OC_Facets[vm.facet.toLowerCase()].Values = vm.facetValues;
+        vm.category.xp.OC_Facets[vm.facet.toLowerCase()].isRequired = vm.isRequired;
         (OrderCloud.Categories.Update(vm.category.ID, vm.category))
             .then(function() {
                 toastr.success('Your category facet has been saved successfully')

@@ -61,7 +61,6 @@ function ProductFacetsController( ProductList, TrackSearch ) {
 
 function FacetedProductManageController ( Product, AssignedCategories, OrderCloud, toastr, $state ) {
     var vm = this;
-    Product.xp.Facets ? vm.list = Product.xp.Facets : vm.list = null;
     vm.assignedCategories = AssignedCategories;
     vm.product = Product;
     vm.addingNewValue = false;
@@ -75,10 +74,10 @@ function FacetedProductManageController ( Product, AssignedCategories, OrderClou
     };
 
     vm.addValueExisting = function (cat, facetName) {
-        cat.xp.Facets[facetName].Values.push(vm.newFacetValue);
+        cat.xp.OC_Facets[facetName].Values.push(vm.newFacetValue);
         OrderCloud.Categories.Update(cat.ID, cat)
             .then(function() {
-                vm.product.xp.Facets[cat.ID][facetName].push(vm.newFacetValue);
+                vm.product.xp.OC_Facets[cat.ID][facetName].push(vm.newFacetValue);
                 OrderCloud.Products.Update(vm.product.ID, vm.product)
                     .then(function() {
                         vm.newFacetValue = null;
