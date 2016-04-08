@@ -56,8 +56,23 @@ function checkoutConfig($stateProvider) {
                         });
                     return dfd.promise;
                 },
-                OrderPayments: function(OrderCloud, Order) {
-                    return OrderCloud.Payments.List(Order.ID);
+                OrderPayments: function($q, OrderCloud, Order) {
+                    var deferred = $q.defer();
+
+                    OrderCloud.Payments.List(Order.ID)
+                        .then(function(data) {
+                            if (!data.Items.length) {
+                                OrderCloud.Payments.Create(Order.ID, {})
+                                    .then(function(p) {
+                                        deferred.resolve({Items: [p]});
+                                    })
+                            }
+                            else {
+                                deferred.resolve(data);
+                            }
+                        })
+
+                    return deferred.promise;
                 }
 			}
 		})
