@@ -285,7 +285,7 @@ function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineIte
     });
 
     function LineItemsInit(OrderID) {
-        OrderCloud.LineItems.Get(OrderID)
+        OrderCloud.LineItems.List(OrderID)
             .then(function(data) {
                 vm.lineItems = data;
                 LineItemHelpers.GetProductInfo(vm.lineItems.Items);

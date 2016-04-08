@@ -106,7 +106,7 @@ function CategoriesController( CategoryList, TrackSearch ) {
     };
 }
 
-function CategoryEditController( $exceptionHandler, $state, OrderCloud, SelectedCategory ) {
+function CategoryEditController( $exceptionHandler, $state, OrderCloud, SelectedCategory, toastr ) {
     var vm = this,
         categoryID = SelectedCategory.ID;
     vm.categoryName = SelectedCategory.Name;
@@ -115,7 +115,8 @@ function CategoryEditController( $exceptionHandler, $state, OrderCloud, Selected
     vm.Submit = function() {
         OrderCloud.Categories.Update(categoryID, vm.category)
             .then(function() {
-                $state.go('categories', {}, {reload:true})
+                $state.go('categories', {}, {reload:true});
+                toastr.success('Category Updated', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
@@ -125,7 +126,8 @@ function CategoryEditController( $exceptionHandler, $state, OrderCloud, Selected
     vm.Delete = function() {
         OrderCloud.Categories.Delete(SelectedCategory.ID)
             .then(function() {
-                $state.go('categories', {}, {reload:true})
+                $state.go('categories', {}, {reload:true});
+                toastr.success('Category Deleted', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
@@ -133,7 +135,7 @@ function CategoryEditController( $exceptionHandler, $state, OrderCloud, Selected
     }
 }
 
-function CategoryCreateController($exceptionHandler,$state, OrderCloud) {
+function CategoryCreateController($exceptionHandler,$state, OrderCloud, toastr) {
     var vm = this;
     vm.category = {};
 
@@ -143,7 +145,8 @@ function CategoryCreateController($exceptionHandler,$state, OrderCloud) {
         }
         OrderCloud.Categories.Create(vm.category)
             .then(function() {
-                $state.go('categories', {}, {reload:true})
+                $state.go('categories', {}, {reload:true});
+                toastr.success('Category Created', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
@@ -166,7 +169,7 @@ function CategoryTreeController(Tree, CategoryTreeService) {
     };
 }
 
-function CategoryAssignPartyController(OrderCloud, Assignments, Paging, UserGroupList, AssignedUserGroups, SelectedCategory) {
+function CategoryAssignPartyController(OrderCloud, Assignments, Paging, UserGroupList, AssignedUserGroups, SelectedCategory, toastr) {
     var vm = this;
     vm.Category = SelectedCategory;
     vm.list = UserGroupList;
@@ -187,6 +190,7 @@ function CategoryAssignPartyController(OrderCloud, Assignments, Paging, UserGrou
     }
 
     function SaveAssignment() {
+        toastr.success('Assignment Updated', 'Success');
         return Assignments.saveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc);
     }
 
@@ -199,7 +203,7 @@ function CategoryAssignPartyController(OrderCloud, Assignments, Paging, UserGrou
     }
 }
 
-function CategoryAssignProductController(OrderCloud, Assignments, Paging, ProductList, ProductAssignments, SelectedCategory) {
+function CategoryAssignProductController(OrderCloud, Assignments, Paging, ProductList, ProductAssignments, SelectedCategory, toastr) {
     var vm = this;
     vm.Category = SelectedCategory;
     vm.list = ProductList;
@@ -219,6 +223,7 @@ function CategoryAssignProductController(OrderCloud, Assignments, Paging, Produc
     }
 
     function SaveAssignment() {
+        toastr.success('Assignment Updated', 'Success');
         return Assignments.saveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc, 'ProductID');
     }
 

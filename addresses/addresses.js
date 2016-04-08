@@ -71,7 +71,7 @@ function AddressesController( AddressList, TrackSearch ) {
     };
 }
 
-function AddressEditController( $exceptionHandler, $state, OrderCloud, SelectedAddress ) {
+function AddressEditController( $exceptionHandler, $state, OrderCloud, SelectedAddress, toastr ) {
 	var vm = this,
         addressID = SelectedAddress.ID;
 	vm.addressName = SelectedAddress.AddressName;
@@ -81,6 +81,7 @@ function AddressEditController( $exceptionHandler, $state, OrderCloud, SelectedA
 		OrderCloud.Addresses.Update(addressID, vm.address)
 			.then(function() {
 				$state.go('addresses', {}, {reload:true});
+                toastr.success('Address Updated', 'Success');
 			})
             .catch(function(ex) {
                 $exceptionHandler(ex);
@@ -91,6 +92,7 @@ function AddressEditController( $exceptionHandler, $state, OrderCloud, SelectedA
 		OrderCloud.Addresses.Delete(SelectedAddress.ID, false)
 			.then(function() {
 				$state.go('addresses', {}, {reload:true})
+                toastr.success('Address Deleted', 'Success');
 			})
             .catch(function(ex) {
                 $exceptionHandler(ex);
@@ -98,14 +100,15 @@ function AddressEditController( $exceptionHandler, $state, OrderCloud, SelectedA
 	};
 }
 
-function AddressCreateController($exceptionHandler, $state, OrderCloud) {
+function AddressCreateController($exceptionHandler, $state, OrderCloud, toastr) {
 	var vm = this;
 	vm.address = {};
 
 	vm.Submit = function() {
 		OrderCloud.Addresses.Create(vm.address)
 			.then(function() {
-				$state.go('addresses', {}, {reload:true})
+				$state.go('addresses', {}, {reload:true});
+                toastr.success('Address Created', 'Success');
 			})
             .catch(function(ex) {
                 $exceptionHandler(ex);
@@ -113,7 +116,7 @@ function AddressCreateController($exceptionHandler, $state, OrderCloud) {
 	};
 }
 
-function AddressAssignController($q, $scope, $state, Underscore, OrderCloud, Assignments, AssignmentsList, UserGroupList, SelectedAddress) {
+function AddressAssignController($q, $scope, $state, Underscore, OrderCloud, Assignments, AssignmentsList, UserGroupList, SelectedAddress, toastr) {
     var vm = this;
     vm.list = UserGroupList;
     vm.assignments = AssignmentsList;
@@ -207,6 +210,7 @@ function AddressAssignController($q, $scope, $state, Underscore, OrderCloud, Ass
         $q.all(queue).then(function() {
             dfd.resolve();
             $state.reload($state.current);
+            toastr.success('Assignment Updated', 'Success');
         });
         return dfd.promise;
     }

@@ -25,6 +25,8 @@ function OrderInputController($state, appname, $scope, $rootScope, $localForage,
     vm.price = null;
     vm.addToCart = AddToCart;
 
+    console.log("this is a state");
+
     $localForage.getItem(appname + '.CurrentOrderID').then(function(data) {
         orderid = data;
     });

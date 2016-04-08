@@ -142,7 +142,8 @@ function SpecEditController( $exceptionHandler, $state, Underscore, OrderCloud, 
     vm.Submit = function() {
         OrderCloud.Specs.Update(specid, vm.spec)
             .then(function() {
-                $state.go('specs', {}, {reload:true})
+                $state.go('specs', {}, {reload:true});
+                toastr.success('Spec Edited', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
@@ -233,6 +234,7 @@ function SpecCreateController( $exceptionHandler, $q, $state, OrderCloud, Unders
                         OrderCloud.Specs.Patch(spec.ID, {DefaultOptionID: DefaultOptionID})
                     }
                     $state.go('specs', {}, {reload: true});
+                    toastr.success('Spec Created', 'Success');
                 });
                 return dfd.promise;
             })
@@ -241,7 +243,7 @@ function SpecCreateController( $exceptionHandler, $q, $state, OrderCloud, Unders
             });
     }
 }
-function SpecAssignController(OrderCloud, Assignments, Paging, ProductList, ProductAssignments, SelectedSpec) {
+function SpecAssignController(OrderCloud, Assignments, Paging, ProductList, ProductAssignments, SelectedSpec, toastr) {
     var vm = this;
     vm.Spec = SelectedSpec;
     vm.list = ProductList;
@@ -261,6 +263,7 @@ function SpecAssignController(OrderCloud, Assignments, Paging, ProductList, Prod
     }
 
     function SaveAssignment() {
+        toastr.success('Assignment Updated', 'Success');
         return Assignments.saveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc, 'ProductID');
     }
 

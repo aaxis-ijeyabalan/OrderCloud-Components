@@ -6,11 +6,11 @@
         <div class="row">
             <div class="col-sm-6 form-group">
                 <label for="userIDInput">User ID</label>
-                <input id="userIDInput" type="text" class="form-control" ng-model="userEdit.user.ID"/>
+                <input id="userIDInput" type="text" pattern="([A-Za-z0-9\-\_]+)" pattern-err-type="ID_Name" class="form-control" ng-model="userEdit.user.ID"/>
             </div>
             <div class="form-group col-sm-6">
                 <label for="userNameInput">User Name</label>
-                <input id="userNameInput" type="text" class="form-control" ng-model="userEdit.user.Username" ng-required="true"/>
+                <input id="userNameInput" type="text" pattern="([A-Za-z0-9\-\_]+)" pattern-err-type="ID_Name" class="form-control" ng-model="userEdit.user.Username" ng-required="true"/>
             </div>
         </div>
         <div class="row">
@@ -37,13 +37,13 @@
         <div class="row">
             <div class="col-sm-6 form-group">
                 <label for="userPasswordInput">Password</label>
-                <input id="userPasswordInput" pattern='^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$' pattern-err-type="customPassword" class="form-control" ng-model="userEdit.user.Password"/>
+                <input id="userPasswordInput" pattern='^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!$%@#£€*?&]{8,}$' pattern-err-type="customPassword" class="form-control" ng-model="userEdit.user.Password" confirmpassword="{{userEdit.PasswordConfirm}}"/>
             </div>
         </div>
         <div class="row">
             <div class="col-sm-6 form-group">
                 <label for="userPasswordConfirmInput">Confirm Password</label>
-                <input id="userPasswordConfirmInput" type="password" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" pattern-err-type="customPassword" class="form-control" ng-model="userEdit.PasswordConfirm"/>
+                <input id="userPasswordConfirmInput" type="password" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!$%@#£€*?&]{8,}$" pattern-err-type="customPassword" class="form-control" ng-model="userEdit.PasswordConfirm" confirmpassword="{{userEdit.user.Password}}"/>
             </div>
         </div>
         <div class="row">
