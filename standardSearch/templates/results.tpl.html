@@ -2,9 +2,9 @@
     <h3 ng-if="results.categories.list.Items.length > 0" class="page-header">
         {{results.categories.list.Items.length > 1 ? 'Categories' : 'Category'}}
     </h3>
-    <div class="category-list row">
+    <div class="product-list row">
 
-        <div class="col-md-3" ng-repeat="category in results.categories.list.Items">
+        <div class="col-md-3 " ng-repeat="category in results.categories.list.Items">
 
             <div class="product-item" ui-sref="catalog.category({categoryid: category.ID})">
 
@@ -29,7 +29,7 @@
     </h3>
     <div class="product-list row">
 
-        <div class="col-md-3" ng-repeat="product in results.products.list.Items">
+        <div class="col-md-3 " ng-repeat="product in results.products.list.Items">
 
 
             <div class="product-item" ui-sref="catalog.product({productid: product.ID})">
@@ -49,7 +49,7 @@
 
             </div>
                 <div class="text-center">
-                    <button class="btn-info" ng-click="results.open(product)">Quick View</button>
+                    <button class="btn btn-default" ng-click="results.open(product)">Quick View</button>
                 </div>
                 <!--<div class="item-price"><p>{{product.StandardPriceSchedule.PriceBreaks[0].Price | currency}} x {{product.StandardPriceSchedule.PriceBreaks[0].Quantity}}</p></div>-->
                 <!--<div class="item-description" ng-if="product.Description"><p>{{product.Description}}</p></div>-->
