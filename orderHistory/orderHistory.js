@@ -120,7 +120,7 @@ function OrderHistoryDetailController( SelectedOrder, toastr, OrderCloud ) {
             });
     };
     vm.removeFromFavorites = function(){
-        SelectedOrder.xp.favorite = null;
+        OrderCloud.Orders.Patch(SelectedOrder.ID, {"xp": null} );
         toastr.success("Your order has been removed from Favorites", 'Success')
     }
 }
