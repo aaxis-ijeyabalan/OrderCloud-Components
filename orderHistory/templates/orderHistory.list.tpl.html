@@ -4,10 +4,18 @@
             Orders
         </h3>
         <ordercloud-order-search controlleras="orderHistory" filters="orderHistory.filters" usertype="{{orderHistory.userType}}" buyercompanies="orderHistory.buyerCompanies"></ordercloud-order-search>
-        <!--<div class="well well-lg text-center" ng-if="!orderHistory.orders.Items.length">
+        <div class="well well-lg text-center" ng-if="!orderHistory.list.Items.length">
             <b ng-if="!orderHistory.searching()">The selected buyer does not have any orderHistory.</b>
             <b ng-if="orderHistory.searching()"><i class="fa fa-search"></i> No orders match your search.</b>
-        </div>-->
+        </div>
+        <div class="toggle-favorites-button">
+            <button class="btn btn-primary" ng-click="orderHistory.toggleFavorites()" ng-if="orderHistory.showAll">
+                <i class="fa fa-star"> </i> Filter by Favorites
+            </button>
+            <button class="btn btn-info" ng-click="orderHistory.toggleFavorites()" ng-if="!orderHistory.showAll">
+                <i class="fa fa-star"> </i> Show All Results
+            </button>
+        </div>
         <section class="table-fixed-header" ng-if="orderHistory.list.Items.length">
             <div class="table-header-bg"></div>
             <div class="table-container" ordercloud-infinite-scroll servicename="Orders" controlleras="orderHistory">
@@ -26,20 +34,14 @@
                         <th>
                             <div>Total</div>
                         </th>
-                        <th>
-                            <div>Reorder</div>
-                        </th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="order in orderHistory.list.Items track by $index">
+                    <tr ng-if="orderHistory.showAll || order.xp.favorite" ng-repeat="order in orderHistory.list.Items">
                         <td ui-sref="orderHistory.detail({orderid: order.ID})">{{order.ID}}</td>
                         <td>{{order.Status}}</td>
                         <td>{{(order.DateSubmitted ||  order.DateCreated) | date}}</td>
                         <td>{{order.Total | currency}}</td>
-                        <td>
-                            <ordercloud-repeat-order orderid="order.ID" ng-show="order.Subtotal > 0"></ordercloud-repeat-order>
-                        </td>
                     </tr>
                     </tbody>
                 </table>

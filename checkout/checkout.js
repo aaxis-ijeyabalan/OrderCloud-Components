@@ -196,7 +196,7 @@ function OrderConfirmationController(Order, CurrentOrder, OrderCloud, $state, is
                     vm.spendingAccountDetails = sa;
                 })
         }
-    }
+    };
 
     vm.checkPaymentType();
 
@@ -214,7 +214,7 @@ function OrderConfirmationController(Order, CurrentOrder, OrderCloud, $state, is
     }
 }
 
-function OrderReviewController(SubmittedOrder, isMultipleAddressShipping, OrderCloud, $q, LineItemHelpers) {
+function OrderReviewController(SubmittedOrder, isMultipleAddressShipping, OrderCloud, $q, LineItemHelpers, toastr) {
 	var vm = this;
     vm.submittedOrder = SubmittedOrder;
     vm.isMultipleAddressShipping = isMultipleAddressShipping;
@@ -243,6 +243,26 @@ function OrderReviewController(SubmittedOrder, isMultipleAddressShipping, OrderC
 
     vm.print = function() {
         window.print();
+    };
+
+    vm.addToFavorites = function(){
+        //TODO: Refactor when SDK allows us to patch null
+        if(!SubmittedOrder.xp) {
+            SubmittedOrder.xp ={}
+        }
+        SubmittedOrder.xp.favorite = true;
+
+        OrderCloud.Orders.Update(SubmittedOrder.ID, SubmittedOrder)
+            .then(function(){
+                toastr.success("Your order has been added to Favorites! You can now easily find your order in 'Order History'", 'Success')
+            })
+            .catch(function(){
+                toastr.error('There was a problem adding this order to your Favorites', 'Error');
+            });
+    };
+    vm.removeFromFavorites = function(){
+        SubmittedOrder.xp.favorite = null;
+        toastr.success("Your order has been removed from Favorites", 'Success')
     }
 
 }

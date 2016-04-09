@@ -93,13 +93,36 @@ function OrderHistoryController( OrderList, UserType, BuyerCompanies ) {
     vm.list = OrderList;
     vm.userType = UserType;
     vm.buyerCompanies = BuyerCompanies;
+    vm.showAll = true;
+    vm.toggleFavorites = function(){
+        vm.showAll = !vm.showAll;
+    };
 
     vm.filters = {};
 }
 
-function OrderHistoryDetailController( SelectedOrder ) {
+function OrderHistoryDetailController( SelectedOrder, toastr, OrderCloud ) {
     var vm = this;
     vm.order = SelectedOrder;
+    vm.addToFavorites = function(){
+        //TODO: Refactor when SDK allows us to patch null
+        if(!SelectedOrder.xp) {
+            SelectedOrder.xp ={}
+        }
+        SelectedOrder.xp.favorite = true;
+
+        OrderCloud.Orders.Update(SelectedOrder.ID, SelectedOrder)
+            .then(function(){
+                toastr.success("Your order has been added to Favorites! You can now easily find your order in 'Order History'", 'Success')
+            })
+            .catch(function(){
+                toastr.error('There was a problem adding this order to your Favorites', 'Error');
+            });
+    };
+    vm.removeFromFavorites = function(){
+        SelectedOrder.xp.favorite = null;
+        toastr.success("Your order has been removed from Favorites", 'Success')
+    }
 }
 
 function OrderHistoryDetailLineItemController( SelectedLineItem ) {
