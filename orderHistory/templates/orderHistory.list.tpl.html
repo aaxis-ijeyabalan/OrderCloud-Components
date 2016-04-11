@@ -37,7 +37,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-if="orderHistory.showAll || order.xp.favorite" ng-repeat="order in orderHistory.list.Items">
+                    <tr ng-repeat="order in orderHistory.list.Items">
                         <td ui-sref="orderHistory.detail({orderid: order.ID})">{{order.ID}}</td>
                         <td>{{order.Status}}</td>
                         <td>{{(order.DateSubmitted ||  order.DateCreated) | date}}</td>

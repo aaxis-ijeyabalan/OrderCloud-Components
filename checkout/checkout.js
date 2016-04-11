@@ -261,7 +261,7 @@ function OrderReviewController(SubmittedOrder, isMultipleAddressShipping, OrderC
             });
     };
     vm.removeFromFavorites = function(){
-        SubmittedOrder.xp.favorite = null;
+        OrderCloud.Orders.Patch(SubmittedOrder.ID, {"xp": null} );
         toastr.success("Your order has been removed from Favorites", 'Success')
     }
 

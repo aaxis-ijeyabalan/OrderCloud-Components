@@ -90,15 +90,16 @@ function OrderHistoryConfig( $stateProvider ) {
 
 function OrderHistoryController( OrderList, UserType, BuyerCompanies ) {
     var vm = this;
+    vm.filters = {};
     vm.list = OrderList;
     vm.userType = UserType;
     vm.buyerCompanies = BuyerCompanies;
     vm.showAll = true;
     vm.toggleFavorites = function(){
-        vm.showAll = !vm.showAll;
+        vm.filters.favorite ? delete vm.filters.favorite : vm.filters.favorite = true;
     };
 
-    vm.filters = {};
+
 }
 
 function OrderHistoryDetailController( SelectedOrder, toastr, OrderCloud ) {
@@ -120,7 +121,7 @@ function OrderHistoryDetailController( SelectedOrder, toastr, OrderCloud ) {
             });
     };
     vm.removeFromFavorites = function(){
-        SelectedOrder.xp.favorite = null;
+        OrderCloud.Orders.Patch(SelectedOrder.ID, {"xp": null} );
         toastr.success("Your order has been removed from Favorites", 'Success')
     }
 }
@@ -226,11 +227,20 @@ function OrderHistoryFactory( $q, Underscore, OrderCloud ) {
 
     function _searchOrders(filters, userType) {
         var deferred = $q.defer();
+        if(filters.favorite){
+            OrderCloud.Orders.List((userType == 'admin' ? 'incoming' : 'outgoing'), filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, filters.sortType, { ID: filters.OrderID, Status: filters.Status, ID: filters.groupOrders, xp:{favorite:filters.favorite} }, filters.FromCompanyID)
+                .then(function(data) {
+                    console.log(filters);
+                    deferred.resolve(data);
+                });
+        }else{
+            OrderCloud.Orders.List((userType == 'admin' ? 'incoming' : 'outgoing'), filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, filters.sortType, { ID: filters.OrderID, Status: filters.Status, ID: filters.groupOrders}, filters.FromCompanyID)
+                .then(function(data) {
+                    console.log(filters);
+                    deferred.resolve(data);
+                });
+        }
 
-        OrderCloud.Orders.List((userType == 'admin' ? 'incoming' : 'outgoing'), filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, null, {ID: filters.OrderID, Status: filters.Status}, filters.FromCompanyID)
-            .then(function(data) {
-                deferred.resolve(data);
-            });
 
         return deferred.promise;
     }
