@@ -90,7 +90,6 @@ function OrderHistoryConfig( $stateProvider ) {
 
 function OrderHistoryController( OrderList, UserType, BuyerCompanies ) {
     var vm = this;
-    vm.filters = {};
     vm.list = OrderList;
     vm.userType = UserType;
     vm.buyerCompanies = BuyerCompanies;
@@ -132,8 +131,7 @@ function OrderHistoryDetailController( SelectedOrder, toastr, OrderCloud ) {
             });
     };
     vm.removeFromFavorites = function(){
-        delete SelectedOrder.xp.favorite;
-        OrderCloud.Orders.Patch(SelectedOrder.ID, {"xp": null} );
+        SelectedOrder.xp.favorite = null;
         toastr.success("Your order has been removed from Favorites", 'Success')
     }
 }

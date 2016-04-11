@@ -94,22 +94,11 @@ function OrderHistoryController( OrderList, UserType, BuyerCompanies ) {
     vm.list = OrderList;
     vm.userType = UserType;
     vm.buyerCompanies = BuyerCompanies;
-
-    //initialization
     vm.showAll = true;
-    vm.filters = {};
-    vm.filters.sortType = 'DateCreated';
-    vm.sortReverse =false;
-
-
     vm.toggleFavorites = function(){
         vm.filters.favorite ? delete vm.filters.favorite : vm.filters.favorite = true;
     };
 
-    vm.setSort = function(newSort){
-        vm.sortReverse ? vm.filters.sortType = '-' + newSort : vm.filters.sortType = newSort;
-        vm.sortReverse = !vm.sortReverse;
-    };
 
 }
 
@@ -147,8 +136,7 @@ function OrderHistoryFactory( $q, Underscore, OrderCloud ) {
     var service = {
         GetOrderDetails: _getOrderDetails,
         GetLineItemDetails: _getLineItemDetails,
-        SearchOrders: _searchOrders,
-        GetGroupOrders: _getGroupOrders
+        SearchOrders: _searchOrders
     };
 
     function _getOrderDetails(orderID) {
@@ -258,44 +246,6 @@ function OrderHistoryFactory( $q, Underscore, OrderCloud ) {
         return deferred.promise;
     }
 
-    function _getGroupOrders(groups){
-        var userIDs =[];
-        groups = groups.replace(/\s+/g, '').split(','); //removes white space and creates array of user groups
-        GetUserIDs(groups)
-            .then(function(users){
-               angular.forEach(users, function(user){
-                   userIDs.push(user.UserID)
-
-               }).then(function(){
-
-               });
-                var dfd = $q.defer();
-                 constructedFilter = userIDs.join('|');
-
-            });
-
-
-        function GetUserIDs(groups){
-            var dfd = $q.defer();
-            var queue = [];
-            var userList = [];
-            angular.forEach(groups, function(group){
-                queue.push(OrderCloud.UserGroups.ListUserAssignments(group));
-            });
-
-            $q.all(queue)
-                .then(function(users){
-                    angular.forEach(users, function(user){
-                       userList = userList.concat(user.Items);
-                    });
-
-                    dfd.resolve(userList);
-                });
-
-           return dfd.promise;
-        }
-    }
-
     return service;
 }
 
@@ -317,8 +267,6 @@ function ordercloudOrderSearch() {
 
 function OrderHistorySearchController( $scope, $timeout, OrderHistoryFactory ) {
     var vm = this;
-    $scope.userGroups = '';
-
     $scope.statuses = [
         {Name: 'Unsubmitted', Value: 'Unsubmitted'},
         {Name: 'Open', Value: 'Open'},
@@ -327,16 +275,6 @@ function OrderHistorySearchController( $scope, $timeout, OrderHistoryFactory ) {
         {Name: 'Declined', Value: 'Declined'},
         {Name: 'Cancelled', Value: 'Cancelled'}
     ];
-
-    $scope.getGroupOrders = function(){
-        OrderHistoryFactory.GetGroupOrders
-            .then(function(orderIDFilter){
-                $scope.filters.groupOrders = orderIDFilter;
-            })
-    };
-
-
-
 
     var searching;
     $scope.$watch('filters', function(n,o) {

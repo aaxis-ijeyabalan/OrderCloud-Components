@@ -104,6 +104,7 @@ function OrderHistoryController( OrderList, UserType, BuyerCompanies ) {
 
     vm.toggleFavorites = function(){
         vm.filters.favorite ? delete vm.filters.favorite : vm.filters.favorite = true;
+<<<<<<< HEAD
     };
 
     vm.setSort = function(newSort){
@@ -111,6 +112,11 @@ function OrderHistoryController( OrderList, UserType, BuyerCompanies ) {
         vm.sortReverse = !vm.sortReverse;
     };
 
+=======
+    };
+
+
+>>>>>>> c4719c1709cbbce556b165b24482d880678c26a2
 }
 
 function OrderHistoryDetailController( SelectedOrder, toastr, OrderCloud ) {
