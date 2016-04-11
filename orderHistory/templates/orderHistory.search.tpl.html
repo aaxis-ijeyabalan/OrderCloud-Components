@@ -36,10 +36,17 @@
         </div>
     </div>
     <div class="row" ng-if="usertype == 'admin'">
-        <div class="col-md-12">
+        <div class="col-md-6">
             <div class="form-group">
                 <label>Search</label>
                 <input type="search" class="form-control" ng-model="filters.searchTerm" />
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Filter by User Groups</label>
+                <input type="search" class="form-control" placeholder="comma separated list of user-groups" ng-model="userGroups" />
+                <button class="btn btn-success" ng-click="getGroupOrders(userGroups)">Testing123</button>
             </div>
         </div>
     </div>

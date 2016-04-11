@@ -3,6 +3,7 @@
         <h3 class="page-header">
             Orders
         </h3>
+        Sort Type: {{orderHistory.filters.sortType}}  Sort Reverse:{{orderHistory.sortReverse}}
         <ordercloud-order-search controlleras="orderHistory" filters="orderHistory.filters" usertype="{{orderHistory.userType}}" buyercompanies="orderHistory.buyerCompanies"></ordercloud-order-search>
         <div class="well well-lg text-center" ng-if="!orderHistory.list.Items.length">
             <b ng-if="!orderHistory.searching()">The selected buyer does not have any orderHistory.</b>
@@ -23,21 +24,41 @@
                     <thead>
                     <tr>
                         <th>
-                            <div>ID</div>
+                            <div>
+                                <a href="#" ng-click="orderHistory.setSort('ID')">
+                                    ID
+                                    <i ng-show="orderHistory.filters.sortType === 'ID' || orderHistory.filters.sortType === '-ID' " class="fa" ng-class="orderHistory.sortReverse ? 'fa-caret-up' : 'fa-caret-down'"></i>
+                                </a>
+                            </div>
                         </th>
                         <th>
-                            <div>Status</div>
+                            <div>
+                                <a href="#" ng-click="orderHistory.setSort('Status')">
+                                    Status
+                                    <i ng-show="orderHistory.filters.sortType === 'Status' || orderHistory.filters.sortType === '-Status'" class="fa" ng-class="orderHistory.sortReverse ? 'fa-caret-up' : 'fa-caret-down'"></i>
+                                </a>
+                            </div>
                         </th>
                         <th>
-                            <div>Date Created/Submitted</div>
+                            <div>
+                                <a href="#" ng-click="orderHistory.setSort('DateCreated')">
+                                    Date Created/Submitted
+                                    <i ng-show="orderHistory.filters.sortType === 'DateCreated' || orderHistory.filters.sortType === '-DateCreated'" class="fa" ng-class="orderHistory.sortReverse ? 'fa-caret-up' : 'fa-caret-down'"></i>
+                                </a>
+                            </div>
                         </th>
                         <th>
-                            <div>Total</div>
+                            <div>
+                                <a href="#" ng-click="orderHistory.setSort('Total')">
+                                    Total
+                                    <i ng-show="orderHistory.filters.sortType === 'Total' || orderHistory.filters.sortType === '-Total' " class="fa" ng-class="orderHistory.sortReverse ? 'fa-caret-up' : 'fa-caret-down'"></i>
+                                </a>
+                            </div>
                         </th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-if="orderHistory.showAll || order.xp.favorite" ng-repeat="order in orderHistory.list.Items">
+                    <tr ng-repeat="order in orderHistory.list.Items">
                         <td ui-sref="orderHistory.detail({orderid: order.ID})">{{order.ID}}</td>
                         <td>{{order.Status}}</td>
                         <td>{{(order.DateSubmitted ||  order.DateCreated) | date}}</td>
