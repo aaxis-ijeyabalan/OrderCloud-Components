@@ -98,7 +98,7 @@ function FacetedCategoryManageController ( Category, OrderCloud, toastr, $state 
             OrderCloud.Categories.Update(vm.category.ID, vm.category);
     };
 
-    vm.deleteFacet = function(facetName, event) {
+    vm.deleteFacet = function(facetName) {
         if(confirm('Are you sure you want to delete this facet?')) {
             if(Object.keys(vm.category.xp.OC_Facets).length === 1) {
                 delete vm.category.xp.OC_Facets;
@@ -108,11 +108,7 @@ function FacetedCategoryManageController ( Category, OrderCloud, toastr, $state 
                 delete vm.category.xp.OC_Facets[facetName];
                 OrderCloud.Categories.Update(vm.category.ID, vm.category);
             }
-            event.stopPropagation();
 
-        }
-        else {
-            event.stopPropagation();
         }
 
     };
