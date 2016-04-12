@@ -3,17 +3,16 @@
         <h3 class="page-header">
             Orders
         </h3>
-        Sort Type: {{orderHistory.filters.sortType}}  Sort Reverse:{{orderHistory.sortReverse}}
-        <ordercloud-order-search controlleras="orderHistory" filters="orderHistory.filters" usertype="{{orderHistory.userType}}" buyercompanies="orderHistory.buyerCompanies"></ordercloud-order-search>
+        <ordercloud-order-search controlleras="orderHistory" filters="orderHistory.filters" usertype="{{orderHistory.userType}}" buyercompanies="orderHistory.buyerCompanies" usergroups="orderHistory.userGroups"></ordercloud-order-search>
         <div class="well well-lg text-center" ng-if="!orderHistory.list.Items.length">
             <b ng-if="!orderHistory.searching()">The selected buyer does not have any orderHistory.</b>
             <b ng-if="orderHistory.searching()"><i class="fa fa-search"></i> No orders match your search.</b>
         </div>
         <div class="toggle-favorites-button">
-            <button class="btn btn-primary" ng-click="orderHistory.toggleFavorites()" ng-if="orderHistory.showAll">
+            <button class="btn btn-primary" ng-click="orderHistory.toggleFavorites()" ng-if="!orderHistory.filters.favorite">
                 <i class="fa fa-star"> </i> Filter by Favorites
             </button>
-            <button class="btn btn-info" ng-click="orderHistory.toggleFavorites()" ng-if="!orderHistory.showAll">
+            <button class="btn btn-info" ng-click="orderHistory.toggleFavorites()" ng-if="orderHistory.filters.favorite">
                 <i class="fa fa-star"> </i> Show All Results
             </button>
         </div>
@@ -49,10 +48,7 @@
                         </th>
                         <th>
                             <div>
-                                <a href="#" ng-click="orderHistory.setSort('Total')">
-                                    Total
-                                    <i ng-show="orderHistory.filters.sortType === 'Total' || orderHistory.filters.sortType === '-Total' " class="fa" ng-class="orderHistory.sortReverse ? 'fa-caret-up' : 'fa-caret-down'"></i>
-                                </a>
+                                Total
                             </div>
                         </th>
                     </tr>

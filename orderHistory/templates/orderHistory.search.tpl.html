@@ -44,9 +44,12 @@
         </div>
         <div class="col-md-6">
             <div class="form-group">
-                <label>Filter by User Groups</label>
-                <input type="search" class="form-control" placeholder="comma separated list of user-groups" ng-model="userGroups" />
-                <button class="btn btn-success" ng-click="getGroupOrders(userGroups)">Testing123</button>
+                <label>From User Groups</label>
+                <input type="text" class="form-control" ng-model="tempValue" uib-typeahead="group as group.ID for group in usergroups" typeahead-on-select="onSelect($item, $model, $label); tempValue='' " typeahead-focus-first="false"/>
+                <div ng-repeat="name in userGroupList track by $index">
+                    <span ng-show="userGroupList.length > 0"> {{name}} <a ng-click="removeGroup($index)">remove</a></span>
+                </div>
+
             </div>
         </div>
     </div>
