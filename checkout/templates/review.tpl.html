@@ -41,6 +41,9 @@
                 <div ng-if="orderReview.submittedOrder.PaymentMethod == 'PurchaseOrder'">
                     <!--need info for each payment type-->
                 </div>
+                <div ng-if="orderReview.submittedOrder.xp">
+                    PO Number : {{orderReview.submittedOrder.xp.PONumber}}
+                </div>
             </div>
         </div>
         <div class="panel panel-default">
