@@ -178,7 +178,7 @@ function CheckoutController($state, $rootScope, toastr, Order, OrderCloud, Shipp
 
 }
 
-function OrderConfirmationController(Order, CurrentOrder, OrderCloud, $state, isMultipleAddressShipping, $exceptionHandler, OrderPayments) {
+function OrderConfirmationController(Order, CurrentOrder, OrderCloud, $state, isMultipleAddressShipping, $exceptionHandler, OrderPayments, toastr) {
     var vm = this;
 
     vm.currentOrder = Order;
@@ -199,7 +199,7 @@ function OrderConfirmationController(Order, CurrentOrder, OrderCloud, $state, is
         if(vm.orderPayments[0].Type == 'CreditCard') {
             OrderCloud.CreditCards.Get(vm.orderPayments[0].CreditCardID)
                 .then(function(cc){
-                    vm.creditCardDetails = cc;
+                    vm.creditcCardDetails = cc;
                 })
         }
         if(vm.orderPayments[0].Type == 'SpendingAccount') {
@@ -217,11 +217,13 @@ function OrderConfirmationController(Order, CurrentOrder, OrderCloud, $state, is
             .then(function() {
                 CurrentOrder.Remove()
                     .then(function(){
+                        toastr.success('Your order has been submitted', 'Success');
                         $state.go('orderReview', {orderid: vm.currentOrder.ID})
                     })
             })
             .catch(function(ex) {
-                $exceptionHandler(ex);
+                toastr.error("Your order did not submit successfully.", 'Error');
+                //$exceptionHandler(ex);
             });
     }
 }
