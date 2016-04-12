@@ -58,5 +58,16 @@
                 <select id="spending_account" ng-required="checkout.PaymentMethod === 'SpendingAccount'" ng-change="checkoutPayment.setSpendingAccount(checkout.currentOrder)" class="form-control" ng-model="checkoutPayment.currentOrderPayments[0].SpendingAccountID" ng-options="spendingAccount.ID as spendingAccount.Name for spendingAccount in checkoutPayment.spendingAccounts"></select>
             </div>
         </div>
+        <div>
+            <form name="PO" ng-submit="checkoutPayment.Submit()" novalidate>
+                <div class="form-group">
+                    <label id="PONumberInput">PO Number</label>
+                    <input id="PONumberInput" class="form-control" type="text" ng-model="checkoutPayment.PONumber">
+                    <button class="btn btn-default" type="submit">Add PONumber to Order</button>
+                </div>
+
+            </form>
+        </div>
+
     </div>
 </div>

@@ -175,13 +175,25 @@ function CheckoutController($state, $rootScope, toastr, Order, OrderCloud, Shipp
             toastr.error('Please select a shipping address for all line items');
         }
     };
+
 }
 
 function OrderConfirmationController(Order, CurrentOrder, OrderCloud, $state, isMultipleAddressShipping, $exceptionHandler, OrderPayments) {
     var vm = this;
+
     vm.currentOrder = Order;
     vm.isMultipleAddressShipping = isMultipleAddressShipping;
     vm.orderPayments = OrderPayments.Items;
+
+
+    // Gets the  PO Number
+    CurrentOrder.Get()
+        .then(function(data) {
+               if(data.xp){
+                   vm.PONumber= data.xp.PONumber;
+               }
+        });
+
 
     vm.checkPaymentType = function() {
         if(vm.orderPayments[0].Type == 'CreditCard') {
@@ -265,6 +277,13 @@ function OrderReviewController(SubmittedOrder, isMultipleAddressShipping, OrderC
         OrderCloud.Orders.Patch(SubmittedOrder.ID, {"xp": null} );
         toastr.success("Your order has been removed from Favorites", 'Success')
     }
+
+
+  if(vm.submittedOrder.xp ){
+                vm.PONumber= vm.submittedOrder.xp.PONumber;
+  }
+
+
 
 }
 

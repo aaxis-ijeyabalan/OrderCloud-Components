@@ -22,8 +22,9 @@ function checkoutPaymentConfig($stateProvider) {
 		});
 }
 
-function CheckoutPaymentController($state, AvailableCreditCards, AvailableSpendingAccounts, OrderCloud, toastr, OrderPayments) {
-	var vm = this;
+function CheckoutPaymentController($state, AvailableCreditCards, AvailableSpendingAccounts, OrderCloud, toastr, OrderPayments, CurrentOrder) {
+
+    var vm = this;
     vm.currentOrderPayments = OrderPayments.Items;
     vm.paymentMethods = [
         {Display: 'Purchase Order', Value: 'PurchaseOrder'},
@@ -41,10 +42,35 @@ function CheckoutPaymentController($state, AvailableCreditCards, AvailableSpendi
     vm.today = new Date();
     vm.creditCards = AvailableCreditCards.Items;
     vm.spendingAccounts = AvailableSpendingAccounts.Items;
+    vm.PONumber=null;
+
+
     vm.setCreditCard = SetCreditCard;
     vm.saveCreditCard = SaveCreditCard;
     vm.setSpendingAccount = SetSpendingAccount;
     vm.setPaymentMethod = SetPaymentMethod;
+
+    vm.Submit = function() {
+
+        return CurrentOrder.Get()
+            .then(function(originalOrder){
+                var order = originalOrder;
+                var orderID = originalOrder.ID;
+                order.xp=  {"PONumber": vm.PONumber};
+
+                OrderCloud.Orders.Update(orderID, order )
+                    .then(function(data){
+                        toastr.success('PO Number Added', 'Success');
+                        vm.PONumber = '';
+
+                    })
+                    .catch(function(){
+                        $exceptionHandler(ex);
+                    })
+            });
+
+
+    };
 
     function SetPaymentMethod(order) {
         if (!vm.currentOrderPayments[0].Amount) {
