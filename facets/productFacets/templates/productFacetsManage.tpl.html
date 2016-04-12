@@ -18,7 +18,7 @@
                                 {{facetName}}<span class="text-muted text-danger" ng-if="facet.isRequired">*</span>
                             </h4>
                         </div>
-                        <form name="prodxpForm" ng-submit="facetedProdManage.saveSelections()" novalidate>
+                        <form name="prodxpForm">
                             <div class="form-group">
                                 <table class="table">
                                     <colgroup>
@@ -49,7 +49,7 @@
                             </form>
                         </div>
                     </div>
-                    <button class="btn btn-primary" type="submit" ng-disabled="facetedProdManage.requiredFacet(cat)" ng-if="cat.xp.OC_Facets">Save Configuration</button>
+                    <button class="btn btn-primary" type="submit" ng-disabled="facetedProdManage.requiredFacet(cat)" ng-click="facetedProdManage.saveSelections()" ng-if="cat.xp.OC_Facets">Save Configuration</button>
                 </div>
             <div class="well well-lg text-center" ng-if="!cat.xp.OC_Facets">
                 <b>This category does not have any facets to configure. <a ui-sref="categoryFacets.manage({categoryid:cat.ID})">Go add some!</a></b>
