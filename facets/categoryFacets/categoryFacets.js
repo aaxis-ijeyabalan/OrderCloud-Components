@@ -3,6 +3,7 @@ angular.module('orderCloud')
     .config( CategoryFacetsConfig )
     .controller( 'CategoryFacetsCtrl', CategoryFacetsController)
     .controller( 'CategoryFacetsManageCtrl', FacetedCategoryManageController)
+    .controller( 'CategoryFacetsModalCtrl', CategoryFacetsModalController)
 
 ;
 
@@ -61,31 +62,41 @@ function CategoryFacetsController( CategoryList, TrackSearch ) {
     };
 }
 
-function FacetedCategoryManageController ( Category, OrderCloud, toastr, $state ) {
+function FacetedCategoryManageController ( Category, OrderCloud, toastr, $state, $uibModal ) {
     var vm = this;
     Category.xp && Category.xp.OC_Facets ? vm.list = Category.xp.OC_Facets : vm.list = null;
     vm.category = Category;
     vm.facetValues = [];
     vm.isRequired = false;
-    vm.addingNewValue = false;
 
+    vm.createFacetModal = function() {
+        var modalInstance = $uibModal.open({
+            animation: vm.animationsEnabled,
+            templateUrl: 'facets/categoryFacets/templates/categoryFacets.modal.tpl.html',
+            controller: 'CategoryFacetsModalCtrl',
+            controllerAs: 'catFacetModal'
+        });
 
-    vm.addValue = function() {
-        if(vm.facetValue != null) {
-            vm.facetValues.push(vm.facetValue);
-            vm.facetValue = null;
-        }
+        modalInstance.result.then(function(facetToSave) {
+            if(vm.category.xp == null) vm.category.xp = { OC_Facets: {}};
+            if (vm.category.xp && !vm.category.xp.OC_Facets) vm.category.xp.OC_Facets = {};
+            vm.category.xp.OC_Facets[facetToSave.facet.toLowerCase()] = {};
+            vm.category.xp.OC_Facets[facetToSave.facet.toLowerCase()].Values = facetToSave.facetValues;
+            vm.category.xp.OC_Facets[facetToSave.facet.toLowerCase()].isRequired = facetToSave.isRequired;
+            (OrderCloud.Categories.Update(vm.category.ID, vm.category))
+                .then(function() {
+                    toastr.success('Your category facet has been saved successfully');
+                });
+        })
     };
 
-    vm.removeValue = function(index) {
-        vm.facetValues.splice(index, 1);
-    };
 
     vm.addValueExisting = function (facetName) {
-        vm.category.xp.OC_Facets[facetName].Values.push(vm.newFacetValue);
+        vm.category.xp.OC_Facets[facetName].Values.push(vm[facetName].newFacetValue.toLowerCase());
         OrderCloud.Categories.Update(vm.category.ID, vm.category)
             .then(function() {
-               vm.newFacetValue = null;
+               vm[facetName].newFacetValue = null;
+                $( "[id*="+facetName+"]").focus();
             });
     };
 
@@ -94,7 +105,8 @@ function FacetedCategoryManageController ( Category, OrderCloud, toastr, $state 
         OrderCloud.Categories.Update(vm.category.ID, vm.category);
     };
 
-    vm.toggleFacetRequired = function() {
+    vm.toggleFacetRequired = function(facetName) {
+            vm.category.xp.OC_Facets[facetName].isRequired = !vm.category.xp.OC_Facets[facetName].isRequired;
             OrderCloud.Categories.Update(vm.category.ID, vm.category);
     };
 
@@ -110,23 +122,42 @@ function FacetedCategoryManageController ( Category, OrderCloud, toastr, $state 
             }
 
         }
+        else {
+            //do nothing
+        }
 
     };
+}
 
-    vm.save = function() {
-        if(vm.category.xp == null) vm.category.xp = { OC_Facets: {}};
-        if (vm.category.xp && !vm.category.xp.OC_Facets) vm.category.xp.OC_Facets = {};
-        vm.category.xp.OC_Facets[vm.facet.toLowerCase()] = {};
-        vm.category.xp.OC_Facets[vm.facet.toLowerCase()].Values = vm.facetValues;
-        vm.category.xp.OC_Facets[vm.facet.toLowerCase()].isRequired = vm.isRequired;
-        (OrderCloud.Categories.Update(vm.category.ID, vm.category))
-            .then(function() {
-                toastr.success('Your category facet has been saved successfully')
-                vm.facetValues = [];
-                vm.facetValue = null;
-                vm.isRequired = false;
-                vm.facet = null;
-                $state.go($state.current, {}, {reload: true})
-            });
+function CategoryFacetsModalController($uibModalInstance) {
+    var vm = this;
+    vm.facetValues = [];
+    vm.isRequired = false;
+    vm.facetValue = null;
+    vm.facet = null;
+
+    vm.addValue = function() {
+        if(vm.facetValue != null) {
+            vm.facetValues.push(vm.facetValue);
+            vm.facetValue = null;
+            $( "#facetValue" ).focus();
+        }
+    };
+
+    vm.removeValue = function(index) {
+        vm.facetValues.splice(index, 1);
+    };
+
+    vm.save = function () {
+        var facetToSave = {
+            facet: vm.facet,
+            facetValues: vm.facetValues,
+            isRequired: vm.isRequired
+        };
+        $uibModalInstance.close(facetToSave);
+    };
+
+    vm.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
     };
 }
