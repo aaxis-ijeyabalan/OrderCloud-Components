@@ -1,8 +1,8 @@
 angular.module('orderCloud')
 
     .config(CatalogConfig)
-    .controller('CatalogCtrl', CatalogController)
     .factory('AddToOrder', AddToOrder)
+    .controller('CatalogCtrl', CatalogController)
     .directive('ordercloudCategoryList', CategoryListDirective)
     .directive('ordercloudProductList', ProductListDirective)
     .factory('CatalogTreeService', CatalogTreeService)
@@ -210,7 +210,6 @@ function CatalogFacetsDirective($rootScope, $q, $stateParams, $state, Underscore
                 if($state.is('catalog.category') && $stateParams.categoryid) {
                     CatalogFacetsService.GetCategoryFacets($stateParams.categoryid)
                         .then(function(data) {
-                            //check active query params and set model to match
                             scope.facetList = data;
                             dfd.resolve();
                         });
@@ -259,7 +258,6 @@ function CatalogFacetsDirective($rootScope, $q, $stateParams, $state, Underscore
 }
 
 function CatalogFacetsService($q, OrderCloud) {
-    var FACET_STORAGE_KEY = "OC_Facets";
     return {
         GetCategoryFacets: getCategoryFacets
     };

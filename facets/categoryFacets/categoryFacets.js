@@ -62,7 +62,7 @@ function CategoryFacetsController( CategoryList, TrackSearch ) {
     };
 }
 
-function FacetedCategoryManageController ( Category, OrderCloud, toastr, $state, $uibModal ) {
+function FacetedCategoryManageController ( $state, Category, OrderCloud, toastr, Underscore, $uibModal ) {
     var vm = this;
     Category.xp && Category.xp.OC_Facets ? vm.list = Category.xp.OC_Facets : vm.list = null;
     vm.category = Category;
@@ -86,6 +86,7 @@ function FacetedCategoryManageController ( Category, OrderCloud, toastr, $state,
             (OrderCloud.Categories.Update(vm.category.ID, vm.category))
                 .then(function() {
                     toastr.success('Your category facet has been saved successfully');
+                    $state.reload();
                 });
         })
     };
@@ -114,11 +115,36 @@ function FacetedCategoryManageController ( Category, OrderCloud, toastr, $state,
         if(confirm('Are you sure you want to delete this facet?')) {
             if(Object.keys(vm.category.xp.OC_Facets).length === 1) {
                 delete vm.category.xp.OC_Facets;
-                OrderCloud.Categories.Update(vm.category.ID, vm.category);
+                OrderCloud.Categories.Update(vm.category.ID, vm.category)
+                    .then(function(){
+                    var keyName = 'xp.OC_Facets.' + vm.category.ID + '.' + facetName;
+                    var filterObj = {};
+                    filterObj[keyName] = '*';
+                    OrderCloud.Products.List(null, 1, 100, null,null, filterObj)
+                        .then(function(matchingProds) {
+                            console.log(matchingProds)
+                            angular.forEach(Underscore.uniq(matchingProds.Items, true, 'ID'), function(prod) {
+                                delete prod.xp.OC_Facets[vm.category.ID];
+                                OrderCloud.Products.Update(prod.ID, prod);
+                            });
+                        });
+                });
             }
             else {
                 delete vm.category.xp.OC_Facets[facetName];
-                OrderCloud.Categories.Update(vm.category.ID, vm.category);
+                OrderCloud.Categories.Update(vm.category.ID, vm.category)
+                    .then(function(){
+                        var keyName = 'xp.OC_Facets.' + vm.category.ID + '.' + facetName;
+                        var filterObj = {};
+                        filterObj[keyName] = '*';
+                        OrderCloud.Products.List(null, 1, 100, null,null, filterObj)
+                            .then(function(matchingProds) {
+                                angular.forEach(Underscore.uniq(matchingProds.Items, true, 'ID'), function(prod) {
+                                    delete prod.xp.OC_Facets[vm.category.ID][facetName];
+                                    OrderCloud.Products.Update(prod.ID, prod);
+                                });
+                            });
+                    });
             }
 
         }

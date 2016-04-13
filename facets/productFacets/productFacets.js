@@ -63,17 +63,30 @@ function FacetedProductManageController ( Product, AssignedCategories, OrderClou
     var vm = this;
     vm.assignedCategories = AssignedCategories;
     vm.product = Product;
-    vm.addingNewValue = false;
+    if(vm.product.xp == null) vm.product.xp = { OC_Facets: {}};
+    if (vm.product.xp && !vm.product.xp.OC_Facets) vm.product.xp.OC_Facets = {};
 
     vm.setSelected = function(scope) {
-        scope.selected = vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName].indexOf(scope.facetValue) > -1;
+        if(vm.product.xp.OC_Facets[scope.$parent.cat.ID] && vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName]) {
+            scope.selected = vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName].indexOf(scope.facetValue) > -1;
+        }
     };
 
     vm.toggleSelection = function(scope) {
         scope.selected = !scope.selected;
-        if(scope.selected) {
+        if(scope.selected && vm.product.xp.OC_Facets[scope.$parent.cat.ID]) {
+            if (vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName]) {
+                vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName].push(scope.facetValue);
+            } else if (!vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName]) {
+                vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName] = [];
+                vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName].push(scope.facetValue);
+            }
+        } else if (scope.selected && !vm.product.xp.OC_Facets[scope.$parent.cat.ID]) {
+            vm.product.xp.OC_Facets[scope.$parent.cat.ID] = {};
+            vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName] = [];
             vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName].push(scope.facetValue);
-        } else {
+        }
+        else {
             vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName].splice(vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName].indexOf(scope.facetValue), 1);
         }
     };
@@ -82,7 +95,7 @@ function FacetedProductManageController ( Product, AssignedCategories, OrderClou
       var disabled = false;
       if(cat.xp && cat.xp.OC_Facets) {
           angular.forEach((cat.xp.OC_Facets), function(facetValues, facet){
-             if(facetValues.isRequired && vm.product.xp.OC_Facets[cat.ID][facet].length == 0) {
+             if(facetValues.isRequired && vm.product.xp.OC_Facets[cat.ID] && vm.product.xp.OC_Facets[cat.ID][facet] && vm.product.xp.OC_Facets[cat.ID][facet].length == 0) {
                  disabled = true;
              }
           });
