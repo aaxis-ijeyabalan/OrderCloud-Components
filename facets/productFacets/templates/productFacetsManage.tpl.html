@@ -12,7 +12,7 @@
                 <h4 class="page-header">
                 {{cat.Name}}
                 </h4>
-                <div class="panel panel-default capitalize" ng-if="cat.xp.OC_Facets"  ng-repeat="(facetName, facet) in cat.xp.OC_Facets">
+                <div class="panel panel-default text-capitalize" ng-if="cat.xp.OC_Facets"  ng-repeat="(facetName, facet) in cat.xp.OC_Facets">
                     <div class="panel-heading">
                         <h4 class="panel-title">
                             {{facetName}}<span class="text-muted text-danger" ng-if="facet.isRequired">*</span>

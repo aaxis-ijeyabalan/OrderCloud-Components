@@ -13,15 +13,15 @@
             <div class="well well-lg text-center" ng-if="!facetedCatManage.category.xp.OC_Facets">
                 <b>The selected category does not have any existing facets.</b>
             </div>
-            <div class="panel panel-default capitalize" ng-if="facetedCatManage.category.xp.OC_Facets"  ng-repeat="(facetName, facet) in facetedCatManage.list">
+            <div class="panel panel-default text-capitalize" ng-if="facetedCatManage.category.xp.OC_Facets"  ng-repeat="(facetName, facet) in facetedCatManage.list">
                 <div class="panel-heading">
-                <span class="pull-right">
-                      <button class="btn btn-default" ng-model="facetedCatManage.category.xp.OC_Facets[facetName].isRequired" ng-click="facetedCatManage.toggleFacetRequired(facetName)">
-                          <i class="fa" ng-class="{'fa-check-square-o': facetedCatManage.category.xp.OC_Facets[facetName].isRequired, 'fa-square-o text-muted': !facetedCatManage.category.xp.OC_Facets[facetName].isRequired}"></i>Required
-                      </button>
-                      <button class="btn btn-default" ng-click="facetedCatManage.deleteFacet(facetName)"><i class="fa fa-trash text-danger"></i><span class="hidden-xs"> Delete Facet</span></button>
-                </span>
-                     <h4>
+                    <div class="panel-header-btn-group">
+                          <button class="btn btn-default" ng-model="facetedCatManage.category.xp.OC_Facets[facetName].isRequired" ng-click="facetedCatManage.toggleFacetRequired(facetName)">
+                              <i class="fa" ng-class="{'fa-check-square-o': facetedCatManage.category.xp.OC_Facets[facetName].isRequired, 'fa-square-o text-muted': !facetedCatManage.category.xp.OC_Facets[facetName].isRequired}"></i> Required
+                          </button>
+                          <button class="btn btn-default" ng-click="facetedCatManage.deleteFacet(facetName)"><i class="fa fa-trash text-danger"></i><span class="hidden-xs"> Delete Facet</span></button>
+                    </div>
+                     <h4 class="panel-title">
                          {{facetName}}
                      </h4>
                 </div>
