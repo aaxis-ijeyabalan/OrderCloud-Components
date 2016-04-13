@@ -175,19 +175,31 @@ function CheckoutController($state, $rootScope, toastr, Order, OrderCloud, Shipp
             toastr.error('Please select a shipping address for all line items');
         }
     };
+
 }
 
-function OrderConfirmationController(Order, CurrentOrder, OrderCloud, $state, isMultipleAddressShipping, $exceptionHandler, OrderPayments) {
+function OrderConfirmationController(Order, CurrentOrder, OrderCloud, $state, isMultipleAddressShipping, $exceptionHandler, OrderPayments, toastr) {
     var vm = this;
+
     vm.currentOrder = Order;
     vm.isMultipleAddressShipping = isMultipleAddressShipping;
     vm.orderPayments = OrderPayments.Items;
+
+
+    // Gets the  PO Number
+    CurrentOrder.Get()
+        .then(function(data) {
+               if(data.xp){
+                   vm.PONumber= data.xp.PONumber;
+               }
+        });
+
 
     vm.checkPaymentType = function() {
         if(vm.orderPayments[0].Type == 'CreditCard') {
             OrderCloud.CreditCards.Get(vm.orderPayments[0].CreditCardID)
                 .then(function(cc){
-                    vm.creditCardDetails = cc;
+                    vm.creditcCardDetails = cc;
                 })
         }
         if(vm.orderPayments[0].Type == 'SpendingAccount') {
@@ -196,7 +208,7 @@ function OrderConfirmationController(Order, CurrentOrder, OrderCloud, $state, is
                     vm.spendingAccountDetails = sa;
                 })
         }
-    }
+    };
 
     vm.checkPaymentType();
 
@@ -205,16 +217,18 @@ function OrderConfirmationController(Order, CurrentOrder, OrderCloud, $state, is
             .then(function() {
                 CurrentOrder.Remove()
                     .then(function(){
+                        toastr.success('Your order has been submitted', 'Success');
                         $state.go('orderReview', {orderid: vm.currentOrder.ID})
                     })
             })
             .catch(function(ex) {
-                $exceptionHandler(ex);
+                toastr.error("Your order did not submit successfully.", 'Error');
+                //$exceptionHandler(ex);
             });
     }
 }
 
-function OrderReviewController(SubmittedOrder, isMultipleAddressShipping, OrderCloud, $q, LineItemHelpers) {
+function OrderReviewController(SubmittedOrder, isMultipleAddressShipping, OrderCloud, $q, LineItemHelpers, toastr) {
 	var vm = this;
     vm.submittedOrder = SubmittedOrder;
     vm.isMultipleAddressShipping = isMultipleAddressShipping;
@@ -243,7 +257,35 @@ function OrderReviewController(SubmittedOrder, isMultipleAddressShipping, OrderC
 
     vm.print = function() {
         window.print();
+    };
+
+    vm.addToFavorites = function(){
+        //TODO: Refactor when SDK allows us to patch null
+        if(!SubmittedOrder.xp) {
+            SubmittedOrder.xp ={}
+        }
+        SubmittedOrder.xp.favorite = true;
+
+        OrderCloud.Orders.Update(SubmittedOrder.ID, SubmittedOrder)
+            .then(function(){
+                toastr.success("Your order has been added to Favorites! You can now easily find your order in 'Order History'", 'Success')
+            })
+            .catch(function(){
+                toastr.error('There was a problem adding this order to your Favorites', 'Error');
+            });
+    };
+    vm.removeFromFavorites = function(){
+        delete SubmittedOrder.xp.favorite;
+        OrderCloud.Orders.Patch(SubmittedOrder.ID, {"xp": null} );
+        toastr.success("Your order has been removed from Favorites", 'Success')
     }
+
+
+  if(vm.submittedOrder.xp ){
+                vm.PONumber= vm.submittedOrder.xp.PONumber;
+  }
+
+
 
 }
 
@@ -285,7 +327,7 @@ function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineIte
     });
 
     function LineItemsInit(OrderID) {
-        OrderCloud.LineItems.Get(OrderID)
+        OrderCloud.LineItems.List(OrderID)
             .then(function(data) {
                 vm.lineItems = data;
                 LineItemHelpers.GetProductInfo(vm.lineItems.Items);

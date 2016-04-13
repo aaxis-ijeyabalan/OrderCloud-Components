@@ -36,10 +36,20 @@
         </div>
     </div>
     <div class="row" ng-if="usertype == 'admin'">
-        <div class="col-md-12">
+        <div class="col-md-6">
             <div class="form-group">
                 <label>Search</label>
                 <input type="search" class="form-control" ng-model="filters.searchTerm" />
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>From User Groups</label>
+                <input type="text" class="form-control" ng-model="tempValue" uib-typeahead="group as group.ID for group in usergroups" typeahead-on-select="onSelect($item, $model, $label); tempValue='' " typeahead-focus-first="false"/>
+                <div ng-repeat="name in userGroupList track by $index" ng-show="userGroupList.length > 0">
+                    {{name}} <span class="fa fa-remove" style="color:#9a2626" ng-click="removeGroup($index)"></span>
+                </div>
+
             </div>
         </div>
     </div>

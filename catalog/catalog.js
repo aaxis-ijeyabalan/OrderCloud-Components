@@ -284,4 +284,3 @@ function CatalogFacetsService($q, OrderCloud) {
         return dfd.promise;
     }
 }
-

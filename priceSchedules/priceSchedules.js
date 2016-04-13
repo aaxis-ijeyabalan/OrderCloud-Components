@@ -46,11 +46,12 @@ function PriceSchedulesController( PriceScheduleList ) {
     vm.list = PriceScheduleList;
 }
 
-function PriceScheduleEditController( $exceptionHandler, $state, OrderCloud, SelectedPriceSchedule, PriceBreak ) {
+function PriceScheduleEditController( $exceptionHandler, $state, OrderCloud, SelectedPriceSchedule, PriceBreak, toastr ) {
     var vm = this,
         priceScheduleid = angular.copy(SelectedPriceSchedule.ID);
     vm.priceScheduleName = angular.copy(SelectedPriceSchedule.Name);
     vm.priceSchedule = SelectedPriceSchedule;
+    vm.priceSchedule.MinQuantity =1;
 
     vm.addPriceBreak = function() {
         PriceBreak.addPriceBreak(vm.priceSchedule, vm.price, vm.quantity);
@@ -65,7 +66,8 @@ function PriceScheduleEditController( $exceptionHandler, $state, OrderCloud, Sel
         vm.priceSchedule = PriceBreak.setMinMax(vm.priceSchedule);
         OrderCloud.PriceSchedules.Update(priceScheduleid, vm.priceSchedule)
             .then(function() {
-                $state.go('priceSchedules', {}, {reload:true})
+                $state.go('priceSchedules', {}, {reload:true});
+                toastr.success('Price Schedule Edited', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
@@ -75,7 +77,8 @@ function PriceScheduleEditController( $exceptionHandler, $state, OrderCloud, Sel
     vm.Delete = function() {
         OrderCloud.PriceSchedules.Delete(priceScheduleid)
             .then(function() {
-                $state.go('priceSchedules', {}, {reload:true})
+                $state.go('priceSchedules', {}, {reload:true});
+                toastr.success('Price Schedule Deleted', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
@@ -83,11 +86,12 @@ function PriceScheduleEditController( $exceptionHandler, $state, OrderCloud, Sel
     }
 }
 
-function PriceScheduleCreateController( $exceptionHandler, $state, OrderCloud, PriceBreak) {
+function PriceScheduleCreateController( $exceptionHandler, $state, OrderCloud, PriceBreak,toastr) {
     var vm = this;
     vm.priceSchedule = {};
     vm.priceSchedule.RestrictedQuantity = false;
     vm.priceSchedule.PriceBreaks = new Array();
+    vm.priceSchedule.MinQuantity =1;
 
     vm.addPriceBreak = function() {
         PriceBreak.addPriceBreak(vm.priceSchedule, vm.price, vm.quantity);
@@ -101,7 +105,8 @@ function PriceScheduleCreateController( $exceptionHandler, $state, OrderCloud, P
         vm.priceSchedule = PriceBreak.setMinMax(vm.priceSchedule);
         OrderCloud.PriceSchedules.Create(vm.priceSchedule)
             .then(function() {
-                $state.go('priceSchedules', {}, {reload:true})
+                $state.go('priceSchedules', {}, {reload:true});
+                toastr.success('Price Schedule Created', 'Success')
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
