@@ -15,7 +15,7 @@
     <div ng-switch-when="CreditCard">
         <div ng-if="!checkoutPayment.createNewCard">
             <label for="credit_card">Credit Card</label>
-            <select id="credit_card" ng-required="checkout.PaymentMethod === 'CreditCard'" class="form-control" ng-model="checkoutPayment.currentOrderPayments[this.$index].CreditCardID" ng-options="creditCard.ID as ('XXXX-XXXX-XXXX-' + creditCard.PartialAccountNumber) for creditCard in checkoutPayment.creditCards"></select>
+            <select id="credit_card" ng-change="checkoutPayment.setCreditCard(checkout.currentOrder, this.$index)" ng-required="checkout.PaymentMethod === 'CreditCard'" class="form-control" ng-model="checkoutPayment.currentOrderPayments[this.$index].CreditCardID" ng-options="creditCard.ID as ('XXXX-XXXX-XXXX-' + creditCard.PartialAccountNumber) for creditCard in checkoutPayment.creditCards"></select>
             </br>
             <button class="btn btn-success" ng-click="checkoutPayment.createNewCard = true"><i class="fa fa-plus-circle"></i> Create New</button>
         </div>
