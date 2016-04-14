@@ -31,11 +31,22 @@ function GiftCardsConfig( $stateProvider ) {
             controller: 'GiftCardEditCtrl',
             controllerAs: 'giftCardEdit',
             resolve: {
-                SelectedGiftCard: function($stateParams, OrderCloud) {
-                    return OrderCloud.SpendingAccounts.Get($stateParams.giftCardid);
+                SelectedGiftCard: function($q,$stateParams, OrderCloud) {
+                    var d = $q.defer();
+                     OrderCloud.SpendingAccounts.Get($stateParams.giftCardid)
+                        .then(function(giftcard){
+                            if(giftcard.StartDate != null)
+                                giftcard.StartDate = new Date(giftcard.StartDate);
+                            if(giftcard.EndDate != null)
+                                giftcard.EndDate = new Date(giftcard.EndDate);
+                            d.resolve(giftcard);
+                });
+                
+                    return d.promise;
                 }
             }
         })
+
         .state( 'giftCards.create', {
             url: '/create',
             templateUrl: 'giftCards/templates/giftCardCreate.tpl.html',
@@ -129,6 +140,7 @@ function GiftCardEditController($state, $exceptionHandler, OrderCloud, SelectedG
                 $exceptionHandler(ex);
             });
     }
+  
 }
 
 function GiftCardCreateController($state, $exceptionHandler, OrderCloud, GiftCardFactory, toastr) {
@@ -151,6 +163,8 @@ function GiftCardCreateController($state, $exceptionHandler, OrderCloud, GiftCar
                 $exceptionHandler(ex);
             });
     }
+    
+
 }
 
 function GiftCardAssignGroupController($q, OrderCloud, UserGroupList, AssignedUserGroups, SelectedGiftCard, Assignments, toastr) {

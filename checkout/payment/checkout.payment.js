@@ -42,6 +42,9 @@ function CheckoutPaymentController($state, Underscore, AvailableCreditCards, Ava
     vm.today = new Date();
     vm.creditCards = AvailableCreditCards.Items;
     vm.spendingAccounts = AvailableSpendingAccounts.Items;
+    vm.PONumber=null;
+
+
     vm.setCreditCard = SetCreditCard;
     vm.saveCreditCard = SaveCreditCard;
     vm.setSpendingAccount = SetSpendingAccount;
@@ -52,23 +55,8 @@ function CheckoutPaymentController($state, Underscore, AvailableCreditCards, Ava
     vm.patchPaymentAmount = PatchPaymentAmount;
     vm.setAmountMax = SetAmountMax;
 
-    function CreatePayment(order) {
-        var amount = order.Total - Underscore.reduce(Underscore.pluck(vm.currentOrderPayments, 'Amount'), function(a, b) { return a + b; });
-        OrderCloud.Payments.Create(order.ID, {Amount: amount})
-            .then(function(payment) {
-                vm.currentOrderPayments.push(payment);
-            });
-    }
-
-    function RemovePayment(order, index) {
-        OrderCloud.Payments.Delete(order.ID, vm.currentOrderPayments[index].ID)
-            .then(function() {
-                vm.currentOrderPayments.splice(index, 1);
-            });
-    }
-
-    function SetPaymentMethod(order, index) {
-        if (!vm.currentOrderPayments[index].Amount) {
+    function SetPaymentMethod(order) {
+        if (!vm.currentOrderPayments[0].Amount) {
             // When Order Payment Method is changed it will clear out all saved payment information
             OrderCloud.Payments.Create(order.ID, {Type: vm.currentOrderPayments[index].Type})
                 .then(function() {

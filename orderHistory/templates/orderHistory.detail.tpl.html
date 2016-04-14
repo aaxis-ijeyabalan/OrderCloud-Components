@@ -4,6 +4,16 @@
             <b>{{orderHistoryDetail.order.Type}} Order - {{orderHistoryDetail.order.ID}}</b>
         </h3>
         <form name="OrderHistoryDetailForm" class="form-horizontal">
+            <div class="group-input">
+                <div class="toggle-favorites-button">
+                    <button class="btn btn-info" ng-click="orderHistoryDetail.removeFromFavorites()" ng-if="orderHistoryDetail.order.xp.favorite">
+                        <i class="fa fa-star"> </i> Remove from Favorites
+                    </button>
+                    <button class="btn btn-primary" ng-click="orderHistoryDetail.addToFavorites()" ng-if="!(orderHistoryDetail.order.xp.favorite)">
+                        <i class="fa fa-star"> </i> Add To Favorites
+                    </button>
+                </div>
+            </div>
             <div class="form-group">
                 <label class="col-sm-1">Order ID:</label>
                 <div class="col-sm-11">

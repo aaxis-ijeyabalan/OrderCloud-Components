@@ -31,7 +31,11 @@
             <div ng-if="orderConfirmation.orderPayments[0].Type == 'PurchaseOrder'">
                 Purchase Order
             </div>
+            <div ng-if="orderConfirmation.PONumber">
+                PO Number : {{orderConfirmation.PONumber}}
+            </div>
         </div>
+
     </div>
     <ordercloud-confirmation-lineitems order="orderConfirmation.currentOrder"></ordercloud-confirmation-lineitems>
     <div class="form-group pull-right">
