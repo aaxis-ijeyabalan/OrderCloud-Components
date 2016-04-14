@@ -46,7 +46,7 @@ function PriceSchedulesController( PriceScheduleList ) {
     vm.list = PriceScheduleList;
 }
 
-function PriceScheduleEditController( $exceptionHandler, $state, OrderCloud, SelectedPriceSchedule, PriceBreak, toastr ) {
+function PriceScheduleEditController( $scope, $exceptionHandler, $state, OrderCloud, SelectedPriceSchedule, PriceBreak, toastr ) {
     var vm = this,
         priceScheduleid = angular.copy(SelectedPriceSchedule.ID);
     vm.priceScheduleName = angular.copy(SelectedPriceSchedule.Name);
@@ -59,6 +59,10 @@ function PriceScheduleEditController( $exceptionHandler, $state, OrderCloud, Sel
         vm.price = null;
     };
 
+
+    PriceBreak.addDisplayQuantity(vm.priceSchedule);
+
+    console.log("this is priceSchedule",vm.priceSchedule.PriceBreaks);
     vm.deletePriceBreak = PriceBreak.deletePriceBreak;
 
 
@@ -84,9 +88,21 @@ function PriceScheduleEditController( $exceptionHandler, $state, OrderCloud, Sel
                 $exceptionHandler(ex)
             });
     }
+
+    $scope.$watch(function() {
+        return vm.priceSchedule.RestrictedQuantity;
+    },function(value){
+
+        if(vm.priceSchedule.RestrictedQuantity == true){
+            vm.priceHeader = "Total Price";
+        }else{
+            vm.priceHeader =  "Price Per Unit";
+        }
+    });
+
 }
 
-function PriceScheduleCreateController( $scope, $exceptionHandler, $state,Underscore, OrderCloud, PriceBreak,toastr) {
+function PriceScheduleCreateController( $scope, $exceptionHandler, $state, OrderCloud, PriceBreak,toastr) {
     var vm = this;
     vm.priceSchedule = {};
     vm.priceSchedule.RestrictedQuantity = false;
@@ -97,34 +113,6 @@ function PriceScheduleCreateController( $scope, $exceptionHandler, $state,Unders
         PriceBreak.addPriceBreak(vm.priceSchedule, vm.price, vm.quantity);
         vm.quantity = null;
         vm.price = null;
-
-        vm.priceSchedule.PriceBreaks.sort(function(a,b){return a.Quantity - b.Quantity});
-
-        for(var i=0; i < vm.priceSchedule.PriceBreaks.length; i++){
-            //var lastElement=vm.priceSchedule.PriceBreaks[vm.priceSchedule.PriceBreaks.length -1];
-
-            var maxQuantity = Math.max.apply(Math,vm.priceSchedule.PriceBreaks.map(function(object){
-                return object.Quantity}));
-
-            if(vm.priceSchedule.PriceBreaks[i].Quantity == maxQuantity ) {
-
-                vm.priceSchedule.PriceBreaks[i].displayQuantity= vm.priceSchedule.PriceBreaks[i].Quantity + "+";
-            }else{
-                var itemPriceRange = Underscore.range(vm.priceSchedule.PriceBreaks[i].Quantity,vm.priceSchedule.PriceBreaks[i + 1].Quantity);
-                itemPriceRange;
-
-
-                    if(itemPriceRange[itemPriceRange.length-1] - itemPriceRange[0] <= 1){
-                    vm.priceSchedule.PriceBreaks[i].displayQuantity = itemPriceRange[0];
-                }else{
-                        vm.priceSchedule.PriceBreaks[i].displayQuantity = itemPriceRange[0] + "-" + itemPriceRange[itemPriceRange.length-1] ;
-                    }
-
-            }
-
-
-        }
-
 
     };
 
@@ -151,7 +139,6 @@ function PriceScheduleCreateController( $scope, $exceptionHandler, $state,Unders
         }else{
             vm.priceHeader =  "Price Per Unit";
             }
-
     });
 
 
