@@ -44,25 +44,40 @@ function PriceBreakFactory (Underscore) {
     function displayQuantity(priceSchedule){
         priceSchedule.PriceBreaks.sort(function(a,b){return a.Quantity - b.Quantity});
 
+
+
         for(var i=0; i < priceSchedule.PriceBreaks.length; i++){
 
             var maxQuantity = Math.max.apply(Math,priceSchedule.PriceBreaks.map(function(object){
                 return object.Quantity}));
 
-            if(priceSchedule.PriceBreaks[i].Quantity == maxQuantity ) {
+
+            console.log("this is y", y);
+            //if max number and is unique, display max number  with + symbol
+            if(priceSchedule.PriceBreaks[i].Quantity == maxQuantity) {
                 priceSchedule.PriceBreaks[i].displayQuantity= priceSchedule.PriceBreaks[i].Quantity + "+";
+
             }else{
                 var itemPriceRange = Underscore.range(priceSchedule.PriceBreaks[i].Quantity,priceSchedule.PriceBreaks[i + 1].Quantity);
                 itemPriceRange;
-                if(itemPriceRange[itemPriceRange.length-1] - itemPriceRange[0] <= 1){
+
+                if(itemPriceRange.length === 1){
                     priceSchedule.PriceBreaks[i].displayQuantity = itemPriceRange[0];
                 }else{
-                    priceSchedule.PriceBreaks[i].displayQuantity = itemPriceRange[0] + "-" + itemPriceRange[itemPriceRange.length-1] ;
+                    //if price range = 0 display one number
+                    if(((priceSchedule.PriceBreaks[priceSchedule.PriceBreaks.length-1]).Quantity - itemPriceRange[0]) <= 1){
+                        priceSchedule.PriceBreaks[i].displayQuantity = itemPriceRange[0];
+                        //displays range
+                    }else{
+                        priceSchedule.PriceBreaks[i].displayQuantity = itemPriceRange[0] + "-" + itemPriceRange[itemPriceRange.length-1] ;
+                        var something;
+                    }
                 }
+
+
             }
         }
     }
-
 
     return service;
 }
