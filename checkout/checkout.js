@@ -139,12 +139,25 @@ function CheckoutController($state, $rootScope, toastr, Order, OrderCloud, Shipp
     vm.isMultipleAddressShipping = true;
     vm.currentOrderPayments = OrderPayments.Items;
 
-    vm.orderIsValid = false;
-    if(vm.currentOrder.BillingAddress && vm.currentOrder.BillingAddress.ID != null && vm.currentOrderPayments[0] && vm.currentOrderPayments[0].Amount == vm.currentOrder.Total){
-        if(vm.currentOrderPayments.length && ((vm.currentOrderPayments[0].Type == 'SpendingAccount' && vm.currentOrderPayments[0].SpendingAccountID != null) || (vm.currentOrderPayments[0].Type == 'CreditCard' && vm.currentOrderPayments[0].CreditCardID != null) || vm.currentOrderPayments[0].Type == 'PurchaseOrder')) {
-            vm.orderIsValid = true;
+    vm.orderIsValid = function(){
+        var orderPaymentsTotal = 0;
+        var validPaymentMethods = false;
+        angular.forEach(vm.currentOrderPayments, function(payment) {
+            orderPaymentsTotal += payment.Amount;
+            if((payment.Type == 'SpendingAccount' && payment.SpendingAccountID != null) || (payment.Type == 'CreditCard' && payment.CreditCardID != null) || payment.Type == 'PurchaseOrder') {
+                validPaymentMethods = true;
+            }
+            else {
+                validPaymentMethods = false;
+            }
+        });
+        if(orderPaymentsTotal === vm.currentOrder.Subtotal && validPaymentMethods && vm.currentOrder.BillingAddress && vm.currentOrder.BillingAddress.ID != null) {
+            return true;
         }
-    }
+        else {
+            return false;
+        }
+    };
 
     // default state (if someone navigates to checkout -> checkout.shipping)
     if ($state.current.name === 'checkout') {
