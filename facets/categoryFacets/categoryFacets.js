@@ -35,7 +35,7 @@ function CategoryFacetsConfig( $stateProvider ) {
                 return dfd.promise;
             },
             CategoryList: function(OrderCloud) {
-                return OrderCloud.Categories.List();
+                return OrderCloud.Categories.List(null, 'all');
             }
         }
     })
