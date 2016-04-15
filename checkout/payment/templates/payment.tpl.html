@@ -1,9 +1,9 @@
 <div class="row">
-    <div class="col-sm-8">
+    <div ng-class="{'col-sm-8': checkoutPayment.allowMultiplePayments, 'col-sm-12': !checkoutPayment.allowMultiplePayments}">
         <label for="payment_method">Payment Method <span ng-show="checkoutPayment.currentOrderPayments.length > 1">{{this.$index + 1}}</span> <i class="fa fa-times-circle text-danger" ng-if="this.$index > 0" ng-click="checkoutPayment.removePayment(checkout.currentOrder, this.$index)"></i></label>
         <select id="payment_method" required="true" ng-change="checkoutPayment.setPaymentMethod(checkout.currentOrder, this.$index)" class="form-control" ng-model="checkoutPayment.currentOrderPayments[this.$index].Type" ng-options="paymentMethod.Value as paymentMethod.Display for paymentMethod in checkoutPayment.paymentMethods"></select>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-4" ng-if="checkoutPayment.allowMultiplePayments">
         <label>Amount</label>
         <input type="number" class="form-control" ng-model="checkoutPayment.currentOrderPayments[this.$index].Amount" max="{{checkoutPayment.currentOrderPayments[this.$index].MaxAmount}}" ng-change="checkoutPayment.patchPaymentAmount(checkout.currentOrder, this.$index)" />
     </div>

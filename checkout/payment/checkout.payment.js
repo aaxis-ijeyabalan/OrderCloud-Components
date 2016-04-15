@@ -2,6 +2,8 @@ angular.module('orderCloud')
 	.config(checkoutPaymentConfig)
 	.controller('CheckoutPaymentCtrl', CheckoutPaymentController)
 	.directive('ocCheckoutPayment', OCCheckoutPayment)
+    //toggle allowMultiplePayments if you do not wish to allow multiple payments on the same order
+    .constant('allowMultiplePayments', true)
 ;
 
 function checkoutPaymentConfig($stateProvider) {
@@ -23,8 +25,9 @@ function checkoutPaymentConfig($stateProvider) {
 		});
 }
 
-function CheckoutPaymentController($state, Underscore, AvailableCreditCards, AvailableSpendingAccounts, OrderCloud, toastr, OrderPayments) {
+function CheckoutPaymentController($state, Underscore, AvailableCreditCards, AvailableSpendingAccounts, OrderCloud, toastr, OrderPayments, allowMultiplePayments) {
 	var vm = this;
+    vm.allowMultiplePayments = allowMultiplePayments;
     vm.currentOrderPayments = OrderPayments.Items;
     vm.paymentMethods = [
         {Display: 'Purchase Order', Value: 'PurchaseOrder'},
@@ -152,7 +155,7 @@ function CheckoutPaymentController($state, Underscore, AvailableCreditCards, Ava
     }
 
     function PatchPaymentAmount(order, index) {
-        if (vm.currentOrderPayments[index].Amount) {
+        if (vm.currentOrderPayments[index].Amount && (vm.currentOrderPayments[index].Amount < vm.currentOrderPayments[index].MaxAmount)) {
             OrderCloud.Payments.Patch(order.ID, vm.currentOrderPayments[index].ID, {Amount: vm.currentOrderPayments[index].Amount})
                 .then(function() {
                     SetAmountMax(order);
