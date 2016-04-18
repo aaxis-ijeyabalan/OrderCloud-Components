@@ -34,7 +34,20 @@ function ExpressCheckoutConfig($stateProvider) {
                     return dfd.promise;
                 },
                 OrderPayments: function($q, OrderCloud, Order) {
-                    return OrderCloud.Payments.List(Order.ID);
+                    var deferred = $q.defer();
+                    OrderCloud.Payments.List(Order.ID)
+                        .then(function(data) {
+                            if (!data.Items.length) {
+                                OrderCloud.Payments.Create(Order.ID, {})
+                                    .then(function(p) {
+                                        deferred.resolve({Items: [p]});
+                                    })
+                            }
+                            else {
+                                deferred.resolve(data);
+                            }
+                        });
+                    return deferred.promise;
                 },
                 CreditCards: function(OrderCloud) {
                     return OrderCloud.Me.ListCreditCards();
@@ -60,8 +73,8 @@ function ExpressCheckoutConfig($stateProvider) {
                 },
                 DefaultCreditCard: function($q, CurrentUser, OrderPayments, Order, OrderCloud) {
                     var dfd = $q.defer();
-                    if(!OrderPayments.Items.length && CurrentUser.xp && CurrentUser.xp.defaultCreditCardID) {
-                        OrderCloud.Payments.Create(Order.ID, {Type: 'CreditCard', CreditCardID: CurrentUser.xp.defaultCreditCardID})
+                    if(OrderPayments.Items[0] && OrderPayments.Items[0].Type === 0 && CurrentUser.xp && CurrentUser.xp.defaultCreditCardID) {
+                        OrderCloud.Payments.Update(Order.ID, OrderPayments.Items[0].ID, {Type: 'CreditCard', CreditCardID: CurrentUser.xp.defaultCreditCardID})
                             .then(function() {
                                 dfd.resolve(Order);
                             });
@@ -139,14 +152,14 @@ function ExpressCheckoutController($state, toastr, OrderCloud, CurrentUser, Curr
             });
     };
 
-    var checkPaymentType = function() {
-        if(vm.orderPayments[0].Type == 'CreditCard') {
+    function checkPaymentType() {
+        if(vm.orderPayments[0].Type == 'CreditCard' && vm.orderPayments[0].CreditCardID) {
             OrderCloud.CreditCards.Get(vm.orderPayments[0].CreditCardID)
                 .then(function(cc){
                     vm.creditCardDetails = cc;
                 })
         }
-        if(vm.orderPayments[0].Type == 'SpendingAccount') {
+        if(vm.orderPayments[0].Type == 'SpendingAccount' && vm.orderPayments[0].SpendingAccountID) {
             OrderCloud.SpendingAccounts.Get(vm.orderPayments[0].SpendingAccountID)
                 .then(function(sa){
                     vm.spendingAccountDetails = sa;
