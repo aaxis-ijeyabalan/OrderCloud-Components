@@ -3,13 +3,9 @@
         {{results.categories.list.Items.length > 1 ? 'Categories' : 'Category'}}
     </h3>
     <div class="product-list row">
-
         <div class="col-md-3 " ng-repeat="category in results.categories.list.Items">
-
             <div class="product-item" ui-sref="catalog.category({categoryid: category.ID})">
-
                 <h3 class="item-name text-center">{{category.Name || category.ID}}</h3>
-
                 <div class="thumbnail-image">
                      <span class="fa-stack fa-5x" ng-if="!category.xp.image">
                         <i class="fa fa-camera fa-stack-1x"></i>
@@ -19,7 +15,6 @@
                         <img class="img-responsive" ng-src="{{category.xp.image.URL}}" alt="Category Image">
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -48,12 +43,7 @@
                 </div>
 
             </div>
-                <div class="text-center">
-                    <button class="btn btn-default" ng-click="results.open(product)">Quick View</button>
-                </div>
-                <!--<div class="item-price"><p>{{product.StandardPriceSchedule.PriceBreaks[0].Price | currency}} x {{product.StandardPriceSchedule.PriceBreaks[0].Quantity}}</p></div>-->
-                <!--<div class="item-description" ng-if="product.Description"><p>{{product.Description}}</p></div>-->
-
+               <ordercloud-quickview product="product"></ordercloud-quickview>
         </div>
     </div>
 </article>

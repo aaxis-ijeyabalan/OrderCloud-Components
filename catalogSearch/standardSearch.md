@@ -16,3 +16,14 @@ For example the following line of code will allow up to 8 items for Products and
 <ordercloud-standardSearch maxprod=8 maxcat=8></ordercloud-standardSearch>
 
 If these attributes are not included it will default to 5 for each.
+
+
+This component also includes a quickview button directive, which when clicked pops up a modal of the product and allows you to order that item in the modal.
+<ordercloud-quickview product=""></ordercloud-quickview>
+
+It is designed to be interpolated or inserted into the ng-repeat directive, where the array should be a list of products.
+The product attribute is required. Here is where you pass the product object into the modal which then allows you to add that specific product into your shopping cart.
+
+For example the following line of code will take the id
+<div class="col-md-3 " ng-repeat="aproduct in results.products.list.Items">
+<ordercloud-quickview product="aproduct"></ordercloud-quickview>. 
