@@ -155,7 +155,7 @@ function CheckoutPaymentController($state, Underscore, AvailableCreditCards, Ava
     }
 
     function PatchPaymentAmount(order, index) {
-        if (vm.currentOrderPayments[index].Amount && (vm.currentOrderPayments[index].Amount < vm.currentOrderPayments[index].MaxAmount)) {
+        if (vm.currentOrderPayments[index].Amount && (vm.currentOrderPayments[index].Amount <= vm.currentOrderPayments[index].MaxAmount)) {
             OrderCloud.Payments.Patch(order.ID, vm.currentOrderPayments[index].ID, {Amount: vm.currentOrderPayments[index].Amount})
                 .then(function() {
                     SetAmountMax(order);
