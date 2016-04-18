@@ -10,8 +10,8 @@ function SearchConfig($stateProvider) {
     $stateProvider
         .state('results', {
             parent:'base',
-            url: '/standardSearch/:searchterm',
-            templateUrl:'standardSearch/templates/results.tpl.html',
+            url: '/catalogSearch/:searchterm',
+            templateUrl:'catalogSearch/templates/results.tpl.html',
             controller: 'SearchResultsCtrl',
             controllerAs: 'results',
             resolve:{
@@ -31,7 +31,7 @@ function ordercloudStandardSearch () {
             maxcat: '@'
         },
         restrict: 'E',
-        templateUrl: 'standardSearch/templates/directive.html',
+        templateUrl: 'catalogSearch/templates/directive.html',
         controller: 'ordercloudStandardSearchCtrl',
         controllerAs: 'SS',
         replace: true
@@ -120,7 +120,7 @@ function SearchResultsController($q, OrderCloud, CategoryList, ProductList, Trac
             var modalInstance = $uibModal.open({
                 animation: vm.animationsEnabled,
                 size:'lg',
-                templateUrl: 'standardSearch/templates/myModalC.html',
+                templateUrl: 'catalogSearch/templates/myModalC.html',
                 controller: 'ModalInstanceCtrl',
                 controllerAs: 'modalview',
 
