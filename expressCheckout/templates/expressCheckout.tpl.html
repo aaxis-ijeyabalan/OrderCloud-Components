@@ -7,7 +7,7 @@
             <div class="panel-heading"><b>Billing Address</b></div>
             <div class="panel-body">
                 <div class="form-group">
-                    <select id="billing_address" name="BillingAddress" ng-change="expressCheckout.saveBillAddress();" ng-model="expressCheckout.currentOrder.BillingAddressID" class="form-control" ng-options="address.ID as (address.AddressName || address.Street1) for address in expressCheckout.billingAddresses"></select>
+                    <select id="billing_address" ng-required="true" name="BillingAddress" ng-change="expressCheckout.saveBillAddress();" ng-model="expressCheckout.currentOrder.BillingAddressID" class="form-control" ng-options="address.ID as (address.AddressName || address.Street1) for address in expressCheckout.billingAddresses"></select>
                 </div>
                 <div>
                     <p ng-if="expressCheckout.currentOrder.BillingAddress" id="address_paragraph">{{expressCheckout.currentOrder.BillingAddress | address: 'full'}}</p>
@@ -18,7 +18,7 @@
             <div class="panel-heading"><b>Shipping Address</b></div>
             <div class="panel-body">
                 <div class="form-group">
-                    <select id="shipping_address" name="ShippingAddress" ng-change="expressCheckout.saveShipAddress();" ng-model="expressCheckout.currentOrder.ShippingAddressID" class="form-control" ng-options="address.ID as (address.AddressName || address.Street1) for address in expressCheckout.shippingAddresses"></select>
+                    <select id="shipping_address" ng-required="true" name="ShippingAddress" ng-change="expressCheckout.saveShipAddress();" ng-model="expressCheckout.currentOrder.ShippingAddressID" class="form-control" ng-options="address.ID as (address.AddressName || address.Street1) for address in expressCheckout.shippingAddresses"></select>
                 </div>
                 <div>
                     <p ng-if="expressCheckout.currentOrder.ShippingAddressID" id="address_paragraph">{{expressCheckout.currentOrder.lineItems[0].ShippingAddress | address: 'full'}}</p>
