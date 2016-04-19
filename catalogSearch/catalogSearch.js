@@ -43,13 +43,13 @@ function ordercloudCatalogSearchDirective () {
 function CatalogSearchController($scope, $state, $q, OrderCloud) {
 
     var vm = this;
-
     vm.popupResults = function (term) {
         console.log(term);
         var maxProducts = $scope.maxprods || 5;
         var maxCategories = $scope.maxcats || 5;
         var dfd = $q.defer();
         var queue = [];
+
         queue.push(OrderCloud.Me.ListProducts(term, null, 1, maxProducts));
         queue.push(OrderCloud.Me.ListCategories(term, 'all', 1, maxCategories));
 
@@ -74,7 +74,6 @@ function CatalogSearchController($scope, $state, $q, OrderCloud) {
     };
 
     vm.onSelect = function($item){
-
         ($item.NameType === 'Category') ? $state.go('catalog.category', {categoryid: $item.ID}) : $state.go('catalog.product', {productid: $item.ID});
     };
 
@@ -85,7 +84,6 @@ function CatalogSearchController($scope, $state, $q, OrderCloud) {
 
 function CatalogSearchResultsController(CategoryList, ProductList) {
     var vm = this;
-
     vm.products = ProductList;
     vm.categories = CategoryList;
 }
@@ -105,14 +103,12 @@ function ordercloudQuickviewDirective(){
 function QuickviewController ($uibModal){
     var vm = this;
     vm.open = function (product){
-
         $uibModal.open({
             animation:true,
             size:'lg',
             templateUrl: 'standardSearch/templates/catalogSearch.quickviewModal.tpl.html',
             controller: 'QuickviewModalCtrl',
             controllerAs: 'quickviewModal',
-
             resolve: {
                 SelectedProduct: function (OrderCloud) {
                     return OrderCloud.Me.GetProduct(product.ID);
@@ -148,11 +144,9 @@ function QuickviewModalController($uibModalInstance, SelectedProduct, SpecList, 
     var vm = this;
     vm.selectedProduct = SelectedProduct;
     vm.selectedProduct.item = {Specs: SpecList};
-
     vm.cancel = function () {
         $uibModalInstance.dismiss('cancel');
     };
-
     vm.addToCart = function(product) {
         product.Quantity = product.item.Quantity;
         product.Specs = product.item.Specs;
@@ -160,5 +154,4 @@ function QuickviewModalController($uibModalInstance, SelectedProduct, SpecList, 
             $uibModalInstance.close()
         });
     };
-
 }
