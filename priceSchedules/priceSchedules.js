@@ -46,7 +46,7 @@ function PriceSchedulesController( PriceScheduleList ) {
     vm.list = PriceScheduleList;
 }
 
-function PriceScheduleEditController( $scope, $exceptionHandler, $state, OrderCloud, SelectedPriceSchedule, PriceBreak, toastr ) {
+function PriceScheduleEditController($scope, $exceptionHandler, $state, OrderCloud, SelectedPriceSchedule, PriceBreak, toastr ) {
     var vm = this,
         priceScheduleid = angular.copy(SelectedPriceSchedule.ID);
     vm.priceScheduleName = angular.copy(SelectedPriceSchedule.Name);
@@ -59,12 +59,9 @@ function PriceScheduleEditController( $scope, $exceptionHandler, $state, OrderCl
         vm.price = null;
     };
 
-
     PriceBreak.addDisplayQuantity(vm.priceSchedule);
 
-    console.log("this is priceSchedule",vm.priceSchedule.PriceBreaks);
     vm.deletePriceBreak = PriceBreak.deletePriceBreak;
-
 
     vm.Submit = function() {
         vm.priceSchedule = PriceBreak.setMinMax(vm.priceSchedule);
@@ -87,7 +84,7 @@ function PriceScheduleEditController( $scope, $exceptionHandler, $state, OrderCl
             .catch(function(ex) {
                 $exceptionHandler(ex)
             });
-    }
+    };
 
     $scope.$watch(function() {
         return vm.priceSchedule.RestrictedQuantity;
@@ -113,7 +110,6 @@ function PriceScheduleCreateController( $scope, $exceptionHandler, $state, Order
         PriceBreak.addPriceBreak(vm.priceSchedule, vm.price, vm.quantity);
         vm.quantity = null;
         vm.price = null;
-
     };
 
     vm.deletePriceBreak = PriceBreak.deletePriceBreak;
