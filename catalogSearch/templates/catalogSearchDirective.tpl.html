@@ -1,19 +1,19 @@
 <div class="form-group">
-    <form name="ProductCategorySearch" ng-submit="CatalogSearch.onHardEnter(CatalogSearch.searchTerm)">
+    <form name="ProductCategorySearch" ng-submit="catalogSearch.onHardEnter(catalogSearch.searchTerm)">
         <div class="input-group">
             <input
                     type="text"
                     class="form-control"
-                    placeholder="Catalog Search"
-                    ng-model="CatalogSearch.searchTerm"
-                    uib-typeahead="item as item for item in CatalogSearch.popupResults($viewValue)"
+                    placeholder="Search"
+                    ng-model="catalogSearch.searchTerm"
+                    uib-typeahead="item as item for item in catalogSearch.popupResults($viewValue)"
                     typeahead-popup-template-url="./catalogSearch/templates/catalogSearchDirective.popup.tpl.html"
-                    typeahead-on-select="CatalogSearch.onSelect($item)"
+                    typeahead-on-select="catalogSearch.onSelect($item)"
                     typeahead-focus-first="false"
                     ng-model-options="{debounce:{'default':300,'blur':0}}"
             />
             <span class="input-group-btn">
-                <button ng-click="CatalogSearch.onHardEnter(CatalogSearch.searchTerm)" class="btn btn-primary">Search</button>
+                <button ng-click="catalogSearch.onHardEnter(catalogSearch.searchTerm)" class="btn btn-primary">Search</button>
             </span>
         </div>
     </form>

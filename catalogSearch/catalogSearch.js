@@ -1,5 +1,5 @@
 angular.module('orderCloud')
-    .config (catalogSearchConfig)
+    .config (CatalogSearchConfig)
     .directive( 'ordercloudCatalogSearch', ordercloudCatalogSearchDirective)
     .controller( 'CatalogSearchCtrl', CatalogSearchController)
     .controller('CatalogSearchResultsCtrl', CatalogSearchResultsController)
@@ -8,14 +8,14 @@ angular.module('orderCloud')
     .controller ('QuickviewModalCtrl', QuickviewModalController)
 ;
 
-function catalogSearchConfig($stateProvider) {
+function CatalogSearchConfig($stateProvider) {
     $stateProvider
         .state('catalogSearchResults', {
             parent:'base',
             url: '/catalogSearchResults/:searchterm',
             templateUrl:'catalogSearch/templates/catalogSearchResults.tpl.html',
             controller: 'CatalogSearchResultsCtrl',
-            controllerAs: 'CatalogSearchResults',
+            controllerAs: 'catalogSearchResults',
             resolve:{
                 CategoryList: function($stateParams, OrderCloud) {
                     return OrderCloud.Me.ListCategories($stateParams.searchterm, 'all');
@@ -35,38 +35,34 @@ function ordercloudCatalogSearchDirective () {
         restrict: 'E',
         templateUrl: 'catalogSearch/templates/catalogSearchDirective.tpl.html',
         controller: 'CatalogSearchCtrl',
-        controllerAs: 'CatalogSearch',
+        controllerAs: 'catalogSearch',
         replace: true
     }
 }
 
 function CatalogSearchController($scope, $state, $q, OrderCloud) {
     var vm = this;
+    vm.productData;
+    vm.categoryData;
     vm.popupResults = function (term) {
         console.log(term);
         var maxProducts = $scope.maxprods || 5;
         var maxCategories = $scope.maxcats || 5;
         var dfd = $q.defer();
         var queue = [];
-
         queue.push(OrderCloud.Me.ListProducts(term, null, 1, maxProducts));
         queue.push(OrderCloud.Me.ListCategories(term, 'all', 1, maxCategories));
-
         $q.all(queue)
             .then(function (responses) {
-
-                var productData = responses[0].Items;
-                var categoryData = responses[1].Items;
-
-                angular.forEach(productData, function (product) {
+                vm.productData = responses[0].Items;
+                vm.categoryData = responses[1].Items;
+                angular.forEach(vm.productData, function (product) {
                     product.NameType = "Product";
                 });
-
-                angular.forEach(categoryData, function (category) {
+                angular.forEach(vm.categoryData, function (category) {
                     category.NameType = "Category";
                 });
-
-                var collected = productData.concat(categoryData);
+                var collected = vm.productData.concat(vm.categoryData);
                 dfd.resolve(collected);
             });
         return dfd.promise;

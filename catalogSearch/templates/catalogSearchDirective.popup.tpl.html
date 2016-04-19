@@ -2,7 +2,7 @@
      ng-show="isOpen() && !moveInProgress"
      aria-hidden="{{!isOpen()}}">
 
-    <p class="popup-headers text-primary">Products</p>
+    <p class="popup-headers text-primary" ng-if="$parent.catalogSearch.productData.length">Products</p>
 
     <ul class="uib-dropdown-menu">
         <div ng-repeat="match in matches track by $index" ng-class="{active: isActive($index) }" ng-mouseenter="selectActive($index)" ng-click="selectMatch($index)" role="option" id="{{::match.id}}">
@@ -10,7 +10,7 @@
         </div>
     </ul>
 
-    <p class="popup-headers text-primary">Categories</p>
+    <p class="popup-headers text-primary" ng-if="$parent.catalogSearch.categoryData.length">Categories</p>
 
     <ul class="uib-dropdown-menu" role="listbox">
         <div ng-repeat="match in matches track by $index" ng-class="{active: isActive($index) }" ng-mouseenter="selectActive($index)" ng-click="selectMatch($index)" role="option" id="{{::match.id}}">
