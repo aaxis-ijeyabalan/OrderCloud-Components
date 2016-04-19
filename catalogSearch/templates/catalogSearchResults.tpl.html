@@ -41,4 +41,7 @@
 
         </div>
     </div>
+    <div class="well well-lg text-center" ng-if="!catalogSearchResults.categories.Items.length && !catalogSearchResults.products.Items.length">
+        <b><i class="fa fa-search"></i> No products or categories match your search.</b>
+    </div>
 </article>
