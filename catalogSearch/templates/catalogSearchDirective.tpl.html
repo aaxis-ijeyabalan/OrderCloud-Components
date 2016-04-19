@@ -4,11 +4,11 @@
             <input
                     type="text"
                     class="form-control"
-                    placeholder="Product Category Search"
+                    placeholder="Catalog Search"
                     ng-model="CatalogSearch.searchTerm"
-                    uib-typeahead="item as item.Name for item in CatalogSearch.popupResults($viewValue)"
-                    typeahead-popup-template-url = "./catalogSearch/templates/catalogSearchDirective.popup.tpl.html"
-                    typeahead-on-select="CatalogSearch.onSelect($item, $model, $label)"
+                    uib-typeahead="item as item for item in CatalogSearch.popupResults($viewValue)"
+                    typeahead-popup-template-url="./catalogSearch/templates/catalogSearchDirective.popup.tpl.html"
+                    typeahead-on-select="CatalogSearch.onSelect($item)"
                     typeahead-focus-first="false"
                     ng-model-options="{debounce:{'default':300,'blur':0}}"
             />

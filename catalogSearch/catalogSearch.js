@@ -42,13 +42,13 @@ function ordercloudCatalogSearchDirective () {
 
 function CatalogSearchController($scope, $state, $q, OrderCloud) {
     var vm = this;
-
     vm.popupResults = function (term) {
         console.log(term);
         var maxProducts = $scope.maxprods || 5;
         var maxCategories = $scope.maxcats || 5;
         var dfd = $q.defer();
         var queue = [];
+
         queue.push(OrderCloud.Me.ListProducts(term, null, 1, maxProducts));
         queue.push(OrderCloud.Me.ListCategories(term, 'all', 1, maxCategories));
 
@@ -73,7 +73,6 @@ function CatalogSearchController($scope, $state, $q, OrderCloud) {
     };
 
     vm.onSelect = function($item){
-
         ($item.NameType === 'Category') ? $state.go('catalog.category', {categoryid: $item.ID}) : $state.go('catalog.product', {productid: $item.ID});
     };
 
@@ -84,7 +83,6 @@ function CatalogSearchController($scope, $state, $q, OrderCloud) {
 
 function CatalogSearchResultsController(CategoryList, ProductList) {
     var vm = this;
-
     vm.products = ProductList;
     vm.categories = CategoryList;
 }
