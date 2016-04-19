@@ -41,7 +41,6 @@ function ordercloudCatalogSearchDirective () {
 }
 
 function CatalogSearchController($scope, $state, $q, OrderCloud) {
-
     var vm = this;
 
     vm.popupResults = function (term) {
