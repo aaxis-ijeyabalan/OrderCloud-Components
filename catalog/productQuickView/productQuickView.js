@@ -1,5 +1,4 @@
 angular.module('orderCloud')
-    //.config (catalogSearchConfig)
     .directive( 'ordercloudQuickView', ordercloudQuickViewDirective)
     .controller( 'QuickViewCtrl', QuickViewController)
     .controller ('QuickViewModalCtrl', QuickViewModalController)
