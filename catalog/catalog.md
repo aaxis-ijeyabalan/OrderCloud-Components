@@ -13,14 +13,14 @@ Catalog is a buyer perspective component, and can only be accessed when logged i
 ----
 #### Product Quick View Directive
 
-This component  includes a quickview button directive, when this button is clicked a modal will appear and will display the product and also allows you to order that product in the modal.
+This component  includes a quickview button directive, when this button is clicked a modal will appear and display the product. It will also allow you to choose or set spec values if applicable as well as set the desired order quantity to add to order. Upon clicking the "Add to Cart" button, once all the required fields are filled out. The modal will add the desired product into your order and close out.
+
 ```javascript
 <ordercloud-quickview product=""></ordercloud-quickview>
 ```
 
-It is designed to be interpolated or inserted into the ng-repeat directive, where the array should be a list of products.
-The product attribute is required. Here is where you pass the product object into the modal which then allows you to add that specific product into your shopping cart.
-<!--Indicate that quick view modal allows you to choose or set spec values on product if applicable. Also close out div in example , take out directive after ng repeart say this is an example-->
+It is designed to be interpolated or inserted into the ng-repeat .Where the array that is being repeated through should be a list of products.
+The product attribute is required. Here is where you pass the product object into the modal which then allows you to add that specific product into your shopping cart.See example below.
 
 ```javascript
 <div class="col-md-3 " ng-repeat="aproduct in results.products.list.Items">
