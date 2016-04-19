@@ -62,16 +62,5 @@
         <div class="text-center add-payment"  ng-if="checkoutPayment.allowMultiplePayments">
             <button type="button" class="btn btn-default" ng-click="checkoutPayment.createPayment(checkout.currentOrder)" ng-disabled="!checkoutPayment.canAddPayment(checkout.currentOrder, checkoutPayment.currentOrderPayments)"><i class="fa fa-plus-circle"></i> Add Another Payment</button>
         </div>
-        <div>
-            <form name="PO" ng-submit="checkoutPayment.Submit()" novalidate>
-                <div class="form-group">
-                    <label id="PONumberInput">PO Number</label>
-                    <input id="PONumberInput" class="form-control" type="text" ng-model="checkoutPayment.PONumber">
-                    <button class="btn btn-default" type="submit">Add PONumber to Order</button>
-                </div>
-
-            </form>
-        </div>
-
     </div>
 </div>
