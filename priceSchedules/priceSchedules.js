@@ -41,7 +41,7 @@ function PriceSchedulesConfig( $stateProvider ) {
         })
 }
 
-function PriceSchedulesController( PriceScheduleList ) {
+function PriceSchedulesController(PriceScheduleList) {
     var vm = this;
     vm.list = PriceScheduleList;
 }
@@ -99,7 +99,7 @@ function PriceScheduleEditController($scope, $exceptionHandler, $state, OrderClo
 
 }
 
-function PriceScheduleCreateController( $scope, $exceptionHandler, $state, OrderCloud, PriceBreak,toastr) {
+function PriceScheduleCreateController($scope, $exceptionHandler, $state, OrderCloud, PriceBreak,toastr) {
     var vm = this;
     vm.priceSchedule = {};
     vm.priceSchedule.RestrictedQuantity = false;
