@@ -7,12 +7,14 @@
                     placeholder="Product Category Search"
                     ng-model="CatalogSearch.searchTerm"
                     uib-typeahead="item as item.Name for item in CatalogSearch.popupResults($viewValue)"
-                    typeahead-popup-template-url = "./catalogSearch/templates/catalogSearchDirective.typeAhead.tpl.html"
+                    typeahead-popup-template-url = "./catalogSearch/templates/catalogSearchDirective.popup.tpl.html"
                     typeahead-on-select="CatalogSearch.onSelect($item, $model, $label)"
                     typeahead-focus-first="false"
+                    ng-model-options="{debounce:{'default':300,'blur':0}}"
             />
-
-            <span ng-click="CatalogSearch.onHardEnter(CatalogSearch.searchTerm)" class="input-group-addon" id="basic-addon2">Search</span>
+            <span class="input-group-btn">
+                <button ng-click="CatalogSearch.onHardEnter(CatalogSearch.searchTerm)" class="btn btn-primary">Search</button>
+            </span>
         </div>
     </form>
 </div>

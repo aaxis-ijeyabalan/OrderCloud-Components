@@ -3,7 +3,9 @@ angular.module('orderCloud')
     .directive( 'ordercloudCatalogSearch', ordercloudCatalogSearchDirective)
     .controller( 'CatalogSearchCtrl', CatalogSearchController)
     .controller('CatalogSearchResultsCtrl', CatalogSearchResultsController)
-    .controller( 'ModalInstanceCtrl', ModalInstanceCtrl)
+    .directive( 'ordercloudQuickview', ordercloudQuickviewDirective)
+    .controller( 'QuickviewCtrl', QuickviewController)
+    .controller ('QuickviewModalCtrl', QuickviewModalController)
 ;
 
 function catalogSearchConfig($stateProvider) {
@@ -42,8 +44,8 @@ function CatalogSearchController($scope, $state, $q, OrderCloud) {
 
     var vm = this;
 
-    vm.popupResults = function(term){
-
+    vm.popupResults = function (term) {
+        console.log(term);
         var maxProducts = $scope.maxprods || 5;
         var maxCategories = $scope.maxcats || 5;
         var dfd = $q.defer();
@@ -81,96 +83,76 @@ function CatalogSearchController($scope, $state, $q, OrderCloud) {
     };
 }
 
-
-function CatalogSearchResultsController($log, $uibModal, CategoryList, ProductList ){
-
-    var vm =this;
-
-    vm.products= ProductList;
-    vm.categories= CategoryList;
-
-        vm.animationsEnabled = true;
-
-        vm.open = function (product){
-            console.log("here is product",product);
-
-            var modalInstance = $uibModal.open({
-                animation: vm.animationsEnabled,
-                size:'lg',
-                templateUrl: 'catalogSearch/templates/myModalC.html',
-                controller: 'ModalInstanceCtrl',
-                controllerAs: 'modalview',
-
-                resolve: {
-                    selectedProduct: function (OrderCloud) {
-                        return OrderCloud.Me.GetProduct(product.ID);
-                    },
-                    SpecList: function(OrderCloud, $q, $stateParams) {
-                        var queue = [];
-                        var dfd = $q.defer();
-                        OrderCloud.Specs.ListProductAssignments(null, product.ID)
-                            .then(function(data) {
-                                angular.forEach(data.Items, function(assignment) {
-                                    queue.push(OrderCloud.Specs.Get(assignment.SpecID));
-                                });
-                                $q.all(queue)
-                                    .then(function(result) {
-                                        angular.forEach(result, function(spec) {
-                                            spec.Value = spec.DefaultValue;
-                                            spec.OptionID = spec.DefaultOptionID;
-                                        });
-                                        dfd.resolve(result);
-                                    });
-                            })
-                            .catch(function(response) {
-
-                            });
-                        return dfd.promise;
-                    }
-                }
-            });
-
-
-            modalInstance.result.then(function (selectedProduct) {
-                //Here is what happens after the modal is exited out of?
-
-                vm.selected = selectedProduct;
-
-            }, function () {
-                $log.info('Modal dismissed at: ' + new Date());
-            });
-        };
-
-        vm.toggleAnimation = function () {
-            vm.animationsEnabled = !vm.animationsEnabled;
-        };
-
-
-
-    };
-
-
-
-
-function ModalInstanceCtrl( $uibModalInstance, selectedProduct, SpecList, AddToOrder){
+function CatalogSearchResultsController(CategoryList, ProductList) {
     var vm = this;
 
-    console.log("Items is what", selectedProduct);
-    vm.selectedProduct = selectedProduct;
+    vm.products = ProductList;
+    vm.categories = CategoryList;
+}
+
+function ordercloudQuickviewDirective(){
+    return{
+        scope:{
+            product: '='
+        },
+        restrict:'E',
+        templateUrl:'standardSearch/templates/catalogSearch.quickview.tpl.html',
+        controller:'QuickviewCtrl',
+        controllerAs:'quickview'
+    }
+}
+
+function QuickviewController ($uibModal){
+    var vm = this;
+    vm.open = function (product){
+
+        $uibModal.open({
+            animation:true,
+            size:'lg',
+            templateUrl: 'standardSearch/templates/catalogSearch.quickviewModal.tpl.html',
+            controller: 'QuickviewModalCtrl',
+            controllerAs: 'quickviewModal',
+
+            resolve: {
+                SelectedProduct: function (OrderCloud) {
+                    return OrderCloud.Me.GetProduct(product.ID);
+                },
+                SpecList: function(OrderCloud, $q) {
+                    var queue = [];
+                    var dfd = $q.defer();
+                    OrderCloud.Specs.ListProductAssignments(null, product.ID)
+                        .then(function(data) {
+                            angular.forEach(data.Items, function(assignment) {
+                                queue.push(OrderCloud.Specs.Get(assignment.SpecID));
+                            });
+                            $q.all(queue)
+                                .then(function(result) {
+                                    angular.forEach(result, function(spec) {
+                                        spec.Value = spec.DefaultValue;
+                                        spec.OptionID = spec.DefaultOptionID;
+                                    });
+                                    dfd.resolve(result);
+                                });
+                        })
+                        .catch(function(response) {
+
+                        });
+                    return dfd.promise;
+                }
+            }
+        });
+    };
+}
+
+function QuickviewModalController($uibModalInstance, SelectedProduct, SpecList, AddToOrder){
+    var vm = this;
+    vm.selectedProduct = SelectedProduct;
     vm.selectedProduct.item = {Specs: SpecList};
-
-    // vm.selected = {
-    //     item: vm.items[0]
-    // };
-
-    // vm.ok = function () {
-    //     $uibModalInstance.close(vm.selected.item);
-    // };
 
     vm.cancel = function () {
         $uibModalInstance.dismiss('cancel');
     };
-    
+
     vm.addToCart = function(product) {
         product.Quantity = product.item.Quantity;
         product.Specs = product.item.Specs;
@@ -178,5 +160,5 @@ function ModalInstanceCtrl( $uibModalInstance, selectedProduct, SpecList, AddToO
             $uibModalInstance.close()
         });
     };
-    
+
 }
