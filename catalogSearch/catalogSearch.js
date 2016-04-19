@@ -93,7 +93,7 @@ function ordercloudQuickviewDirective(){
             product: '='
         },
         restrict:'E',
-        templateUrl:'standardSearch/templates/catalogSearch.quickview.tpl.html',
+        templateUrl:'catalogSearch/templates/catalogSearch.quickview.tpl.html',
         controller:'QuickviewCtrl',
         controllerAs:'quickview'
     }
@@ -105,7 +105,7 @@ function QuickviewController ($uibModal){
         $uibModal.open({
             animation:true,
             size:'lg',
-            templateUrl: 'standardSearch/templates/catalogSearch.quickviewModal.tpl.html',
+            templateUrl: 'catalogSearch/templates/catalogSearch.quickviewModal.tpl.html',
             controller: 'QuickviewModalCtrl',
             controllerAs: 'quickviewModal',
             resolve: {
