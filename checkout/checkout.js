@@ -227,7 +227,7 @@ function OrderConfirmationController(Order, CurrentOrder, OrderCloud, $state, is
         if(vm.orderPayments[0].Type == 'CreditCard') {
             OrderCloud.CreditCards.Get(vm.orderPayments[0].CreditCardID)
                 .then(function(cc){
-                    vm.creditcCardDetails = cc;
+                    vm.creditCardDetails = cc;
                 })
         }
         if(vm.orderPayments[0].Type == 'SpendingAccount') {
