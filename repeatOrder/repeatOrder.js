@@ -16,13 +16,13 @@ function RepeatOrderController($state, RepeatOrderFactory, OrderCloud, toastr) {
         var userType = JSON.parse(atob(OrderCloud.Auth.ReadToken().split('.')[1])).usrtype;
         var CredentialsObject = {ClientID: clientid, UserID: userid, Claims: claims || null};
 
-        if(!orderID || !clientid || !userid){
-            if(!orderID){
-                toastr.error('This directive requires an orderID be passed in as an attribute', 'Error')
-            } if(userType === 'admin' && (!clientid || !userid)){
-                toastr.error('In order for this directive to work on the admin side a client ID and userid is required')
-            }
-        } else{
+        if(userType === 'admin' && (!orderID || !clientid || !userid)){
+            toastr.error('This directive is not configured correctly. orderID, clientID and userID are required attributes');
+        }
+        else if(userType == 'buyer' && (!orderID)) {
+            toastr.error('This directive requires an orderID be passed in as an attribute', 'Error')
+        }
+        else{
             RepeatOrderFactory.CheckLineItemsValid(userType, orderID, CredentialsObject)
                 .then(function(validLI){
                     RepeatOrderFactory.GetCurrentOrderLineItems(validLI)
