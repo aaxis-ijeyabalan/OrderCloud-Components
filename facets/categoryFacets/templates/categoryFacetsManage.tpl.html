@@ -38,10 +38,10 @@
                     </tbody>
                 </table>
                 <div class="panel-body">
-                    <form name="newValInput.{{facetName}}" ng-submit="facetedCatManage.addValueExisting(facetName)">
+                    <form name="{{'newValInput' + $index}}" ng-submit="facetedCatManage.addValueExisting(facetName, $index)">
                         <div class="form-group">
                             <div class="input-group">
-                                <input id="newFacetValue.{{facetName}}" type="text" class="form-control" ng-model="facetedCatManage[facetName].newFacetValue" placeholder="Add new value">
+                                <input id="{{'newFacetValue' + $index}}" type="text" class="form-control" ng-model="facetedCatManage[facetName].newFacetValue" placeholder="Add new value">
                                 <span class="input-group-btn">
                                     <button class="btn btn-success" type="submit"><i class="fa fa-plus-circle"></i></button>
                                 </span>
