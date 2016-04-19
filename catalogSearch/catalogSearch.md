@@ -1,23 +1,24 @@
 ## catalogSearch Component Overview
 
-This component includes a Catalog search box with type-ahead functionality.
+This component includes a Catalog search box with type-ahead functionality that searches on
+both categories and products that are assigned to the current user.
 
 The search box directive can be placed anywhere in your HTML by including the following:
 ```javascript
-<ordercloud-standardSearch></ordercloud-standardSearch>
+<ordercloud-catalog-search></ordercloud-catalog-search>
 ```
 
-maxprod and maxcat are additional attributes that can be added to the directive that allow you
+maxprods and maxcats are attributes that can be added to the directive that allow you
 to specify the maximum number of items you would like listed in the typeahead for both Products
-and Categories respectively.
+and Categories respectively. The default value is 5 for each and the maximum is 100 for each.
 
-For example the following line of code will allow up to 8 items for Products and Categories:
+The following line of code will allow up to 8 items for Products and Categories:
 
 ```javascript
-<ordercloud-standardSearch maxprod=8 maxcat=8></ordercloud-standardSearch>
+<ordercloud-catalog-search maxprods=8 maxcats=8></ordercloud-catalog-search>
 ```
 
-If these attributes are not included it will default to 5 for each.
+
 
 
 

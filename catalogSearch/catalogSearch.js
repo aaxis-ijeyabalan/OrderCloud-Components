@@ -1,11 +1,8 @@
 angular.module('orderCloud')
     .config (CatalogSearchConfig)
-    .directive( 'ordercloudCatalogSearch', ordercloudCatalogSearchDirective)
     .controller( 'CatalogSearchCtrl', CatalogSearchController)
+    .directive( 'ordercloudCatalogSearch', ordercloudCatalogSearchDirective)
     .controller('CatalogSearchResultsCtrl', CatalogSearchResultsController)
-    .directive( 'ordercloudQuickview', ordercloudQuickviewDirective)
-    .controller( 'QuickviewCtrl', QuickviewController)
-    .controller ('QuickviewModalCtrl', QuickviewModalController)
 ;
 
 function CatalogSearchConfig($stateProvider) {
@@ -26,18 +23,11 @@ function CatalogSearchConfig($stateProvider) {
             }
         });
 }
-function ordercloudCatalogSearchDirective () {
-    return {
-        scope: {
-            maxprods: "@",
-            maxcats: '@'
-        },
-        restrict: 'E',
-        templateUrl: 'catalogSearch/templates/catalogSearchDirective.tpl.html',
-        controller: 'CatalogSearchCtrl',
-        controllerAs: 'catalogSearch',
-        replace: true
-    }
+
+function CatalogSearchResultsController(CategoryList, ProductList) {
+    var vm = this;
+    vm.products = ProductList;
+    vm.categories = CategoryList;
 }
 
 function CatalogSearchController($scope, $state, $q, OrderCloud) {
@@ -45,7 +35,6 @@ function CatalogSearchController($scope, $state, $q, OrderCloud) {
     vm.productData;
     vm.categoryData;
     vm.popupResults = function (term) {
-        console.log(term);
         var maxProducts = $scope.maxprods || 5;
         var maxCategories = $scope.maxcats || 5;
         var dfd = $q.defer();
@@ -77,9 +66,16 @@ function CatalogSearchController($scope, $state, $q, OrderCloud) {
     };
 }
 
-function CatalogSearchResultsController(CategoryList, ProductList) {
-    var vm = this;
-    vm.products = ProductList;
-    vm.categories = CategoryList;
+function ordercloudCatalogSearchDirective () {
+    return {
+        scope: {
+            maxprods: "@",
+            maxcats: '@'
+        },
+        restrict: 'E',
+        templateUrl: 'catalogSearch/templates/catalogSearchDirective.tpl.html',
+        controller: 'CatalogSearchCtrl',
+        controllerAs: 'catalogSearch',
+        replace: true
+    }
 }
-
