@@ -215,15 +215,6 @@ function OrderConfirmationController(Order, CurrentOrder, OrderCloud, $state, is
     vm.orderPayments = OrderPayments.Items;
 
 
-    // Gets the  PO Number
-    CurrentOrder.Get()
-        .then(function(data) {
-               if(data.xp){
-                   vm.PONumber= data.xp.PONumber;
-               }
-        });
-
-
     vm.checkPaymentType = function() {
         if(vm.orderPayments[0].Type == 'CreditCard') {
             OrderCloud.CreditCards.Get(vm.orderPayments[0].CreditCardID)
@@ -308,11 +299,6 @@ function OrderReviewController(SubmittedOrder, isMultipleAddressShipping, OrderC
         OrderCloud.Orders.Patch(SubmittedOrder.ID, {"xp": null} );
         toastr.success("Your order has been removed from Favorites", 'Success')
     }
-
-
-  if(vm.submittedOrder.xp ){
-                vm.PONumber= vm.submittedOrder.xp.PONumber;
-  }
 
 
 

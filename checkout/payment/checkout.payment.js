@@ -45,7 +45,6 @@ function CheckoutPaymentController($state, Underscore, AvailableCreditCards, Ava
     vm.today = new Date();
     vm.creditCards = AvailableCreditCards.Items;
     vm.spendingAccounts = AvailableSpendingAccounts.Items;
-    vm.PONumber=null;
 
 
     vm.setCreditCard = SetCreditCard;
