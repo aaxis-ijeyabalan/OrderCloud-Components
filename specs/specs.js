@@ -143,7 +143,7 @@ function SpecEditController( $exceptionHandler, $state, Underscore, OrderCloud, 
         OrderCloud.Specs.Update(specid, vm.spec)
             .then(function() {
                 $state.go('specs', {}, {reload:true});
-                toastr.success('Spec Edited', 'Success');
+                toastr.success('Spec Updated', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)

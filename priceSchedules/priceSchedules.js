@@ -68,7 +68,7 @@ function PriceScheduleEditController($scope, $exceptionHandler, $state, OrderClo
         OrderCloud.PriceSchedules.Update(priceScheduleid, vm.priceSchedule)
             .then(function() {
                 $state.go('priceSchedules', {}, {reload:true});
-                toastr.success('Price Schedule Edited', 'Success');
+                toastr.success('Price Schedule Updated', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
