@@ -92,12 +92,12 @@ function FacetedCategoryManageController ( $state, Category, OrderCloud, toastr,
     };
 
 
-    vm.addValueExisting = function (facetName) {
+    vm.addValueExisting = function (facetName, index) {
         vm.category.xp.OC_Facets[facetName].Values.push(vm[facetName].newFacetValue.toLowerCase());
         OrderCloud.Categories.Update(vm.category.ID, vm.category)
             .then(function() {
                vm[facetName].newFacetValue = null;
-                $( "[id*="+facetName+"]").focus();
+                $('#newFacetValue' + index).focus();
             });
     };
 
