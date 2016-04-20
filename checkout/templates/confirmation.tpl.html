@@ -35,7 +35,7 @@
                 Subtotal: {{orderConfirmation.currentOrder.Subtotal | currency}}
             </div>
             <div ng-if="orderConfirmation.currentOrder.xp.taxInfo">
-                Total Tax: {{orderConfirmation.currentOrder.xp.taxInfo | currency}}
+                Tax: {{orderConfirmation.currentOrder.xp.taxInfo | currency}}
             </div>
             <div ng-if="orderConfirmation.currentOrder.xp.taxInfo">
                 Grand Total: {{orderConfirmation.currentOrder.xp.taxInfo + orderConfirmation.currentOrder.Subtotal | currency}}
