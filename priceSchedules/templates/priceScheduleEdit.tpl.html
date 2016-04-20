@@ -96,7 +96,7 @@
                                     <div>Quantity</div>
                                 </th>
                                 <th>
-                                    <div>Price</div>
+                                    <div>{{priceScheduleEdit.priceHeader}}</div>
                                 </th>
                             </tr>
                             </thead>
@@ -105,8 +105,10 @@
                                 <td class="text-center">
                                     <a class="fa fa-trash text-danger" ng-click="priceScheduleEdit.deletePriceBreak(priceScheduleEdit.priceSchedule, $index)"></a>
                                 </td>
-                                <td>{{pricebreak.Quantity}}</td>
-                                <td>{{pricebreak.Price * pricebreak.Quantity | currency}}</td>
+                                <td ng-if="priceScheduleEdit.priceSchedule.RestrictedQuantity">{{pricebreak.Quantity}}</td>
+                                <td ng-if="!priceScheduleEdit.priceSchedule.RestrictedQuantity">{{pricebreak.displayQuantity}} </td>
+                                <td ng-if="priceScheduleEdit.priceSchedule.RestrictedQuantity">{{pricebreak.Price * pricebreak.Quantity | currency}}</td>
+                                <td ng-if="!priceScheduleEdit.priceSchedule.RestrictedQuantity">{{pricebreak.Price | currency}}</td>
                             </tr>
                             </tbody>
                         </table>

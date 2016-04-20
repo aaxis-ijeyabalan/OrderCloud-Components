@@ -41,12 +41,12 @@ function PriceSchedulesConfig( $stateProvider ) {
         })
 }
 
-function PriceSchedulesController( PriceScheduleList ) {
+function PriceSchedulesController(PriceScheduleList) {
     var vm = this;
     vm.list = PriceScheduleList;
 }
 
-function PriceScheduleEditController( $exceptionHandler, $state, OrderCloud, SelectedPriceSchedule, PriceBreak, toastr ) {
+function PriceScheduleEditController($scope, $exceptionHandler, $state, OrderCloud, SelectedPriceSchedule, PriceBreak, toastr ) {
     var vm = this,
         priceScheduleid = angular.copy(SelectedPriceSchedule.ID);
     vm.priceScheduleName = angular.copy(SelectedPriceSchedule.Name);
@@ -59,8 +59,9 @@ function PriceScheduleEditController( $exceptionHandler, $state, OrderCloud, Sel
         vm.price = null;
     };
 
-    vm.deletePriceBreak = PriceBreak.deletePriceBreak;
+    PriceBreak.addDisplayQuantity(vm.priceSchedule);
 
+    vm.deletePriceBreak = PriceBreak.deletePriceBreak;
 
     vm.Submit = function() {
         vm.priceSchedule = PriceBreak.setMinMax(vm.priceSchedule);
@@ -83,10 +84,22 @@ function PriceScheduleEditController( $exceptionHandler, $state, OrderCloud, Sel
             .catch(function(ex) {
                 $exceptionHandler(ex)
             });
-    }
+    };
+
+    $scope.$watch(function() {
+        return vm.priceSchedule.RestrictedQuantity;
+    },function(value){
+
+        if(vm.priceSchedule.RestrictedQuantity == true){
+            vm.priceHeader = "Total Price";
+        }else{
+            vm.priceHeader =  "Price Per Unit";
+        }
+    });
+
 }
 
-function PriceScheduleCreateController( $exceptionHandler, $state, OrderCloud, PriceBreak,toastr) {
+function PriceScheduleCreateController($scope, $exceptionHandler, $state, OrderCloud, PriceBreak,toastr) {
     var vm = this;
     vm.priceSchedule = {};
     vm.priceSchedule.RestrictedQuantity = false;
@@ -112,4 +125,17 @@ function PriceScheduleCreateController( $exceptionHandler, $state, OrderCloud, P
                 $exceptionHandler(ex)
             });
     }
+
+    $scope.$watch(function() {
+        return vm.priceSchedule.RestrictedQuantity;
+    },function(value){
+
+        if(vm.priceSchedule.RestrictedQuantity == true){
+            vm.priceHeader = "Total Price";
+        }else{
+            vm.priceHeader =  "Price Per Unit";
+            }
+    });
+
+
 }
