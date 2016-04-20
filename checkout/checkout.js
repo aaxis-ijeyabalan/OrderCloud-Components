@@ -330,7 +330,7 @@ function CheckoutLineItemsListDirective() {
     };
 }
 
-function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineItemHelpers, Underscore, CheckoutService, TaxService) {
+function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineItemHelpers, Underscore, CheckoutService, TaxService, CurrentOrder) {
     var vm = this;
     vm.lineItems = {};
     vm.UpdateQuantity = LineItemHelpers.UpdateQuantity;
@@ -342,6 +342,11 @@ function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineIte
         Underscore.where(vm.lineItems.Items, {ID: LineItemID})[0].ShippingAddress = address;
         TaxService.Calculate($scope.order.ID).then(function (taxData) {
             vm.taxInformation = taxData.calculatedTaxSummary.totalTax;
+            CurrentOrder.Get()
+                .then(function(order){
+                    order.xp = {taxInfo: vm.taxInformation};
+                    OrderCloud.Orders.Update(order.ID, order);
+                })
         })
     });
 
@@ -351,6 +356,11 @@ function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineIte
             li.ShippingAddress = address;
             TaxService.Calculate($scope.order.ID).then(function (taxData) {
                 vm.taxInformation = taxData.calculatedTaxSummary.totalTax;
+                CurrentOrder.Get()
+                    .then(function(order){
+                        order.xp = {taxInfo: vm.taxInformation};
+                        OrderCloud.Orders.Update(order.ID, order);
+                    })
             })
         });
     });
