@@ -316,7 +316,7 @@ function CheckoutLineItemsListDirective() {
     };
 }
 
-function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineItemHelpers, Underscore, CheckoutService, TaxService, CurrentOrder) {
+function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineItemHelpers, Underscore, CheckoutService, TaxService, CurrentOrder, toastr) {
     var vm = this;
     vm.lineItems = {};
     vm.UpdateQuantity = LineItemHelpers.UpdateQuantity;
@@ -328,13 +328,27 @@ function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineIte
     $scope.$on('LineItemAddressUpdated', function(event, LineItemID, address) {
         vm.calculatingTax = true;
         Underscore.where(vm.lineItems.Items, {ID: LineItemID})[0].ShippingAddress = address;
-        TaxService.Calculate($scope.order.ID).then(function (taxData) {
-            vm.taxInformation = taxData.calculatedTaxSummary.totalTax;
-            CurrentOrder.Get()
-                .then(function(order){
-                    order.xp = {taxInfo: vm.taxInformation};
-                    OrderCloud.Orders.Update(order.ID, order);
-                })
+        TaxService.Calculate($scope.order.ID)
+            .then(function (taxData) {
+                if(taxData.calculatedTaxSummary){
+                    vm.taxInformation = taxData.calculatedTaxSummary.totalTax;
+                    CurrentOrder.Get()
+                        .then(function(order){
+                            order.xp = {taxInfo: vm.taxInformation};
+                            OrderCloud.Orders.Update(order.ID, order);
+                        })
+                }
+                else{
+                    toastr.error('The provided address is not valid', 'Error');
+                    vm.calculatingTax = false;
+                    vm.taxInformation = 0;
+                    CurrentOrder.Get()
+                        .then(function(order){
+                            order.xp = {taxInfo: vm.taxInformation};
+                            OrderCloud.Orders.Update(order.ID, order);
+                        })
+                }
+
         })
     });
 
@@ -343,15 +357,27 @@ function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineIte
         angular.forEach(vm.lineItems.Items, function(li) {
             li.ShippingAddressID = address.ID;
             li.ShippingAddress = address;
-            TaxService.Calculate($scope.order.ID).then(function (taxData) {
-                vm.taxInformation = taxData.calculatedTaxSummary.totalTax;
-                CurrentOrder.Get()
-                    .then(function(order){
-                        order.xp = {taxInfo: vm.taxInformation};
-                        OrderCloud.Orders.Update(order.ID, order);
+            TaxService.Calculate($scope.order.ID)
+                .then(function (taxData) {
+                    if(taxData.calculatedTaxSummary){
+                        vm.taxInformation = taxData.calculatedTaxSummary.totalTax;
+                        CurrentOrder.Get()
+                            .then(function(order){
+                                order.xp = {taxInfo: vm.taxInformation};
+                                OrderCloud.Orders.Update(order.ID, order);
+                            })
+                    }
+                    else{
+                        toastr.error('The provided address is not valid', 'Error');
                         vm.calculatingTax = false;
-                    })
-            })
+                        vm.taxInformation = 0;
+                        CurrentOrder.Get()
+                            .then(function(order){
+                                order.xp = {taxInfo: vm.taxInformation};
+                                OrderCloud.Orders.Update(order.ID, order);
+                            })
+                    }
+                })
         });
     });
 
