@@ -4,25 +4,20 @@ angular.module('orderCloud')
     .directive('ordercloudRepeatOrder', OrderCloudRepeatOrderDirective)
 ;
 
-
-function RepeatOrderController($state, RepeatOrderFactory, OrderCloud, toastr) {
-
+function RepeatOrderController($state, toastr, OrderCloud, RepeatOrderFactory) {
     var vm = this;
     vm.reorder = function(orderID, includebilling, includeshipping, clientid, userid, claims){
-
         var includeBilling = (includebilling === 'true');
         var includeShipping = (includeshipping === 'true');
-
         var userType = JSON.parse(atob(OrderCloud.Auth.ReadToken().split('.')[1])).usrtype;
         var CredentialsObject = {ClientID: clientid, UserID: userid, Claims: claims || null};
-
-        if(!orderID || !clientid || !userid){
-            if(!orderID){
-                toastr.error('This directive requires an orderID be passed in as an attribute', 'Error')
-            } if(userType === 'admin' && (!clientid || !userid)){
-                toastr.error('In order for this directive to work on the admin side a client ID and userid is required')
-            }
-        } else{
+        if(userType === 'admin' && (!orderID || !clientid || !userid)){
+            toastr.error('This directive is not configured correctly. orderID, clientID and userID are required attributes');
+        }
+        else if(userType == 'buyer' && (!orderID)) {
+            toastr.error('This directive is not configured correctly. orderID is a required attribute', 'Error')
+        }
+        else{
             RepeatOrderFactory.CheckLineItemsValid(userType, orderID, CredentialsObject)
                 .then(function(validLI){
                     RepeatOrderFactory.GetCurrentOrderLineItems(validLI)
@@ -43,17 +38,13 @@ function RepeatOrderController($state, RepeatOrderFactory, OrderCloud, toastr) {
     }
 }
 
-function RepeatOrderFactory($q, OrderCloud, LineItemHelpers, CurrentOrder, toastr, $localForage, appname, $resource) {
-
+function RepeatOrderFactory($q, $resource, $localForage, toastr, OrderCloud, appname, LineItemHelpers, CurrentOrder){
     return {
         CheckLineItemsValid: CheckLineItemsValid,
         GetCurrentOrderLineItems: GetCurrentOrderLineItems,
         Reorder: Reorder
-
     };
-
     function CheckLineItemsValid(userType, originalOrderID, CredentialsObject){
-
         var dfd =$q.defer();
         ListAllProducts(CredentialsObject)
             .then(function (productList) {
@@ -68,7 +59,6 @@ function RepeatOrderFactory($q, OrderCloud, LineItemHelpers, CurrentOrder, toast
                         angular.forEach(lineItemList, function (li) {
                             (productIds.indexOf(li.ProductID) > -1) ? validLI.push(li) : invalidLI.push(li.ProductID);
                         });
-
                         if (validLI.length && invalidLI.length) {
                             toastr.warning("There are " + invalidLI.length + " product(s) in your cart that either no longer exist or you do not have permission to reorder, the order will process only with the products you are able to order. The ID's of the products that have been excluded are: " + invalidLI.toString());
                             dfd.resolve(validLI)
@@ -85,10 +75,8 @@ function RepeatOrderFactory($q, OrderCloud, LineItemHelpers, CurrentOrder, toast
         return dfd.promise;
 
         function ListAllProducts(CredentialsObject){
-
             var dfd = $q.defer();
             var queue=[];
-
             ( (userType === 'buyer') ? OrderCloud.Me.ListProducts(null,null,1,100) : ListProductsAsAdmin(CredentialsObject) )
                 .then(function(data){
                     var productList = data;
@@ -128,7 +116,6 @@ function RepeatOrderFactory($q, OrderCloud, LineItemHelpers, CurrentOrder, toast
                         'categoryID': null,
                         'page': 1,
                         'pageSize': 100
-
                     },
                     {
                         callApi: {
@@ -147,10 +134,10 @@ function RepeatOrderFactory($q, OrderCloud, LineItemHelpers, CurrentOrder, toast
                 return dfd.promise;
             });
     }
+
     function GetCurrentOrderLineItems(validLI){
         var dfd = $q.defer();
         var totalLI;
-
         //cant use CurrentOrder.GetID() because if there is not a current ID the promise is rejected which halts everything
         $localForage.getItem(appname + '.CurrentOrderID')
             .then(function(order_id){
@@ -160,7 +147,6 @@ function RepeatOrderFactory($q, OrderCloud, LineItemHelpers, CurrentOrder, toast
                             if(li.length){toastr.warning('The line items from your current order were added to this reorder.', 'Please be advised')}
                             totalLI = validLI.concat(li);
                             dfd.resolve(totalLI);
-
                         })
                         .catch(function(err){
                             dfd.reject(err)
@@ -169,12 +155,11 @@ function RepeatOrderFactory($q, OrderCloud, LineItemHelpers, CurrentOrder, toast
                     totalLI = validLI;
                     dfd.resolve(totalLI);
                 }
-
             });
         return dfd.promise;
     }
-    function Reorder(originalOrderID, includeBilling, includeShipping, CredentialsObject, totalLI, userType) {
 
+    function Reorder(originalOrderID, includeBilling, includeShipping, CredentialsObject, totalLI, userType) {
         var dfd = $q.defer();
         OrderCloud.Orders.Get(originalOrderID)
             .then(function (data) {
@@ -194,7 +179,6 @@ function RepeatOrderFactory($q, OrderCloud, LineItemHelpers, CurrentOrder, toast
                             !includeShipping ? delete lineItem.ShippingAddress : angular.noop();
                             queue.push(OrderCloud.LineItems.Create(orderID, lineItem));
                         });
-
                         $q.all(queue)
                             .then(function (data) {
                                 dfd.resolve(data);
@@ -204,7 +188,6 @@ function RepeatOrderFactory($q, OrderCloud, LineItemHelpers, CurrentOrder, toast
                             })
                     })
             });
-
         return dfd.promise;
 
         //TODO: replace this with impersonation when it is fixed & remove $resource as dependency
@@ -237,9 +220,9 @@ function RepeatOrderFactory($q, OrderCloud, LineItemHelpers, CurrentOrder, toast
 function OrderCloudRepeatOrderDirective() {
     return {
         restrict: 'E',
-        templateUrl: 'repeatOrder/templates/repeatOrder.html',
+        templateUrl: 'repeatOrder/templates/repeatOrderDirective.tpl.html',
         controller: 'RepeatOrderCtrl',
-        controllerAs: 'repeat',
+        controllerAs: 'repeatOrder',
         scope: {
             orderid: '=',
             includebilling: '@',
