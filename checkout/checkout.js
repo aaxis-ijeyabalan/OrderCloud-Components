@@ -337,8 +337,10 @@ function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineIte
     vm.UpdateShipping = LineItemHelpers.UpdateShipping;
     vm.setCustomShipping = LineItemHelpers.CustomShipping;
     vm.RemoveItem = LineItemHelpers.RemoveItem;
+    vm.calculatingTax = false;
 
     $scope.$on('LineItemAddressUpdated', function(event, LineItemID, address) {
+        vm.calculatingTax = true;
         Underscore.where(vm.lineItems.Items, {ID: LineItemID})[0].ShippingAddress = address;
         TaxService.Calculate($scope.order.ID).then(function (taxData) {
             vm.taxInformation = taxData.calculatedTaxSummary.totalTax;
@@ -351,6 +353,7 @@ function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineIte
     });
 
     $scope.$on('OrderShippingAddressChanged', function(event, order, address) {
+        vm.calculatingTax = true;
         angular.forEach(vm.lineItems.Items, function(li) {
             li.ShippingAddressID = address.ID;
             li.ShippingAddress = address;
@@ -360,6 +363,7 @@ function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineIte
                     .then(function(order){
                         order.xp = {taxInfo: vm.taxInformation};
                         OrderCloud.Orders.Update(order.ID, order);
+                        vm.calculatingTax = false;
                     })
             })
         });
