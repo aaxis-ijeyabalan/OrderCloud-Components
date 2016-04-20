@@ -19,3 +19,4 @@ Below is a quick summary of attributes for this directive:
 * clientid: the client id of the app that the order is being placed by (required only for the admin perspective)
 * includeshipping: will include any shipping details from the previous order if available (optional)
 * includebilling: will include any billing details from the previous order if available (optional)
+* claims: The claims available to the user placing the reorder. Will default to FullAccess if none are specified. (optional)
