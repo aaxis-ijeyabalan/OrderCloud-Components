@@ -58,10 +58,23 @@ function OrderHistoryConfig( $stateProvider ) {
 
                     return deferred.promise;
                 },
-                UserGroups: function(OrderCloud, UserType){
+                UserGroups: function($q, OrderCloud,UserType){
+                    var dfd = $q.defer();
+                    var groups;
+                    var queue = [];
                     if(UserType === 'admin') {
-                        return OrderCloud.UserGroups.List(null, 1, 100)
+                        OrderCloud.UserGroups.List(null, 1, 100)
+                            .then(function (data) {
+                                groups = [].concat(data.Items);
+                                $q.all(queue)
+                                    .then(function (results) {
+                                        dfd.resolve(groups);
+                                    });
+                            });
+                    } else{
+                        dfd.resolve();
                     }
+                    return dfd.promise;
                 }
             }
         })
@@ -237,20 +250,24 @@ function OrderHistoryFactory( $q, Underscore, OrderCloud ) {
 
     function _searchOrders(filters, userType) {
         var deferred = $q.defer();
-        if(filters.favorite){
-            OrderCloud.Orders.List((userType == 'admin' ? 'incoming' : 'outgoing'), filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, filters.sortType, { ID: filters.OrderID, Status: filters.Status, FromUserID: filters.groupOrders, xp:{favorite:filters.favorite} }, filters.FromCompanyID)
-                .then(function(data) {
-                    console.log(filters);
-                    deferred.resolve(data);
-                });
-        }else{
-            OrderCloud.Orders.List((userType == 'admin' ? 'incoming' : 'outgoing'), filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, filters.sortType, { ID: filters.OrderID, Status: filters.Status, FromUserID: filters.groupOrders}, filters.FromCompanyID)
-                .then(function(data) {
-                    console.log(filters);
-                    deferred.resolve(data);
-                });
-        }
 
+        if(!filters.groupOrders){
+            deferred.resolve();
+        }else{
+            if(filters.favorite){
+                OrderCloud.Orders.List((userType == 'admin' ? 'incoming' : 'outgoing'), filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, filters.sortType, { ID: filters.OrderID, Status: filters.Status, FromUserID: filters.groupOrders, xp:{favorite:filters.favorite} }, filters.FromCompanyID)
+                    .then(function(data) {
+                        console.log(filters);
+                        deferred.resolve(data);
+                    });
+            }else{
+                OrderCloud.Orders.List((userType == 'admin' ? 'incoming' : 'outgoing'), filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, filters.sortType, { ID: filters.OrderID, Status: filters.Status, FromUserID: filters.groupOrders}, filters.FromCompanyID)
+                    .then(function(data) {
+                        console.log(filters);
+                        deferred.resolve(data);
+                    });
+            }
+        }
 
         return deferred.promise;
     }
