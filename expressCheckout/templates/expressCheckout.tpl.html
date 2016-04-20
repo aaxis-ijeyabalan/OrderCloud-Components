@@ -43,9 +43,6 @@
                         <select id="spending_account" ng-required="expressCheckout.orderPayments[0].Type == 'SpendingAccount'" ng-change="expressCheckout.setSpendingAccount(expressCheckout.currentOrder)" class="form-control" ng-model="expressCheckout.orderPayments[0].SpendingAccountID" ng-options="spendingAccount.ID as spendingAccount.Name for spendingAccount in expressCheckout.spendingAccounts.Items"></select>
                     </div>
                 </div>
-                <div ng-if="expressCheckout.currentOrder.xp.PONumber">
-                    PO Number : {{expressCheckout.PONumber}}
-                </div>
             </div>
         </div>
         <ordercloud-confirmation-lineitems order="expressCheckout.currentOrder"></ordercloud-confirmation-lineitems>
