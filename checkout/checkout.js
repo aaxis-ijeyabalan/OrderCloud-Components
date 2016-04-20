@@ -8,6 +8,7 @@ angular.module('orderCloud')
     .directive('ordercloudConfirmationLineitems', ConfirmationLineItemsListDirective)
     .controller('CheckoutLineItemsCtrl', CheckoutLineItemsController)
     .controller('ConfirmationLineItemsCtrl', ConfirmationLineItemsController)
+    .factory('TaxService', TaxService)
     //toggle isMultipleAddressShipping if you do not wish to allow line items to ship to multiple addresses
     .constant('isMultipleAddressShipping', true);
 ;
@@ -329,7 +330,7 @@ function CheckoutLineItemsListDirective() {
     };
 }
 
-function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineItemHelpers, Underscore, CheckoutService) {
+function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineItemHelpers, Underscore, CheckoutService, TaxService) {
     var vm = this;
     vm.lineItems = {};
     vm.UpdateQuantity = LineItemHelpers.UpdateQuantity;
@@ -339,12 +340,18 @@ function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineIte
 
     $scope.$on('LineItemAddressUpdated', function(event, LineItemID, address) {
         Underscore.where(vm.lineItems.Items, {ID: LineItemID})[0].ShippingAddress = address;
+        TaxService.Calculate($scope.order.ID).then(function (taxData) {
+            vm.taxInformation = taxData.calculatedTaxSummary.totalTax;
+        })
     });
 
     $scope.$on('OrderShippingAddressChanged', function(event, order, address) {
         angular.forEach(vm.lineItems.Items, function(li) {
             li.ShippingAddressID = address.ID;
             li.ShippingAddress = address;
+            TaxService.Calculate($scope.order.ID).then(function (taxData) {
+                vm.taxInformation = taxData.calculatedTaxSummary.totalTax;
+            })
         });
     });
 
@@ -377,6 +384,21 @@ function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineIte
         }
         else return null;
     };
+}
+function TaxService($http, OrderCloud, $exceptionHandler) {
+    return {Calculate: Calculate};
+    function Calculate(OrderID) {
+        var requestObject = {
+            orderID: OrderID,
+            accessToken: OrderCloud.Auth.ReadToken(),
+            buyerID: OrderCloud.BuyerID.Get()
+        };
+        return $http.post('https://Four51TRIAL104401.jitterbit.net/Four51OnPrem/v1/CalculateTax', requestObject).then(function (taxInfo) {
+            return taxInfo.data;
+        }).catch(function (err) {
+            $exceptionHandler(err);
+        });
+    }
 }
 
 function ConfirmationLineItemsListDirective() {
