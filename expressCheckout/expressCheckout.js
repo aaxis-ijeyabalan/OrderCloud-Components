@@ -1,8 +1,6 @@
 angular.module('orderCloud')
     .config(ExpressCheckoutConfig)
     .controller('ExpressCheckoutCtrl', ExpressCheckoutController)
-    .directive('ordercloudUserDefaults', ExpressCheckoutUserDefaultsDirective)
-    .controller('ExpressCheckoutUserDefaultsCtrl', ExpressCheckoutUserDefaultsController)
 
 ;
 
@@ -215,36 +213,4 @@ function ExpressCheckoutController($state, $rootScope, toastr, OrderCloud, Curre
             });
     }
 
-}
-
-function ExpressCheckoutUserDefaultsDirective() {
-    return {
-        templateUrl: 'expressCheckout/templates/expressCheckoutUserDefaults.tpl.html',
-        controller: 'ExpressCheckoutUserDefaultsCtrl',
-        controllerAs: 'expressCheckoutUserDefaults'
-    };
-}
-
-function ExpressCheckoutUserDefaultsController(Underscore, OrderCloud) {
-    var vm = this;
-
-    OrderCloud.Me.Get()
-        .then(function(data){
-            vm.me = data;
-        });
-
-    OrderCloud.Me.ListCreditCards()
-        .then(function(data){
-            vm.creditCards = data;
-        });
-
-    OrderCloud.Me.ListAddresses()
-        .then(function(data){
-            vm.shippingAddresses = Underscore.where(data.Items, {Shipping: true});
-            vm.billingAddresses = Underscore.where(data.Items, {Biling: true});
-        });
-
-    vm.updateDefault = function() {
-        OrderCloud.Me.Update(vm.me)
-    };
 }
