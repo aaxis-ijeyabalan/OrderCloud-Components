@@ -116,6 +116,9 @@ function FacetedProductManageController ( Product, AssignedCategories, OrderClou
         cat.xp.OC_Facets[facetName].Values.push(vm.newFacetValue[facetName].toLowerCase());
         OrderCloud.Categories.Update(cat.ID, cat)
             .then(function() {
+                if (!vm.product.xp.OC_Facets) vm.product.xp.OC_Facets = {};
+                if (!vm.product.xp.OC_Facets[cat.ID]) vm.product.xp.OC_Facets[cat.ID] = {};
+                if(!vm.product.xp.OC_Facets[cat.ID][facetName]) vm.product.xp.OC_Facets[cat.ID][facetName] = [];
                 vm.product.xp.OC_Facets[cat.ID][facetName].push(vm.newFacetValue[facetName].toLowerCase());
                 OrderCloud.Products.Update(vm.product.ID, vm.product)
                     .then(function() {
