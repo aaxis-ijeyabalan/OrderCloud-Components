@@ -31,6 +31,9 @@
             <div ng-if="orderConfirmation.orderPayments[0].Type == 'PurchaseOrder'">
                 Purchase Order
             </div>
+            <div ng-if="orderConfirmation.currentOrder.xp.taxInfo">
+                Total Tax: {{orderConfirmation.currentOrder.xp.taxInfo | currency}}
+            </div>
             <div ng-if="orderConfirmation.PONumber">
                 PO Number : {{orderConfirmation.PONumber}}
             </div>
