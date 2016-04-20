@@ -58,33 +58,10 @@ function OrderHistoryConfig( $stateProvider ) {
 
                     return deferred.promise;
                 },
-                UserGroups: function($q, OrderCloud,UserType){
-                    var dfd = $q.defer();
-                    var groups;
-                    var queue = [];
+                UserGroups: function(OrderCloud, UserType){
                     if(UserType === 'admin') {
-                        OrderCloud.UserGroups.List(null, 1, 100)
-                            .then(function (data) {
-                                groups = data;
-                                if (data.Meta.TotalPages > data.Meta.Page) {
-                                    var page = data.Meta.Page;
-                                    while (page < data.Meta.TotalPages) {
-                                        page++;
-                                        queue.push(OrderCloud.LineItems.List(orderID, page, 100));
-                                    }
-                                }
-                                $q.all(queue)
-                                    .then(function (results) {
-                                        angular.forEach(results, function (result) {
-                                            groups.Items = [].concat(groups.Items, result.Items);
-                                        });
-                                        dfd.resolve(groups.Items);
-                                    });
-                            });
-                    } else{
-                        dfd.resolve();
+                        return OrderCloud.UserGroups.List(null, 1, 100)
                     }
-                    return dfd.promise;
                 }
             }
         })
