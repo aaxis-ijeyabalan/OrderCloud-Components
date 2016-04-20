@@ -125,7 +125,7 @@ function CouponEditController( $exceptionHandler, $state, SelectedCoupon, OrderC
         OrderCloud.Coupons.Update(couponid, vm.coupon)
             .then(function() {
                 $state.go('coupons', {}, {reload:true});
-                toastr.success('Coupon Edited', 'Success');
+                toastr.success('Coupon Updated', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);

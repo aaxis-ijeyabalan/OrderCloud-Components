@@ -89,7 +89,7 @@ function ProductEditController($exceptionHandler, $state, OrderCloud, SelectedPr
         OrderCloud.Products.Update(productid, vm.product)
             .then(function () {
                 $state.go('products', {}, {reload:true});
-                toastr.success('Product Edited', 'Success')
+                toastr.success('Product Updated', 'Success')
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)
