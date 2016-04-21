@@ -32,7 +32,6 @@ function CreditCardsConfig( $stateProvider ) {
             controllerAs: 'creditCardEdit',
             resolve: {
                 SelectedCreditCard: function($stateParams, OrderCloud) {
-                    console.log($stateParams);
                     return OrderCloud.CreditCards.Get($stateParams.creditCardid);
                 }
             }
@@ -43,7 +42,6 @@ function CreditCardsConfig( $stateProvider ) {
             controller:'CreditCardCreateCtrl',
             controllerAs: 'creditCardCreate'
         })
-
         .state( 'creditCards.assign', {
             url: '/:creditCardid/assign',
             templateUrl: 'creditCards/templates/creditCardAssign.tpl.html',
@@ -69,21 +67,16 @@ function CreditCardsConfig( $stateProvider ) {
 function CreditCardsController( CreditCardList ) {
     var vm = this;
     vm.list = CreditCardList;
-
-
 }
 
 function creditCardExpirationDate(){
-
     //return the expirationMonth array and its function
     var expirationDate={
-
         expirationMonth : [{number:1,string:'01'}, {number:2,string:'02'},{number:3,string:'03'},{number:4,string:'04'},{number:5,string:'05'},{number:6,string:'06'},{number:7,string:'07'},{number:8,string:'08'},{number:9,string:'09'},{number:10,string:'10'},{number:11,string:'11'},{number:12,string:'12'}],
         expirationYear : []
     };
 
     function _ccExpireYears(){
-
         var today = new Date();
         today = today.getFullYear();
 
@@ -92,40 +85,29 @@ function creditCardExpirationDate(){
         }
         return expirationDate.expirationYear;
     }
-
-
     _ccExpireYears();
-
     return expirationDate;
 }
 
-
 function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Underscore, SelectedCreditCard, toastr , creditCardExpirationDate) {
-
     var vm = this,
         creditcardid = SelectedCreditCard.ID;
-
     vm.expireMonth = creditCardExpirationDate.expirationMonth;
     vm.expireYear =creditCardExpirationDate.expirationYear;
-
     vm.creditCardName = SelectedCreditCard.ID;
     vm.creditCard = SelectedCreditCard;
 
     if(vm.creditCard.ExpirationDate != null){
         vm.creditCard.ExpirationDate = new Date(vm.creditCard.ExpirationDate);
     }
-
-   vm.creditCard.selectedExpireMonth = Underscore.findWhere(vm.expireMonth,{number: vm.creditCard.ExpirationDate.getMonth() +1});// vm.creditCard.selectedExpireYear = vm.expireYear[vm.expireYear.indexOf(vm.creditCard.ExpirationDate.getFullYear())];
+   vm.creditCard.selectedExpireMonth = Underscore.findWhere(vm.expireMonth,{number: vm.creditCard.ExpirationDate.getMonth() +1});
     vm.creditCard.selectedExpireYear = vm.expireYear[vm.expireYear.indexOf(vm.creditCard.ExpirationDate.getFullYear())];
-
     vm.creditCard.Token = "token";
 
     vm.Submit = function() {
-
         var expiration = new Date();
         expiration.setMonth(vm.creditCard.selectedExpireMonth.number -1);
         expiration.setYear(vm.creditCard.selectedExpireYear);
-
         vm.creditCard.ExpirationDate = expiration;
 
         OrderCloud.CreditCards.Update(creditcardid, vm.creditCard)
@@ -151,16 +133,10 @@ function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Unders
 }
 
 function CreditCardCreateController( $exceptionHandler, $state, OrderCloud, toastr, creditCardExpirationDate) {
-
     var vm = this;
-
     vm.expireMonth = creditCardExpirationDate.expirationMonth;
     vm.expireYear = creditCardExpirationDate.expirationYear;
-
-
     vm.creditCard = {};
-
-
     //TODO: stop faking the token
     vm.creditCard.Token = "token";
 
@@ -168,10 +144,7 @@ function CreditCardCreateController( $exceptionHandler, $state, OrderCloud, toas
         var expiration = new Date();
         expiration.setMonth(vm.selectedExpireMonth.number -1);
         expiration.setYear(vm.selectedExpireYear);
-
         vm.creditCard.ExpirationDate = expiration;
-
-        console.log(expiration);
         OrderCloud.CreditCards.Create(vm.creditCard)
 
             .then(function() {

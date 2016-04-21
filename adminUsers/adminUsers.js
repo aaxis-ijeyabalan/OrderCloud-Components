@@ -64,7 +64,7 @@ function AdminUserEditController( $exceptionHandler, $state, OrderCloud, Selecte
         OrderCloud.AdminUsers.Update(adminuserid, vm.adminUser)
             .then(function() {
                 $state.go('adminUsers', {}, {reload:true});
-                toastr.success('User Edited', 'Success');
+                toastr.success('User Updated', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex)

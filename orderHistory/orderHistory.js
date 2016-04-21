@@ -8,9 +8,6 @@ angular.module( 'orderCloud' )
     .directive( 'ordercloudOrderSearch', ordercloudOrderSearch )
     .controller( 'OrderHistorySearchCtrl', OrderHistorySearchController )
     .filter('paymentmethods', paymentmethods)
-    .factory('RepeatOrderFactory', RepeatOrderFactory)
-    .controller('RepeatOrderCtrl', RepeatOrderController)
-    .directive('ordercloudRepeatOrder', OrderCloudRepeatOrderDirective)
 ;
 
 function OrderHistoryConfig( $stateProvider ) {
@@ -60,6 +57,24 @@ function OrderHistoryConfig( $stateProvider ) {
                     }
 
                     return deferred.promise;
+                },
+                UserGroups: function($q, OrderCloud,UserType){
+                    var dfd = $q.defer();
+                    var groups;
+                    var queue = [];
+                    if(UserType === 'admin') {
+                        OrderCloud.UserGroups.List(null, 1, 100)
+                            .then(function (data) {
+                                groups = [].concat(data.Items);
+                                $q.all(queue)
+                                    .then(function (results) {
+                                        dfd.resolve(groups);
+                                    });
+                            });
+                    } else{
+                        dfd.resolve();
+                    }
+                    return dfd.promise;
                 }
             }
         })
@@ -88,18 +103,49 @@ function OrderHistoryConfig( $stateProvider ) {
     ;
 }
 
-function OrderHistoryController( OrderList, UserType, BuyerCompanies ) {
+function OrderHistoryController( OrderList, UserType, BuyerCompanies, UserGroups ) {
     var vm = this;
+    vm.filters = {};
     vm.list = OrderList;
     vm.userType = UserType;
     vm.buyerCompanies = BuyerCompanies;
+    vm.userGroups = UserGroups;
+    vm.sortReverse =false;
 
-    vm.filters = {};
+    vm.toggleFavorites = function(){
+        vm.filters.favorite ? delete vm.filters.favorite : vm.filters.favorite = true;
+    };
+
+    vm.setSort = function(newSort){
+        vm.sortReverse ? vm.filters.sortType = '-' + newSort : vm.filters.sortType = newSort;
+        vm.sortReverse = !vm.sortReverse;
+    };
+
 }
 
-function OrderHistoryDetailController( SelectedOrder ) {
+function OrderHistoryDetailController( SelectedOrder, toastr, OrderCloud ) {
     var vm = this;
     vm.order = SelectedOrder;
+    vm.addToFavorites = function(){
+        //TODO: Refactor when SDK allows us to patch null
+        if(!SelectedOrder.xp) {
+            SelectedOrder.xp ={}
+        }
+        SelectedOrder.xp.favorite = true;
+
+        OrderCloud.Orders.Update(SelectedOrder.ID, SelectedOrder)
+            .then(function(){
+                toastr.success("Your order has been added to Favorites! You can now easily find your order in 'Order History'", 'Success')
+            })
+            .catch(function(){
+                toastr.error('There was a problem adding this order to your Favorites', 'Error');
+            });
+    };
+    vm.removeFromFavorites = function(){
+        delete SelectedOrder.xp.favorite;
+        OrderCloud.Orders.Patch(SelectedOrder.ID, {"xp": null} );
+        toastr.success("Your order has been removed from Favorites", 'Success')
+    }
 }
 
 function OrderHistoryDetailLineItemController( SelectedLineItem ) {
@@ -111,7 +157,8 @@ function OrderHistoryFactory( $q, Underscore, OrderCloud ) {
     var service = {
         GetOrderDetails: _getOrderDetails,
         GetLineItemDetails: _getLineItemDetails,
-        SearchOrders: _searchOrders
+        SearchOrders: _searchOrders,
+        GetGroupOrders: _getGroupOrders
     };
 
     function _getOrderDetails(orderID) {
@@ -204,12 +251,58 @@ function OrderHistoryFactory( $q, Underscore, OrderCloud ) {
     function _searchOrders(filters, userType) {
         var deferred = $q.defer();
 
-        OrderCloud.Orders.List((userType == 'admin' ? 'incoming' : 'outgoing'), filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, null, {ID: filters.OrderID, Status: filters.Status}, filters.FromCompanyID)
-            .then(function(data) {
-                deferred.resolve(data);
-            });
+        if(!filters.groupOrders){
+            deferred.resolve();
+        }else{
+            if(filters.favorite){
+                OrderCloud.Orders.List((userType == 'admin' ? 'incoming' : 'outgoing'), filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, filters.sortType, { ID: filters.OrderID, Status: filters.Status, FromUserID: filters.groupOrders, xp:{favorite:filters.favorite} }, filters.FromCompanyID)
+                    .then(function(data) {
+                        console.log(filters);
+                        deferred.resolve(data);
+                    });
+            }else{
+                OrderCloud.Orders.List((userType == 'admin' ? 'incoming' : 'outgoing'), filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, filters.sortType, { ID: filters.OrderID, Status: filters.Status, FromUserID: filters.groupOrders}, filters.FromCompanyID)
+                    .then(function(data) {
+                        console.log(filters);
+                        deferred.resolve(data);
+                    });
+            }
+        }
 
         return deferred.promise;
+    }
+
+    function _getGroupOrders(groupList){
+        var userIDs =[];
+        var dfd = $q.defer();
+        GetUserIDs(groupList)
+            .then(function(users){
+               angular.forEach(users, function(user){
+                   userIDs.push(user.UserID)
+               });
+                dfd.resolve(userIDs.join('|'));
+            });
+        return dfd.promise;
+
+        function GetUserIDs(groups){
+            var dfd = $q.defer();
+            var queue = [];
+            var userList = [];
+            angular.forEach(groups, function(group){
+                queue.push(OrderCloud.UserGroups.ListUserAssignments(group));
+            });
+
+            $q.all(queue)
+                .then(function(users){
+                    angular.forEach(users, function(user){
+                       userList = userList.concat(user.Items);
+                    });
+
+                    dfd.resolve(userList);
+                });
+
+           return dfd.promise;
+        }
     }
 
     return service;
@@ -221,7 +314,8 @@ function ordercloudOrderSearch() {
             controlleras: '=',
             filters: '=',
             usertype: '@',
-            buyercompanies: '='
+            buyercompanies: '=',
+            usergroups:'='
         },
         restrict: 'E',
         templateUrl: 'orderHistory/templates/orderHistory.search.tpl.html',
@@ -233,6 +327,8 @@ function ordercloudOrderSearch() {
 
 function OrderHistorySearchController( $scope, $timeout, OrderHistoryFactory ) {
     var vm = this;
+    $scope.userGroupList = [];
+
     $scope.statuses = [
         {Name: 'Unsubmitted', Value: 'Unsubmitted'},
         {Name: 'Open', Value: 'Open'},
@@ -241,6 +337,22 @@ function OrderHistorySearchController( $scope, $timeout, OrderHistoryFactory ) {
         {Name: 'Declined', Value: 'Declined'},
         {Name: 'Cancelled', Value: 'Cancelled'}
     ];
+
+    $scope.removeGroup = function(index){
+        $scope.userGroupList.splice(index,1);
+        OrderHistoryFactory.GetGroupOrders($scope.userGroupList)
+            .then(function(orderIDFilter){
+                $scope.filters.groupOrders = orderIDFilter;
+            })
+    };
+
+    $scope.onSelect = function(item,model,label){
+        $scope.userGroupList.push(label);
+        OrderHistoryFactory.GetGroupOrders($scope.userGroupList)
+            .then(function(orderIDFilter){
+                $scope.filters.groupOrders = orderIDFilter;
+            })
+    };
 
     var searching;
     $scope.$watch('filters', function(n,o) {
@@ -274,80 +386,4 @@ function paymentmethods() {
         if (!map[method]) return method;
         return map[method];
     }
-}
-
-function RepeatOrderFactory($q, OrderCloud, LineItemHelpers, CurrentOrder) {
-
-    return {
-        Reorder: Reorder
-    };
-
-    function Reorder(orderID) {
-
-        var deferred = $q.defer();
-        var lineItems;
-        var order;
-
-        OrderCloud.Orders.Create({})
-            .then(function (data) {
-                order = data;
-                CurrentOrder.Set(order.ID);
-                listLineItems();
-
-            });
-
-        function listLineItems() {
-            LineItemHelpers.ListAll(orderID)
-                .then(function (li) {
-                    lineItems = li;
-                    createLineItems();
-                });
-        }
-
-        function createLineItems() {
-            var queue = [];
-
-            angular.forEach(lineItems, function (lineItem) {
-                delete lineItem.OrderID;
-                delete lineItem.ID;
-                delete lineItem.QuantityShipped;
-                queue.push(OrderCloud.LineItems.Create(order.ID, lineItem));
-            });
-
-            $q.all(queue).then(function () {
-                deferred.resolve();
-            });
-
-        }
-
-        return deferred.promise;
-
-
-    }
-
-
-}
-
-function RepeatOrderController($state, RepeatOrderFactory) {
-
-    var vm = this;
-
-    vm.reorder = function(orderID){
-        RepeatOrderFactory.Reorder(orderID).then(function(){
-            $state.go('cart', {}, {reload:true});
-        });
-    }
-}
-
-function OrderCloudRepeatOrderDirective() {
-    return {
-        restrict: 'E',
-        templateUrl: 'orderHistory/templates/repeatOrder.tpl.html',
-        controller: 'RepeatOrderCtrl',
-        controllerAs: 'repeat',
-        scope: {
-            orderid: '='
-        }
-    }
-
 }
