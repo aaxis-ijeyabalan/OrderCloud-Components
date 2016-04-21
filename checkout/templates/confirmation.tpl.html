@@ -31,14 +31,14 @@
             <div ng-if="orderConfirmation.orderPayments[0].Type == 'PurchaseOrder'">
                 Purchase Order
             </div>
+            <!--<div>-->
+                <!--Subtotal: {{orderConfirmation.currentOrder.Subtotal | currency}}-->
+            <!--</div>-->
+            <!--<div ng-if="orderConfirmation.currentOrder.xp.taxInfo">-->
+                <!--Tax: {{orderConfirmation.currentOrder.xp.taxInfo | currency}}-->
+            <!--</div>-->
             <div>
-                Subtotal: {{orderConfirmation.currentOrder.Subtotal | currency}}
-            </div>
-            <div ng-if="orderConfirmation.currentOrder.xp.taxInfo">
-                Tax: {{orderConfirmation.currentOrder.xp.taxInfo | currency}}
-            </div>
-            <div ng-if="orderConfirmation.currentOrder.xp.taxInfo">
-                Grand Total: {{orderConfirmation.currentOrder.xp.taxInfo + orderConfirmation.currentOrder.Subtotal | currency}}
+                Total: {{orderConfirmation.currentOrder.Subtotal | currency}}
             </div>
         </div>
 

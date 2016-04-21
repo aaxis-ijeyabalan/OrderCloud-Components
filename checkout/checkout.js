@@ -8,7 +8,7 @@ angular.module('orderCloud')
     .directive('ordercloudConfirmationLineitems', ConfirmationLineItemsListDirective)
     .controller('CheckoutLineItemsCtrl', CheckoutLineItemsController)
     .controller('ConfirmationLineItemsCtrl', ConfirmationLineItemsController)
-    .factory('TaxService', TaxService)
+    //.factory('TaxService', TaxService)
     //toggle isMultipleAddressShipping if you do not wish to allow line items to ship to multiple addresses
     .constant('isMultipleAddressShipping', true);
 ;
@@ -207,7 +207,7 @@ function CheckoutController($state, $rootScope, toastr, Order, OrderCloud, Shipp
 
 }
 
-function OrderConfirmationController(Order, CurrentOrder, OrderCloud, $state, isMultipleAddressShipping, $exceptionHandler, OrderPayments, toastr) {
+function OrderConfirmationController($rootScope, Order, CurrentOrder, OrderCloud, $state, isMultipleAddressShipping, $exceptionHandler, OrderPayments, toastr) {
     var vm = this;
 
     vm.currentOrder = Order;
@@ -238,6 +238,7 @@ function OrderConfirmationController(Order, CurrentOrder, OrderCloud, $state, is
                 CurrentOrder.Remove()
                     .then(function(){
                         toastr.success('Your order has been submitted', 'Success');
+                        $rootScope.$broadcast('OC:RemoveOrder');
                         $state.go('orderReview', {orderid: vm.currentOrder.ID})
                     })
             })
@@ -316,68 +317,68 @@ function CheckoutLineItemsListDirective() {
     };
 }
 
-function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineItemHelpers, Underscore, CheckoutService, TaxService, CurrentOrder, toastr) {
+function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineItemHelpers, Underscore, CheckoutService, CurrentOrder, toastr) {
     var vm = this;
     vm.lineItems = {};
     vm.UpdateQuantity = LineItemHelpers.UpdateQuantity;
     vm.UpdateShipping = LineItemHelpers.UpdateShipping;
     vm.setCustomShipping = LineItemHelpers.CustomShipping;
     vm.RemoveItem = LineItemHelpers.RemoveItem;
-    vm.calculatingTax = false;
+    //vm.calculatingTax = false;
 
     $scope.$on('LineItemAddressUpdated', function(event, LineItemID, address) {
-        vm.calculatingTax = true;
+        //vm.calculatingTax = true;
         Underscore.where(vm.lineItems.Items, {ID: LineItemID})[0].ShippingAddress = address;
-        TaxService.Calculate($scope.order.ID)
-            .then(function (taxData) {
-                if(taxData.calculatedTaxSummary){
-                    vm.taxInformation = taxData.calculatedTaxSummary.totalTax;
-                    CurrentOrder.Get()
-                        .then(function(order){
-                            order.xp = {taxInfo: vm.taxInformation};
-                            OrderCloud.Orders.Update(order.ID, order);
-                        })
-                }
-                else{
-                    toastr.error('The provided address is not valid', 'Error');
-                    vm.calculatingTax = false;
-                    vm.taxInformation = 0;
-                    CurrentOrder.Get()
-                        .then(function(order){
-                            order.xp = {taxInfo: vm.taxInformation};
-                            OrderCloud.Orders.Update(order.ID, order);
-                        })
-                }
-
-        })
+        //TaxService.Calculate($scope.order.ID)
+        //    .then(function (taxData) {
+        //        if(taxData.calculatedTaxSummary){
+        //            vm.taxInformation = taxData.calculatedTaxSummary.totalTax;
+        //            CurrentOrder.Get()
+        //                .then(function(order){
+        //                    order.xp = {taxInfo: vm.taxInformation};
+        //                    OrderCloud.Orders.Update(order.ID, order);
+        //                })
+        //        }
+        //        else{
+        //            toastr.error('The provided address is not valid', 'Error');
+        //            vm.calculatingTax = false;
+        //            vm.taxInformation = 0;
+        //            CurrentOrder.Get()
+        //                .then(function(order){
+        //                    order.xp = {taxInfo: vm.taxInformation};
+        //                    OrderCloud.Orders.Update(order.ID, order);
+        //                })
+        //        }
+        //
+        //})
     });
 
     $scope.$on('OrderShippingAddressChanged', function(event, order, address) {
-        vm.calculatingTax = true;
+        //vm.calculatingTax = true;
         angular.forEach(vm.lineItems.Items, function(li) {
             li.ShippingAddressID = address.ID;
             li.ShippingAddress = address;
-            TaxService.Calculate($scope.order.ID)
-                .then(function (taxData) {
-                    if(taxData.calculatedTaxSummary){
-                        vm.taxInformation = taxData.calculatedTaxSummary.totalTax;
-                        CurrentOrder.Get()
-                            .then(function(order){
-                                order.xp = {taxInfo: vm.taxInformation};
-                                OrderCloud.Orders.Update(order.ID, order);
-                            })
-                    }
-                    else{
-                        toastr.error('The provided address is not valid', 'Error');
-                        vm.calculatingTax = false;
-                        vm.taxInformation = 0;
-                        CurrentOrder.Get()
-                            .then(function(order){
-                                order.xp = {taxInfo: vm.taxInformation};
-                                OrderCloud.Orders.Update(order.ID, order);
-                            })
-                    }
-                })
+        //    TaxService.Calculate($scope.order.ID)
+        //        .then(function (taxData) {
+        //            if(taxData.calculatedTaxSummary){
+        //                vm.taxInformation = taxData.calculatedTaxSummary.totalTax;
+        //                CurrentOrder.Get()
+        //                    .then(function(order){
+        //                        order.xp = {taxInfo: vm.taxInformation};
+        //                        OrderCloud.Orders.Update(order.ID, order);
+        //                    })
+        //            }
+        //            else{
+        //                toastr.error('The provided address is not valid', 'Error');
+        //                vm.calculatingTax = false;
+        //                vm.taxInformation = 0;
+        //                CurrentOrder.Get()
+        //                    .then(function(order){
+        //                        order.xp = {taxInfo: vm.taxInformation};
+        //                        OrderCloud.Orders.Update(order.ID, order);
+        //                    })
+        //            }
+        //        })
         });
     });
 
@@ -411,21 +412,21 @@ function CheckoutLineItemsController($rootScope, $scope, $q, OrderCloud, LineIte
         else return null;
     };
 }
-function TaxService($http, OrderCloud, $exceptionHandler) {
-    return {Calculate: Calculate};
-    function Calculate(OrderID) {
-        var requestObject = {
-            orderID: OrderID,
-            accessToken: OrderCloud.Auth.ReadToken(),
-            buyerID: OrderCloud.BuyerID.Get()
-        };
-        return $http.post('https://Four51TRIAL104401.jitterbit.net/Four51OnPrem/v1/CalculateTax', requestObject).then(function (taxInfo) {
-            return taxInfo.data;
-        }).catch(function (err) {
-            $exceptionHandler(err);
-        });
-    }
-}
+//function TaxService($http, OrderCloud, $exceptionHandler) {
+//    return {Calculate: Calculate};
+//    function Calculate(OrderID) {
+//        var requestObject = {
+//            orderID: OrderID,
+//            accessToken: OrderCloud.Auth.ReadToken(),
+//            buyerID: OrderCloud.BuyerID.Get()
+//        };
+//        return $http.post('https://Four51TRIAL104401.jitterbit.net/Four51OnPrem/v1/CalculateTax', requestObject).then(function (taxInfo) {
+//            return taxInfo.data;
+//        }).catch(function (err) {
+//            $exceptionHandler(err);
+//        });
+//    }
+//}
 
 function ConfirmationLineItemsListDirective() {
     return {
