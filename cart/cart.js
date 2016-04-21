@@ -155,7 +155,7 @@ function MiniCartController($q, $state, $rootScope, OrderCloud, LineItemHelpers,
     });
 
 
-    $rootScope.$on('OC:OrderDeleted', function(){ //broadcast is in build > src > app > common > line items
+    $rootScope.$on('OC:RemoveOrder', function(){ //broadcast is in build > src > app > common > line items
         vm.Order = null;
         vm.LineItems = {};
     });

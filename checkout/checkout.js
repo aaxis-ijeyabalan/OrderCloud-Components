@@ -207,7 +207,7 @@ function CheckoutController($state, $rootScope, toastr, Order, OrderCloud, Shipp
 
 }
 
-function OrderConfirmationController(Order, CurrentOrder, OrderCloud, $state, isMultipleAddressShipping, $exceptionHandler, OrderPayments, toastr) {
+function OrderConfirmationController($rootScope, Order, CurrentOrder, OrderCloud, $state, isMultipleAddressShipping, $exceptionHandler, OrderPayments, toastr) {
     var vm = this;
 
     vm.currentOrder = Order;
@@ -238,6 +238,7 @@ function OrderConfirmationController(Order, CurrentOrder, OrderCloud, $state, is
                 CurrentOrder.Remove()
                     .then(function(){
                         toastr.success('Your order has been submitted', 'Success');
+                        $rootScope.$broadcast('OC:RemoveOrder');
                         $state.go('orderReview', {orderid: vm.currentOrder.ID})
                     })
             })

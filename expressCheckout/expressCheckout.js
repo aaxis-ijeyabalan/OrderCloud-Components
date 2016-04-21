@@ -203,7 +203,7 @@ function ExpressCheckoutController($state, $rootScope, toastr, OrderCloud, Curre
             .then(function() {
                 CurrentOrder.Remove()
                     .then(function(){
-                        $rootScope.$broadcast('OC:OrderDeleted');
+                        $rootScope.$broadcast('OC:RemoveOrder');
                         toastr.success('Your order has been submitted', 'Success');
                         $state.go('orderReview', {orderid: vm.currentOrder.ID})
                     })
