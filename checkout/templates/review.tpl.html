@@ -41,14 +41,14 @@
                 <div ng-if="orderReview.submittedOrder.PaymentMethod == 'PurchaseOrder'">
                     <!--need info for each payment type-->
                 </div>
+                <!--<div>-->
+                    <!--Subtotal: {{orderReview.submittedOrder.Subtotal | currency}}-->
+                <!--</div>-->
+                <!--<div ng-if="orderReview.submittedOrder.xp.taxInfo">-->
+                    <!--Tax : {{orderReview.submittedOrder.xp.taxInfo | currency}}-->
+                <!--</div>-->
                 <div>
-                    Subtotal: {{orderReview.submittedOrder.Subtotal | currency}}
-                </div>
-                <div ng-if="orderReview.submittedOrder.xp.taxInfo">
-                    Tax : {{orderReview.submittedOrder.xp.taxInfo | currency}}
-                </div>
-                <div ng-if="orderReview.submittedOrder.xp.taxInfo">
-                    Grand Total: {{orderReview.submittedOrder.Subtotal + orderReview.submittedOrder.xp.taxInfo | currency}}
+                    Total: {{orderReview.submittedOrder.Subtotal| currency}}
                 </div>
             </div>
         </div>
