@@ -105,6 +105,7 @@ function PriceScheduleCreateController($scope, $exceptionHandler, $state, OrderC
     vm.priceSchedule.RestrictedQuantity = false;
     vm.priceSchedule.PriceBreaks = new Array();
     vm.priceSchedule.MinQuantity =1;
+    vm.priceSchedule.OrderType = 'Standard';
 
     vm.addPriceBreak = function() {
         PriceBreak.addPriceBreak(vm.priceSchedule, vm.price, vm.quantity);
