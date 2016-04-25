@@ -17,26 +17,44 @@ function ExpressCheckoutConfig($stateProvider) {
                 CurrentUser: function(OrderCloud) {
                     return OrderCloud.Me.Get();
                 },
-                Order: function($q, $state, toastr, OrderCloud, CurrentOrder, CurrentUser) {
+                Order: function($q, $state, toastr, Underscore, OrderCloud, CurrentOrder, CurrentUser) {
                     var dfd = $q.defer();
                     CurrentOrder.Get()
                         .then(function(order) {
                             var patchObj = {};
-                            if (!order.ShippingAddressID && CurrentUser.xp && CurrentUser.xp.defaultShippingAddressID)
-                                patchObj.ShippingAddressID = CurrentUser.xp.defaultShippingAddressID;
-                            if (!order.BillingAddressID && CurrentUser.xp && CurrentUser.xp.defaultBillingAddressID)
-                                patchObj.BillingAddressID = CurrentUser.xp.defaultBillingAddressID;
-                            if (!patchObj.ShippingAddressID && !patchObj.BillingAddressID)
-                                dfd.resolve(order);
-                            else {
-                                OrderCloud.Orders.Patch(order.ID, patchObj)
-                                    .then(function() {
-                                        OrderCloud.Orders.Get(order.ID)
-                                            .then(function(newOrder) {
-                                                dfd.resolve(newOrder);
-                                            });
-                                    });
+                            var queue = []
+                            if (!order.ShippingAddressID && CurrentUser.xp && CurrentUser.xp.defaultShippingAddressID) {
+                                queue.push(OrderCloud.Me.ListAddresses()
+                                    .then(function(data){
+                                        if(Underscore.where(data.Items, {ID: CurrentUser.xp.defaultShippingAddressID, Shipping: true}).length) {
+                                            patchObj.ShippingAddressID = CurrentUser.xp.defaultShippingAddressID;
+                                        }
+                                    }));
                             }
+
+                            if (!order.BillingAddressID && CurrentUser.xp && CurrentUser.xp.defaultBillingAddressID) {
+                                queue.push(OrderCloud.Me.ListAddresses()
+                                    .then(function(data){
+                                        if(Underscore.where(data.Items, {ID: CurrentUser.xp.defaultBillingAddressID, Biling: true}).length) {
+                                            patchObj.BillingAddressID = CurrentUser.xp.defaultBillingAddressID;
+                                        }
+                                    }));
+                            }
+                            $q.all(queue)
+                                .then(function(){
+                                    if (!patchObj.ShippingAddressID && !patchObj.BillingAddressID) {
+                                        dfd.resolve(order);
+                                    }
+                                    else  {
+                                        OrderCloud.Orders.Patch(order.ID, patchObj)
+                                            .then(function() {
+                                                OrderCloud.Orders.Get(order.ID)
+                                                    .then(function(newOrder) {
+                                                        dfd.resolve(newOrder);
+                                                    });
+                                            });
+                                    }
+                                });
                         })
                         .catch(function() {
                             toastr.error('You do not have an active open order.', 'Error');
@@ -47,22 +65,36 @@ function ExpressCheckoutConfig($stateProvider) {
                         });
                     return dfd.promise;
                 },
-                OrderPayments: function($q, OrderCloud, CurrentUser, CurrentOrder) {
+                OrderPayments: function($q, $state, toastr, Underscore, OrderCloud, CurrentUser, CurrentOrder) {
                   var dfd = $q.defer();
                     CurrentOrder.Get()
                         .then(function(order){
                            OrderCloud.Payments.List(order.ID)
                                .then(function(payments){
                                    if(!payments.Items.length && CurrentUser.xp && CurrentUser.xp.defaultCreditCardID){
-                                       OrderCloud.Payments.Create(order.ID, {Type: 'CreditCard', CreditCardID: CurrentUser.xp.defaultCreditCardID})
-                                           .then(function(){
-                                              OrderCloud.Payments.List(order.ID)
-                                                  .then(function(newPayments){
-                                                      dfd.resolve(newPayments);
-                                                  });
-                                           });
+                                       OrderCloud.Me.ListCreditCards()
+                                           .then(function(data){
+                                               if(Underscore.where(data.Items, {ID: CurrentUser.xp.defaultCreditCardID}).length) {
+                                                   OrderCloud.Payments.Create(order.ID, {Type: 'CreditCard', CreditCardID: CurrentUser.xp.defaultCreditCardID})
+                                                       .then(function(){
+                                                           OrderCloud.Payments.List(order.ID)
+                                                               .then(function(newPayments){
+                                                                   dfd.resolve(newPayments);
+                                                               });
+                                                       });
+                                               }
+                                               else {
+                                                   OrderCloud.Payments.Create(order.ID, {})
+                                                       .then(function(){
+                                                           OrderCloud.Payments.List(order.ID)
+                                                               .then(function(newPayments){
+                                                                   dfd.resolve(newPayments);
+                                                               })
+                                                       })
+                                               }
+                                           })
                                    }
-                                   else if (!payments.Items.length) {
+                                   else {
                                        OrderCloud.Payments.Create(order.ID, {})
                                            .then(function(){
                                                OrderCloud.Payments.List(order.ID)
@@ -71,10 +103,14 @@ function ExpressCheckoutConfig($stateProvider) {
                                                    })
                                            })
                                    }
-                                   else {
-                                       dfd.resolve(payments)
-                                   }
                                });
+                        })
+                        .catch(function(){
+                            toastr.error('You do not have an active open order.', 'Error');
+                            if ($state.current.name.indexOf('expressCheckout') > -1) {
+                                $state.go('home');
+                            }
+                            dfd.reject();
                         });
                     return dfd.promise;
                 },
