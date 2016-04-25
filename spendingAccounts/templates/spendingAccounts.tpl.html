@@ -5,8 +5,8 @@
         </h3>
         <ordercloud-search servicename="SpendingAccounts" controlleras="spendingAccounts"></ordercloud-search>
         <div class="well well-lg text-center" ng-if="!spendingAccounts.list.Items.length">
-            <b ng-if="!spendingAccounts.searching()">No spending accounts match your criteria .</b>
-            <b ng-if="spendingAccounts.searching()"><i class="fa fa-search"></i> No users match your search.</b>
+            <b ng-if="!spendingAccounts.searching()">The selected buyer does not have any Spending Accounts</b>
+            <b ng-if="spendingAccounts.searching()"><i class="fa fa-search"></i>No Spending Accounts match your search</b>
         </div>
         <section class="table-fixed-header" ng-if="spendingAccounts.list.Items.length">
             <div class="table-header-bg"></div>
