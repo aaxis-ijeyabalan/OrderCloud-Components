@@ -94,7 +94,7 @@ function ExpressCheckoutConfig($stateProvider) {
                                                }
                                            })
                                    }
-                                   else {
+                                   else if (!payments.Items.length) {
                                        OrderCloud.Payments.Create(order.ID, {})
                                            .then(function(){
                                                OrderCloud.Payments.List(order.ID)
@@ -102,6 +102,9 @@ function ExpressCheckoutConfig($stateProvider) {
                                                        dfd.resolve(newPayments);
                                                    })
                                            })
+                                   }
+                                   else {
+                                       dfd.resolve(payments);
                                    }
                                });
                         })
