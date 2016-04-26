@@ -202,6 +202,13 @@ function ExpressCheckoutController($state, $rootScope, toastr, OrderCloud, Curre
             });
     };
 
+    vm.savePONumber = function(order){
+        !vm.orderPayments[0].xp ? vm.orderPayments[0].xp = {} : vm.orderPayments[0].xp;
+        if(vm.orderPayments[0].Type === "PurchaseOrder"){
+            OrderCloud.Payments.Update(order.ID, vm.orderPayments[0].ID, vm.orderPayments[0]);
+        }
+    };
+
     function checkPaymentType() {
         if(vm.orderPayments[0].Type == 'CreditCard' && vm.orderPayments[0].CreditCardID) {
             OrderCloud.CreditCards.Get(vm.orderPayments[0].CreditCardID)
