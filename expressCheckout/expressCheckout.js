@@ -154,7 +154,7 @@ function ExpressCheckoutConfig($stateProvider) {
                     OrderCloud.Orders.Get($stateParams.orderid)
                         .then(function(order){
                             if(order.Status == 'Unsubmitted') {
-                                $state.go('checkout.shipping')
+                                $state.go('expressCheckout')
                                     .then(function() {
                                         toastr.error('You cannot review an Unsubmitted Order', 'Error');
                                         dfd.reject();
@@ -227,22 +227,13 @@ function ExpressCheckoutController($state, $rootScope, toastr, OrderCloud, Curre
     checkPaymentType();
 
     vm.setPaymentMethod = function(order) {
-        if (!vm.orderPayments.length) {
-            // When Order Payment Method is changed it will clear out all saved payment information
-            OrderCloud.Payments.Create(order.ID, {Type: vm.orderPayments[0].Type})
-                .then(function() {
-                    $state.reload();
-                });
-        }
-        else {
-            OrderCloud.Payments.Delete(order.ID, vm.orderPayments[0].ID)
-                .then(function(){
-                    OrderCloud.Payments.Create(order.ID, {Type: vm.orderPayments[0].Type})
-                        .then(function() {
-                            $state.reload();
-                        });
-                })
-        }
+        OrderCloud.Payments.Delete(order.ID, vm.orderPayments[0].ID)
+            .then(function(){
+                OrderCloud.Payments.Create(order.ID, {Type: vm.orderPayments[0].Type})
+                    .then(function() {
+                        $state.reload();
+                    });
+            })
     };
 
     vm.setCreditCard = function(order) {
@@ -275,7 +266,7 @@ function ExpressCheckoutController($state, $rootScope, toastr, OrderCloud, Curre
             .then(function() {
                 CurrentOrder.Remove()
                     .then(function(){
-                        $state.go('orderReview', {orderid: vm.currentOrder.ID});
+                        $state.go('expressOrderReview', {orderid: vm.currentOrder.ID});
                         $rootScope.$broadcast('OC:RemoveOrder');
                         toastr.success('Your order has been submitted', 'Success');
                     })
@@ -295,8 +286,6 @@ function ExpressOrderReviewController(SubmittedOrder, isMultipleAddressShipping,
     OrderCloud.Payments.List(vm.submittedOrder.ID)
         .then(function(data){
             vm.orderPayments = data.Items;
-        })
-        .then(function(){
             angular.forEach(vm.orderPayments, function(payment, index){
                 if(payment.Type === 'CreditCard' && payment.CreditCardID) {
                     OrderCloud.CreditCards.Get(payment.CreditCardID)
@@ -353,7 +342,7 @@ function ExpressOrderReviewController(SubmittedOrder, isMultipleAddressShipping,
         }
         SubmittedOrder.xp.favorite = true;
 
-        OrderCloud.Orders.Update(SubmittedOrder.ID, SubmittedOrder)
+        OrderCloud.Orders.Patch(SubmittedOrder.ID, {xp: SubmittedOrder.xp.favorite} )
             .then(function(){
                 toastr.success("Your order has been added to Favorites! You can now easily find your order in 'Order History'", 'Success')
             })
@@ -363,7 +352,7 @@ function ExpressOrderReviewController(SubmittedOrder, isMultipleAddressShipping,
     };
     vm.removeFromFavorites = function(){
         delete SubmittedOrder.xp.favorite;
-        OrderCloud.Orders.Patch(SubmittedOrder.ID, {"xp": null} );
+        OrderCloud.Orders.Patch(SubmittedOrder.ID, {xp: SubmittedOrder.xp} );
         toastr.success("Your order has been removed from Favorites", 'Success')
     }
 
