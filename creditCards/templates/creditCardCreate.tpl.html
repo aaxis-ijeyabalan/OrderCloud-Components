@@ -30,10 +30,10 @@
             <div class="col-sm-3 form-group">
                 <label>Expiration Date</label>
                 <div class="row">
-                    <div class="col-md-4">
-                        <select class="form-control"  ng-model="creditCardCreate.selectedExpireMonth" ng-options="cc.string for cc in creditCardCreate.expireMonth"></select>
+                    <div class="col-sm-6 col-md-4 exp-mo">
+                        <select class="form-control" ng-model="creditCardCreate.selectedExpireMonth" ng-options="cc.string for cc in creditCardCreate.expireMonth"></select>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-sm-6 col-md-8 exp-yr">
                         <select class="form-control" ng-model="creditCardCreate.selectedExpireYear" ng-options="cc for cc in creditCardCreate.expireYear"></select>
                     </div>
                 </div>
