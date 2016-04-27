@@ -56,6 +56,9 @@ function CheckoutPaymentController($state, Underscore, AvailableCreditCards, Ava
     vm.canAddPayment = CanAddPayment;
     vm.patchPaymentAmount = PatchPaymentAmount;
     vm.setAmountMax = SetAmountMax;
+    vm.savePONumber = SavePONumber;
+
+
 
     function CreatePayment(order) {
         OrderCloud.Payments.Create(order.ID, {Type: vm.currentOrderPayments[0].Type})
@@ -169,6 +172,13 @@ function CheckoutPaymentController($state, Underscore, AvailableCreditCards, Ava
         });
 
     }
+
+    function SavePONumber(index,order){
+        !vm.currentOrderPayments[index].xp ? vm.currentOrderPayments[index].xp = {} : vm.currentOrderPayments[index].xp;
+        if(vm.currentOrderPayments[index].Type === "PurchaseOrder"){
+            OrderCloud.Payments.Update(order.ID, vm.currentOrderPayments[index].ID, vm.currentOrderPayments[index]);
+        }
+    };
 }
 
 function OCCheckoutPayment() {

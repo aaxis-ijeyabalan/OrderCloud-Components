@@ -78,14 +78,12 @@ function SpendingAccountsConfig( $stateProvider ) {
         });
 }
 
-function SpendingAccountsController( SpendingAccountList, OrderCloud ) {
+function SpendingAccountsController( SpendingAccountList, TrackSearch ) {
     var vm = this;
     vm.list = SpendingAccountList;
-    vm.searchfunction = Search;
-
-    function Search(searchTerm) {
-        return OrderCloud.SpendingAccounts.List(searchTerm, null, null, null, null, {'RedemptionCode': '!*'});
-    }
+    vm.searching = function() {
+        return TrackSearch.GetTerm() ? true : false;
+    };
 }
 
 function SpendingAccountEditController( $exceptionHandler, $state, OrderCloud, SelectedSpendingAccount, toastr ) {

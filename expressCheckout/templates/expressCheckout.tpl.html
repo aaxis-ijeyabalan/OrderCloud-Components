@@ -42,6 +42,13 @@
                         <label for="spending_account">Spending Account</label>
                         <select id="spending_account" ng-required="expressCheckout.orderPayments[0].Type == 'SpendingAccount'" ng-change="expressCheckout.setSpendingAccount(expressCheckout.currentOrder)" class="form-control" ng-model="expressCheckout.orderPayments[0].SpendingAccountID" ng-options="spendingAccount.ID as spendingAccount.Name for spendingAccount in expressCheckout.spendingAccounts.Items"></select>
                     </div>
+                    <div ng-if="expressCheckout.orderPayments[0].Type == 'PurchaseOrder'">
+                        <label for="poNumber">PO Number</label>
+                        <div class="input-group">
+                            <input id="poNumber" class="form-control" type="text" ng-model="expressCheckout.orderPayments[0].xp.PONumber"/>
+                            <span class="input-group-btn"><button type="button" class="btn btn-success" ng-click="expressCheckout.savePONumber(expressCheckout.currentOrder)"><i class="fa fa-plus"></i> </button></span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
