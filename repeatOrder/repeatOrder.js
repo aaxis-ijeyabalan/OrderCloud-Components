@@ -10,43 +10,66 @@ function RepeatOrderController($state, toastr, OrderCloud, RepeatOrderFactory) {
         var includeBilling = (includebilling === 'true');
         var includeShipping = (includeshipping === 'true');
         var userType = JSON.parse(atob(OrderCloud.Auth.ReadToken().split('.')[1])).usrtype;
-        var CredentialsObject = {ClientID: clientid, UserID: userid, Claims: claims || null};
-        if(userType === 'admin' && (!orderID || !clientid || !userid)){
-            toastr.error('This directive is not configured correctly. orderID, clientID and userID are required attributes');
+        if(userType === 'admin' && (!orderID || !clientid)){
+            toastr.error('This directive is not configured correctly. orderID and clientID are required attributes', 'Error');
         }
         else if(userType == 'buyer' && (!orderID)) {
             toastr.error('This directive is not configured correctly. orderID is a required attribute', 'Error')
         }
         else{
-            RepeatOrderFactory.CheckLineItemsValid(userType, orderID, CredentialsObject)
-                .then(function(validLI){
-                    RepeatOrderFactory.GetCurrentOrderLineItems(validLI)
-                        .then(function(totalLI){
-                            RepeatOrderFactory.Reorder(orderID, includeBilling, includeShipping, CredentialsObject, totalLI, userType)
-                                .then(function(data){
-                                    if(userType == 'buyer'){
-                                        (includeBilling || includeShipping) ? $state.go('checkout', {}, {reload:true}) : $state.go('cart', {}, {reload:true});
-                                    }
-                                    else{
-                                        toastr.success('Your reorder was successfully placed! The new order number is: ' + data[0] );
-                                        $state.go('orderHistory', {}, {reload:true});
-                                    }
-                                });
+            RepeatOrderFactory.SetAccessToken(userType, userid, clientid, claims)
+                .then(function(){
+                    RepeatOrderFactory.CheckLineItemsValid(userType, orderID)
+                        .then(function(validLI){
+                            RepeatOrderFactory.GetCurrentOrderLineItems(validLI)
+                                .then(function(totalLI){
+                                    RepeatOrderFactory.Reorder(orderID, includeBilling, includeShipping, totalLI, userType)
+                                        .then(function(data){
+                                            if(userType == 'buyer'){
+                                                (includeBilling || includeShipping) ? $state.go('checkout', {}, {reload:true}) : $state.go('cart', {}, {reload:true});
+                                            }
+                                            else{
+                                                toastr.success('Your reorder was successfully placed! The new order number is: ' + data[0] );
+                                                $state.go('orderHistory', {}, {reload:true});
+                                            }
+                                        });
+                                })
                         })
                 })
         }
     }
 }
 
-function RepeatOrderFactory($q, $resource, $localForage, toastr, OrderCloud, appname, LineItemHelpers, CurrentOrder){
+function RepeatOrderFactory($q, $localForage, toastr, OrderCloud, appname, LineItemHelpers, CurrentOrder){
     return {
+        SetAccessToken: SetAccessToken,
         CheckLineItemsValid: CheckLineItemsValid,
         GetCurrentOrderLineItems: GetCurrentOrderLineItems,
         Reorder: Reorder
     };
-    function CheckLineItemsValid(userType, originalOrderID, CredentialsObject){
+
+    function SetAccessToken(usertype, userid, clientid, claims){
+        var dfd = $q.defer();
+        var tokenRequest = {clientID:clientid, Claims:[claims || "FullAccess"]};
+        if(usertype === 'admin'){
+            OrderCloud.Users.GetAccessToken(userid, tokenRequest)
+                .then(function(token){
+                    OrderCloud.Auth.SetImpersonationToken(token.access_token);
+                    dfd.resolve();
+                })
+                .catch(function(){
+                    toastr.error('There was an issue retrieving the access token of the user you are trying to impersonate. Please make sure the userid and clientid are correct')
+                    dfd.reject();
+                })
+        }else{
+            dfd.resolve();
+        }
+        return dfd.promise;
+    }
+
+    function CheckLineItemsValid(userType, originalOrderID){
         var dfd =$q.defer();
-        ListAllProducts(CredentialsObject)
+        ListAllProducts()
             .then(function (productList) {
                 var productIds = [];
                 angular.forEach(productList, function (product) {
@@ -74,17 +97,17 @@ function RepeatOrderFactory($q, $resource, $localForage, toastr, OrderCloud, app
             });
         return dfd.promise;
 
-        function ListAllProducts(CredentialsObject){
+        function ListAllProducts(){
             var dfd = $q.defer();
             var queue=[];
-            ( (userType === 'buyer') ? OrderCloud.Me.ListProducts(null,null,1,100) : ListProductsAsAdmin(CredentialsObject) )
+            ( (userType === 'buyer') ? OrderCloud.Me.ListProducts(null,null,1,100) : OrderCloud.As().Me.ListProducts(null,null,1,100) )
                 .then(function(data){
                     var productList = data;
                     if (data.Meta.TotalPages > data.Meta.Page) {
                         var page = data.Meta.Page;
                         while (page < data.Meta.TotalPages) {
                             page += 1;
-                            (userType === 'buyer') ? queue.push(OrderCloud.Me.ListProducts(null, null, page, 100)) : queue.push(ListProductsAsAdmin(CredentialsObject))
+                            (userType === 'buyer') ? queue.push(OrderCloud.Me.ListProducts(null, null, page, 100)) : queue.push(OrderCloud.As().Me.ListProducts(null,null,1,100))
                         }
                     }
                     $q.all(queue)
@@ -100,39 +123,6 @@ function RepeatOrderFactory($q, $resource, $localForage, toastr, OrderCloud, app
                 });
             return dfd.promise;
         }
-    }
-
-    //TODO: Replace this with impersonation when it is fixed & remove $resource as dependency
-    function ListProductsAsAdmin(CredentialsObject) {
-        return OrderCloud.Users.GetAccessToken(CredentialsObject.UserID, {
-                ClientID: CredentialsObject.ClientID,
-                Claims: CredentialsObject.Claims ? CredentialsObject.Claims : ["FullAccess"]
-            })
-            .then(function (_token) {
-                var dfd = $q.defer();
-                $resource('https://api.ordercloud.io/v1/me/products',
-                    {
-                        'search':null,
-                        'categoryID': null,
-                        'page': 1,
-                        'pageSize': 100
-                    },
-                    {
-                        callApi: {
-                            method: 'GET',
-                            headers: {
-                                'Authorization': 'Bearer ' + _token.access_token
-                            }
-                        }
-                    }).callApi(null).$promise
-                    .then(function(data) {
-                        dfd.resolve(data);
-                    })
-                    .catch(function(ex){
-                        dfd.reject(ex);
-                    });
-                return dfd.promise;
-            });
     }
 
     function GetCurrentOrderLineItems(validLI){
@@ -159,12 +149,12 @@ function RepeatOrderFactory($q, $resource, $localForage, toastr, OrderCloud, app
         return dfd.promise;
     }
 
-    function Reorder(originalOrderID, includeBilling, includeShipping, CredentialsObject, totalLI, userType) {
+    function Reorder(originalOrderID, includeBilling, includeShipping, totalLI, userType) {
         var dfd = $q.defer();
         OrderCloud.Orders.Get(originalOrderID)
             .then(function (data) {
                 var billingAddress = data.BillingAddress;
-                (userType === 'buyer' ? OrderCloud.Orders.Create({}) : CreateOrderAsAdmin() )
+                (userType === 'buyer' ? OrderCloud.Orders.Create({}) : OrderCloud.As().Orders.Create({}) )
                     .then(function (data) {
                         var orderID = data.ID;
                         userType === 'buyer' ? CurrentOrder.Set(orderID) : angular.noop();
@@ -189,31 +179,6 @@ function RepeatOrderFactory($q, $resource, $localForage, toastr, OrderCloud, app
                     })
             });
         return dfd.promise;
-
-        //TODO: replace this with impersonation when it is fixed & remove $resource as dependency
-        function CreateOrderAsAdmin(){
-            return OrderCloud.Users.GetAccessToken(CredentialsObject.UserID, {ClientID: CredentialsObject.ClientID, Claims: CredentialsObject.Claims ? CredentialsObject.Claims : ["FullAccess"]})
-                .then(function(_token) {
-                    var dfd = $q.defer();
-                    $resource("https://api.ordercloud.io/v1/buyers/:buyerID/orders",
-                        {'buyerID': OrderCloud.BuyerID.Get()},
-                        {
-                            callApi:{
-                                method: 'POST',
-                                headers: {
-                                    'Authorization': 'Bearer ' + _token.access_token
-                                }
-                            }
-                        }).callApi({}).$promise
-                        .then(function(data){
-                            dfd.resolve(data);
-                        })
-                        .catch(function(ex) {
-                            dfd.reject(ex);
-                        });
-                    return dfd.promise;
-                });
-        }
     }
 }
 
