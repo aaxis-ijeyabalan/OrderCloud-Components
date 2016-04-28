@@ -27,14 +27,16 @@
                     <option value="Discover">Discover</option>
                 </select>
             </div>
-            <div class="form-group col-sm-1">
+            <div class="form-group col-sm-3">
             <label >Expiration Date</label>
-            <select class="form-control" ng-model="creditCardEdit.creditCard.selectedExpireMonth" ng-options="cc.string for cc in creditCardEdit.expireMonth"></select>
-            </div>
-            <div class="form-group col-sm-2">
-                <label></label>
-                <select class="form-control" ng-model="creditCardEdit.creditCard.selectedExpireYear" ng-options="cc for cc in creditCardEdit.expireYear"></select>
-            </div>
+                <div class="row">
+                    <div class="col-sm-6 col-md-4 exp-mo">
+                        <select class="form-control" ng-model="creditCardEdit.creditCard.selectedExpireMonth" ng-options="cc.string for cc in creditCardEdit.expireMonth"></select>
+                    </div>
+                    <div class="col-sm-6 col-md-8 exp-yr">
+                        <select class="form-control" ng-model="creditCardEdit.creditCard.selectedExpireYear" ng-options="cc for cc in creditCardEdit.expireYear"></select>
+                    </div>
+                </div>
         </div>
         </div>
         <div class="form-group">
