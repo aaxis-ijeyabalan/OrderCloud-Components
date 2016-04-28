@@ -1,11 +1,13 @@
-describe('Component: Catalog Search', function(){
+fdescribe('Component: Catalog Search', function(){
     var scope,
         q,
         oc,
         searchTerm,
-        product,
-        category;
-
+        mockProductList,
+        mockCategoryList,
+        mockProductData,
+        mockCategoryData
+        ;
     beforeEach(module('orderCloud'));
     beforeEach(module('orderCloud.sdk'));
     beforeEach(inject(function($q,$rootScope,OrderCloud){
@@ -13,35 +15,94 @@ describe('Component: Catalog Search', function(){
         scope = $rootScope.$new();
         oc = OrderCloud;
         searchTerm = 'burger';
-        category = {
-            Meta: 'fakemetadata',
-            Items: [{
-                ID: "TestCategory123456789",
-                Name: "TestCategoryTest",
-                Description: "Test Category Description",
-                ListOrder: 1,
-                Active: true
-            }]
-        };
-        product = {
-            Meta: 'fakemetadata',
-            Items: [{
-                ID: "TestProduct123456789",
-                Name: "TestProductTest",
-                Description: "Test Product Description",
-                QuantityMultiplier: 1,
-                ShipWeight: 1,
-                Active: true,
-                Type: "Static",
-                InventoryEnabled: false,
-                InventoryNotificationPoint: null,
-                VariantLevelInventory: false,
-                AllowOrderExceedInventory: false,
-                DisplayInventory: false
-            }]
-        };
+        mockProductList = {
+                "Meta": {
+                    "Page": 1,
+                    "PageSize": 20,
+                    "TotalCount": 3,
+                    "TotalPages": 1,
+                    "ItemRange": [
+                       1,
+                       3
+                    ]
+                },
+                "Items": [
+                    {
+                        "ReplenishmentPriceSchedule": null,
+                        "StandardPriceSchedule": null,
+                        "ID": "TestProductID123456789",
+                        "Name": "TestProduct1234",
+                        "Description": "Burgers",
+                        "QuantityMultiplier": 1,
+                        "ShipWeight": null,
+                        "Active": true,
+                        "Type": "Static",
+                        "InventoryEnabled": false,
+                        "InventoryNotificationPoint": null,
+                        "VariantLevelInventory": false,
+                        "xp": null,
+                        "AllowOrderExceedInventory": false,
+                        "DisplayInventory": false
+                    }]};
+        mockCategoryList = {
+                "Meta": {
+                    "Page": 1,
+                    "PageSize": 20,
+                    "TotalCount": 1,
+                    "TotalPages": 1,
+                    "ItemRange": [1, 1]
+                }, "Items": [
+                    {
+                        "ID": "TestCategoryID123456789",
+                        "Name": "TestCategory1234",
+                        "Description": "TestDescription",
+                        "xp": null,
+                        "ListOrder": 0,
+                        "Active": true,
+                        "ParentID": null,
+                        "ChildCount": 4
+                    }
+                ]
+            };
+        mockProductData =
+            {
+                "ReplenishmentPriceSchedule": null,
+                "StandardPriceSchedule": null,
+                "ID": "TestProductID123456789",
+                "Name": "TestProduct1234",
+                "Description": "The Heart Attack",
+                "QuantityMultiplier": 1,
+                "ShipWeight": null,
+                "Active": true,
+                "Type": "Static",
+                "InventoryEnabled": false,
+                "InventoryNotificationPoint": null,
+                "VariantLevelInventory": false,
+                "xp": null,
+                "AllowOrderExceedInventory": false,
+                "DisplayInventory": false,
+                "NameType": 'Product'
+            };
+        mockCategoryData =
+            {
+                "ReplenishmentPriceSchedule": null,
+                "StandardPriceSchedule": null,
+                "ID": "TestCategoryID123456789",
+                "Name": "TestCategory1234",
+                "Description": "Burgers",
+                "QuantityMultiplier": 1,
+                "ShipWeight": null,
+                "Active": true,
+                "Type": "Static",
+                "InventoryEnabled": false,
+                "InventoryNotificationPoint": null,
+                "VariantLevelInventory": false,
+                "xp": null,
+                "AllowOrderExceedInventory": false,
+                "DisplayInventory": false,
+                "NameType": 'Category'
+            }
     }));
-
     describe('State: catalogSearchResults', function(){
         var state;
         beforeEach(inject(function($state){
@@ -58,7 +119,6 @@ describe('Component: Catalog Search', function(){
             expect(oc.Me.ListProducts).toHaveBeenCalled();
         }))
     });
-
     describe('Controller: CatalogSearchController', function(){
         var catalogSearchCtrl;
         beforeEach(inject(function($state,$controller) {
@@ -67,26 +127,15 @@ describe('Component: Catalog Search', function(){
             });
             spyOn($state, 'go');
         }));
-
         describe('popUpResults', function(){
             beforeEach(function(){
-                term = searchTerm;
-                catalogSearchCtrl.productData = product;
-                catalogSearchCtrl.categoryData = category;
-                spyOn(oc.Me, 'ListProducts').and.callFake(function(){
-                    var defer = q.defer();
-                    defer.resolve(product);
-                    return defer.promise;
-                });
-                spyOn(oc.Me, 'ListCategories').and.callFake(function(){
-                    var defer = q.defer();
-                    defer.resolve(category);
-                    return defer.promise;
-                });
-                catalogSearchCtrl.popupResults(term);
-            });
 
-            afterEach(function(){
+                term = searchTerm;
+                catalogSearchCtrl.productData = mockProductData;
+                catalogSearchCtrl.categoryData = mockCategoryData;
+                spyOn(oc.Me, 'ListProducts').and.returnValue(mockProductList);
+                spyOn(oc.Me, 'ListCategories').and.returnValue(mockCategoryList);
+                catalogSearchCtrl.popupResults(term);
                 scope.$digest();
             });
             it('should call the Me.ListProducts method', function(){
@@ -97,15 +146,13 @@ describe('Component: Catalog Search', function(){
             });
         });
         describe('onSelect', function(){
-            categoryItem = {attribute1:'fakedata', NameType:'Category', ID: 1};
-            productItem = {attribute1:'fakedata', NameType:'Product', ID: 2};
             it('should go to catalog.category state if $item.NameType is "Category"',inject(function($state){
-                catalogSearchCtrl.onSelect(categoryItem);
-                expect($state.go).toHaveBeenCalledWith('catalog.category', {categoryid:1});
+                catalogSearchCtrl.onSelect(mockCategoryData);
+                expect($state.go).toHaveBeenCalledWith('catalog.category', {categoryid:"TestCategoryID123456789"});
             }));
             it('should go to catalog.product state if $item.NameType is "Product"', inject(function($state){
-                catalogSearchCtrl.onSelect(productItem);
-                expect($state.go).toHaveBeenCalledWith('catalog.product', {productid:2})
+                catalogSearchCtrl.onSelect(mockProductData);
+                expect($state.go).toHaveBeenCalledWith('catalog.product', {productid:"TestProductID123456789"})
             }));
         });
         describe('onHardEnter', function(){
@@ -114,5 +161,17 @@ describe('Component: Catalog Search', function(){
                 expect($state.go).toHaveBeenCalledWith('catalogSearchResults', {searchterm: searchTerm}, {reload:true})
             }))
         });
-    })
+    });
+    describe('Directive: ordercloudCatalogSearch', function() {
+        var element;
+        beforeEach(inject(function($compile) {
+            element = $compile('<ordercloud-catalog-search maxprods="8" maxcats="8"></ordercloud-catalog-search>')(scope);
+            scope.$digest();
+        }));
+        it('should initialize the isolate scope', function() {
+            expect(element.isolateScope().maxprods).toBe('8');
+            expect(element.isolateScope().maxcats).toBe('8');
+        });
+    });
 });
+
