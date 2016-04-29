@@ -1,4 +1,4 @@
-fdescribe('Component: Catalog Search', function(){
+describe('Component: Catalog Search', function(){
     var scope,
         q,
         oc,
@@ -102,7 +102,7 @@ fdescribe('Component: Catalog Search', function(){
             }))
         });
     });
-    xdescribe('Directive: ordercloudCatalogSearch', function() {
+    describe('Directive: ordercloudCatalogSearch', function() {
         var element;
         beforeEach(inject(function($compile) {
             element = $compile('<ordercloud-catalog-search maxprods="8" maxcats="8"></ordercloud-catalog-search>')(scope);
