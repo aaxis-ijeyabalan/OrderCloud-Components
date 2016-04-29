@@ -4,34 +4,28 @@ angular.module('orderCloud')
     .directive('ordercloudRepeatOrder', OrderCloudRepeatOrderDirective)
 ;
 
-function RepeatOrderController($state, toastr, OrderCloud, RepeatOrderFactory) {
+function RepeatOrderController(toastr, OrderCloud, RepeatOrderFactory) {
     var vm = this;
     vm.reorder = function(orderID, includebilling, includeshipping, clientid, userid, claims){
-        var includeBilling = (includebilling === 'true');
-        var includeShipping = (includeshipping === 'true');
-        var userType = JSON.parse(atob(OrderCloud.Auth.ReadToken().split('.')[1])).usrtype;
-        if(userType === 'admin' && (!orderID || !clientid)){
+        vm.includeBilling = (includebilling === 'true');
+        vm.includeShipping = (includeshipping === 'true');
+        vm.userType = JSON.parse(atob(OrderCloud.Auth.ReadToken().split('.')[1])).usrtype;
+        if(vm.userType === 'admin' && (!orderID || !clientid)){
             toastr.error('This directive is not configured correctly. orderID and clientID are required attributes', 'Error');
         }
-        else if(userType == 'buyer' && (!orderID)) {
+        else if(vm.userType == 'buyer' && (!orderID)) {
             toastr.error('This directive is not configured correctly. orderID is a required attribute', 'Error')
         }
         else{
-            RepeatOrderFactory.SetAccessToken(userType, userid, clientid, claims)
+            RepeatOrderFactory.SetAccessToken(vm.userType, userid, clientid, claims)
                 .then(function(){
-                    RepeatOrderFactory.CheckLineItemsValid(userType, orderID)
+                    RepeatOrderFactory.CheckLineItemsValid(vm.userType, orderID)
                         .then(function(validLI){
                             RepeatOrderFactory.GetCurrentOrderLineItems(validLI)
                                 .then(function(totalLI){
-                                    RepeatOrderFactory.Reorder(orderID, includeBilling, includeShipping, totalLI, userType)
+                                    RepeatOrderFactory.Reorder(orderID, vm.includeBilling, vm.includeShipping, totalLI, vm.userType)
                                         .then(function(data){
-                                            if(userType == 'buyer'){
-                                                (includeBilling || includeShipping) ? $state.go('checkout', {}, {reload:true}) : $state.go('cart', {}, {reload:true});
-                                            }
-                                            else{
-                                                toastr.success('Your reorder was successfully placed! The new order number is: ' + data[0] );
-                                                $state.go('orderHistory', {}, {reload:true});
-                                            }
+                                            RepeatOrderFactory.SuccessConfirmation(data, vm.userType, vm.includeBilling, vm.includeShipping);
                                         });
                                 })
                         })
@@ -40,12 +34,13 @@ function RepeatOrderController($state, toastr, OrderCloud, RepeatOrderFactory) {
     }
 }
 
-function RepeatOrderFactory($q, $localForage, toastr, OrderCloud, appname, LineItemHelpers, CurrentOrder){
+function RepeatOrderFactory($q, $state, $localForage, toastr, OrderCloud, appname, LineItemHelpers, CurrentOrder){
     return {
         SetAccessToken: SetAccessToken,
         CheckLineItemsValid: CheckLineItemsValid,
         GetCurrentOrderLineItems: GetCurrentOrderLineItems,
-        Reorder: Reorder
+        Reorder: Reorder,
+        SuccessConfirmation: SuccessConfirmation
     };
 
     function SetAccessToken(usertype, userid, clientid, claims){
@@ -179,6 +174,16 @@ function RepeatOrderFactory($q, $localForage, toastr, OrderCloud, appname, LineI
                     })
             });
         return dfd.promise;
+    }
+
+    function SuccessConfirmation(order, usertype, includeBilling, includeShipping){
+        if(usertype == 'buyer'){
+            (includeBilling || includeShipping) ? $state.go('checkout', {}, {reload:true}) : $state.go('cart', {}, {reload:true});
+        }
+        else{
+            toastr.success('Your reorder was successfully placed! The new order number is: ' + order[0] );
+            $state.go('orderHistory', {}, {reload:true});
+        }
     }
 }
 
