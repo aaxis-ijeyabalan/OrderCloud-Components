@@ -48,8 +48,8 @@ describe('Component: Catalog Search', function(){
         var state;
         beforeEach(inject(function($state){
             state = $state.get('catalogSearchResults', {}, {reload:true});
-            spyOn(oc.Me, 'ListCategories').and.returnValue(null);
-            spyOn(oc.Me, 'ListProducts').and.returnValue(null);
+            spyOn(oc.Me, 'ListCategories');
+            spyOn(oc.Me, 'ListProducts');
         }));
         it('should resolve CategoryList', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.CategoryList);
