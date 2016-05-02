@@ -1,30 +1,30 @@
 angular.module('orderCloud')
-    .directive( 'ordercloudQuickView', ordercloudQuickViewDirective)
-    .controller( 'QuickViewCtrl', QuickViewController)
-    .controller ('QuickViewModalCtrl', QuickViewModalController)
+    .directive( 'ordercloudProductQuickView', ordercloudProductQuickViewDirective)
+    .controller( 'ProductQuickViewCtrl', ProductQuickViewController)
+    .controller ('ProductQuickViewModalCtrl', ProductQuickViewModalController)
 ;
 
-function ordercloudQuickViewDirective(){
+function ordercloudProductQuickViewDirective(){
     return{
         scope:{
             product: '='
         },
         restrict:'E',
         templateUrl:'catalog/productQuickView/templates/catalogSearch.quickview.tpl.html',
-        controller:'QuickViewCtrl',
-        controllerAs:'quickView'
+        controller:'ProductQuickViewCtrl',
+        controllerAs:'productQuickView'
     }
 }
 
-function QuickViewController ($uibModal){
+function ProductQuickViewController ($uibModal){
     var vm = this;
     vm.open = function (product){
         $uibModal.open({
             animation:true,
             size:'lg',
             templateUrl: 'catalog/productQuickView/templates/catalogSearch.quickviewModal.tpl.html',
-            controller: 'QuickViewModalCtrl',
-            controllerAs: 'quickViewModal',
+            controller: 'ProductQuickViewModalCtrl',
+            controllerAs: 'productQuickViewModal',
 
             resolve: {
                 SelectedProduct: function (OrderCloud) {
@@ -57,7 +57,7 @@ function QuickViewController ($uibModal){
     };
 }
 
-function QuickViewModalController($uibModalInstance, SelectedProduct, SpecList, AddToOrder){
+function ProductQuickViewModalController($uibModalInstance, SelectedProduct, SpecList, AddToOrder){
     var vm = this;
     vm.selectedProduct = SelectedProduct;
     vm.selectedProduct.item = {Specs: SpecList};
