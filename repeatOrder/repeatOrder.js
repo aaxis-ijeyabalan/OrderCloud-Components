@@ -198,7 +198,7 @@ function OrderCloudRepeatOrderDirective() {
             includebilling: '@',
             includeshipping: '@',
             clientid: '@',
-            userid: '@',
+            fromuserid: '@',
             claims: '@'
         }
     }
