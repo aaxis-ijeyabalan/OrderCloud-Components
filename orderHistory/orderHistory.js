@@ -251,19 +251,17 @@ function OrderHistoryFactory( $q, Underscore, OrderCloud ) {
     function _searchOrders(filters, userType) {
         var deferred = $q.defer();
 
-        if(!filters.groupOrders){
+        if(!filters.groupOrders && filters.searchingGroupOrders){
             deferred.resolve();
         }else{
             if(filters.favorite){
                 OrderCloud.Orders.List((userType == 'admin' ? 'incoming' : 'outgoing'), filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, filters.sortType, { ID: filters.OrderID, Status: filters.Status, FromUserID: filters.groupOrders, xp:{favorite:filters.favorite} }, filters.FromCompanyID)
                     .then(function(data) {
-                        console.log(filters);
                         deferred.resolve(data);
                     });
             }else{
                 OrderCloud.Orders.List((userType == 'admin' ? 'incoming' : 'outgoing'), filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, filters.sortType, { ID: filters.OrderID, Status: filters.Status, FromUserID: filters.groupOrders}, filters.FromCompanyID)
                     .then(function(data) {
-                        console.log(filters);
                         deferred.resolve(data);
                     });
             }
@@ -328,6 +326,7 @@ function ordercloudOrderSearch() {
 function OrderHistorySearchController( $scope, $timeout, OrderHistoryFactory ) {
     var vm = this;
     $scope.userGroupList = [];
+    $scope.filters.searchingGroupOrders = false;
 
     $scope.statuses = [
         {Name: 'Unsubmitted', Value: 'Unsubmitted'},
@@ -343,6 +342,7 @@ function OrderHistorySearchController( $scope, $timeout, OrderHistoryFactory ) {
         OrderHistoryFactory.GetGroupOrders($scope.userGroupList)
             .then(function(orderIDFilter){
                 $scope.filters.groupOrders = orderIDFilter;
+                $scope.userGroupList.length ? $scope.filters.searchingGroupOrders = true : $scope.filters.searchingGroupOrders = false;
             })
     };
 
@@ -351,6 +351,7 @@ function OrderHistorySearchController( $scope, $timeout, OrderHistoryFactory ) {
         OrderHistoryFactory.GetGroupOrders($scope.userGroupList)
             .then(function(orderIDFilter){
                 $scope.filters.groupOrders = orderIDFilter;
+                $scope.filters.searchingGroupOrders = true;
             })
     };
 
