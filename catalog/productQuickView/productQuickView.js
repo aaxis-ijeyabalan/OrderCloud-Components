@@ -1,30 +1,30 @@
 angular.module('orderCloud')
-    .directive( 'ordercloudProductQuickView', ordercloudProductQuickViewDirective)
-    .controller( 'ProductQuickViewCtrl', ProductQuickViewController)
-    .controller ('ProductQuickViewModalCtrl', ProductQuickViewModalController)
+    .directive( 'ordercloudQuickView', ordercloudQuickViewDirective)
+    .controller( 'QuickViewCtrl', QuickViewController)
+    .controller ('QuickViewModalCtrl', QuickViewModalController)
 ;
 
-function ordercloudProductQuickViewDirective(){
+function ordercloudQuickViewDirective(){
     return{
         scope:{
             product: '='
         },
         restrict:'E',
         templateUrl:'catalog/productQuickView/templates/catalogSearch.quickview.tpl.html',
-        controller:'ProductQuickViewCtrl',
-        controllerAs:'productQuickView'
+        controller:'QuickViewCtrl',
+        controllerAs:'quickView'
     }
 }
 
-function ProductQuickViewController ($uibModal){
+function QuickViewController ($uibModal){
     var vm = this;
     vm.open = function (product){
         $uibModal.open({
             animation:true,
             size:'lg',
             templateUrl: 'catalog/productQuickView/templates/catalogSearch.quickviewModal.tpl.html',
-            controller: 'ProductQuickViewModalCtrl',
-            controllerAs: 'productQuickViewModal',
+            controller: 'QuickViewModalCtrl',
+            controllerAs: 'quickViewModal',
 
             resolve: {
                 SelectedProduct: function (OrderCloud) {
@@ -57,7 +57,7 @@ function ProductQuickViewController ($uibModal){
     };
 }
 
-function ProductQuickViewModalController($uibModalInstance, SelectedProduct, SpecList, AddToOrder){
+function QuickViewModalController($uibModalInstance, SelectedProduct, SpecList, AddToOrder){
     var vm = this;
     vm.selectedProduct = SelectedProduct;
     vm.selectedProduct.item = {Specs: SpecList};
@@ -69,8 +69,7 @@ function ProductQuickViewModalController($uibModalInstance, SelectedProduct, Spe
     vm.addToCart = function(product) {
         product.Quantity = product.item.Quantity;
         product.Specs = product.item.Specs;
-        AddToOrder.Add(product)
-            .then(function(){
+        AddToOrder.Add(product).then(function(){
             $uibModalInstance.close()
         });
     };
