@@ -342,7 +342,7 @@ function OrderHistorySearchController( $scope, $timeout, OrderHistoryFactory ) {
         OrderHistoryFactory.GetGroupOrders($scope.userGroupList)
             .then(function(orderIDFilter){
                 $scope.filters.groupOrders = orderIDFilter;
-                $scope.userGroupList.length ? $scope.filters.searchingGroupOrders = true : $scope.filters.searchingGroupOrders = false;
+                $scope.filters.searchingGroupOrders = $scope.userGroupList.length;
             })
     };
 
