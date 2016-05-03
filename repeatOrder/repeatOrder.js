@@ -53,7 +53,8 @@ function RepeatOrderFactory($q, $state, $localForage, toastr, OrderCloud, appnam
                     dfd.resolve();
                 })
                 .catch(function(){
-                    toastr.error('There was an issue retrieving the access token of the user you are trying to impersonate. Please make sure the userid and clientid are correct')
+                    toastr.error('There was an issue retrieving the access token of the user you are ' +
+                        'trying to impersonate. Please make sure the userid and clientid are correct');
                     dfd.reject();
                 })
         }else{
@@ -78,14 +79,18 @@ function RepeatOrderFactory($q, $state, $localForage, toastr, OrderCloud, appnam
                             (productIds.indexOf(li.ProductID) > -1) ? validLI.push(li) : invalidLI.push(li.ProductID);
                         });
                         if (validLI.length && invalidLI.length) {
-                            toastr.warning("There are " + invalidLI.length + " product(s) in your cart that either no longer exist or you do not have permission to reorder, the order will process only with the products you are able to order. The ID's of the products that have been excluded are: " + invalidLI.toString());
+                            toastr.warning("There are " + invalidLI.length + " product(s) in your cart that either " +
+                                "no longer exist or you do not have permission to reorder, the order will process " +
+                                "only with the products you are able to order. The ID's of the products that have " +
+                                "been excluded are: " + invalidLI.toString());
                             dfd.resolve(validLI)
                         }
                         if (validLI.length && !invalidLI.length) {
                             dfd.resolve(validLI)
                         }
                         if (!validLI.length) {
-                            toastr.error('The product(s) from the order you are trying to place either no longer exist or you do not have permission to reorder', 'Error');
+                            toastr.error('The product(s) from the order you are trying to place either no longer exist ' +
+                                'or you do not have permission to reorder', 'Error');
                             dfd.reject();
                         }
                     })
@@ -178,11 +183,11 @@ function RepeatOrderFactory($q, $state, $localForage, toastr, OrderCloud, appnam
 
     function SuccessConfirmation(order, usertype, includeBilling, includeShipping){
         if(usertype == 'buyer'){
-            (includeBilling || includeShipping) ? $state.go('checkout', {}, {reload:true}) : $state.go('cart', {}, {reload:true});
+            (includeBilling || includeShipping) ? $state.go('checkout') : $state.go('cart');
         }
         else{
             toastr.success('Your reorder was successfully placed! The new order number is: ' + order[0] );
-            $state.go('orderHistory', {}, {reload:true});
+            $state.go('orderHistory');
         }
     }
 }
