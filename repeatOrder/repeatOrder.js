@@ -24,8 +24,8 @@ function RepeatOrderController(toastr, OrderCloud, RepeatOrderFactory) {
                             RepeatOrderFactory.GetCurrentOrderLineItems(validLI)
                                 .then(function(totalLI){
                                     RepeatOrderFactory.Reorder(orderID, vm.includeBilling, vm.includeShipping, totalLI, vm.userType)
-                                        .then(function(data){
-                                            RepeatOrderFactory.SuccessConfirmation(data, vm.userType, vm.includeBilling, vm.includeShipping);
+                                        .then(function(order){
+                                            RepeatOrderFactory.SuccessConfirmation(order, vm.userType, vm.includeBilling, vm.includeShipping);
                                         });
                                 })
                         })
@@ -155,12 +155,11 @@ function RepeatOrderFactory($q, $state, $localForage, toastr, OrderCloud, appnam
             .then(function (data) {
                 var billingAddress = data.BillingAddress;
                 (userType === 'buyer' ? OrderCloud.Orders.Create({}) : OrderCloud.As().Orders.Create({}) )
-                    .then(function (data) {
-                        var orderID = data.ID;
+                    .then(function (order) {
+                        var orderID = order.ID;
                         userType === 'buyer' ? CurrentOrder.Set(orderID) : angular.noop();
                         includeBilling ? OrderCloud.Orders.SetBillingAddress(orderID, billingAddress) : angular.noop();
                         var queue = [];
-                        queue.push(orderID);
                         angular.forEach(totalLI, function (lineItem) {
                             delete lineItem.OrderID;
                             delete lineItem.ID;
@@ -171,7 +170,7 @@ function RepeatOrderFactory($q, $state, $localForage, toastr, OrderCloud, appnam
                         });
                         $q.all(queue)
                             .then(function (data) {
-                                dfd.resolve(data);
+                                dfd.resolve(order);
                             })
                             .catch(function(err){
                                 dfd.reject(err);
@@ -186,7 +185,7 @@ function RepeatOrderFactory($q, $state, $localForage, toastr, OrderCloud, appnam
             (includeBilling || includeShipping) ? $state.go('checkout') : $state.go('cart');
         }
         else{
-            toastr.success('Your reorder was successfully placed! The new order number is: ' + order[0] );
+            toastr.success('Your reorder was successfully placed! The new order number is: ' + order.ID );
             $state.go('orderHistory');
         }
     }
