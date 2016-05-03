@@ -349,7 +349,10 @@ fdescribe('Component: Repeat Order', function(){
                 spyOn(state, 'go');
                 spyOn(toaster, 'success');
             }));
-            mockSuccessOrder = ["orderID12345","lineitem1","lineitem2","lineitem3"];
+            mockSuccessOrder = {
+                ID:'orderID12345',
+                orderdata:'mockData'
+            };
             it('should take me to checkout if buyer with includeBilling or includeShipping set to true', function(){
                 repeatFactory.SuccessConfirmation(mockSuccessOrder, 'buyer', true, true);
                 expect(state.go).toHaveBeenCalledWith('checkout');
