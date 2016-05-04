@@ -16,7 +16,7 @@ the userid and clientid.
 Below is a quick summary of attributes for this directive:
 * orderid: ID of the order being reordered (required for both admin and buyer perspective)
 * userid: ID of the user under which the order is being placed by (required only for admin perspective)
-* clientid: the client id of the app that the order is being placed by (required only for the admin perspective)
+* clientid: the client id of the buyer app that the order is being placed by (required only for the admin perspective)
 * includeshipping: will include any shipping details from the previous order if available (optional)
 * includebilling: will include any billing details from the previous order if available (optional)
 * claims: The claims available to the user placing the reorder. Will default to FullAccess if none are specified. (optional)
