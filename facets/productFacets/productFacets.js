@@ -66,28 +66,31 @@ function FacetedProductManageController ( Product, AssignedCategories, OrderClou
     if(vm.product.xp == null) vm.product.xp = { OC_Facets: {}};
     if (vm.product.xp && !vm.product.xp.OC_Facets) vm.product.xp.OC_Facets = {};
 
-    vm.setSelected = function(scope) {
-        if(vm.product.xp.OC_Facets[scope.$parent.cat.ID] && vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName]) {
-            scope.selected = vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName].indexOf(scope.facetValue) > -1;
+    vm.setSelected = function(cat, facetName, facetValue) {
+        var selected = false;
+        if(vm.product.xp.OC_Facets[cat.ID] && vm.product.xp.OC_Facets[cat.ID][facetName]) {
+            selected = vm.product.xp.OC_Facets[cat.ID][facetName].indexOf(facetValue) > -1
         }
+        return selected;
     };
 
-    vm.toggleSelection = function(scope) {
-        scope.selected = !scope.selected;
-        if(scope.selected && vm.product.xp.OC_Facets[scope.$parent.cat.ID]) {
-            if (vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName]) {
-                vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName].push(scope.facetValue);
-            } else if (!vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName]) {
-                vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName] = [];
-                vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName].push(scope.facetValue);
+    vm.toggleSelection = function(cat, facetName, facetValue) {
+        var selected = vm.setSelected(cat, facetName, facetValue);
+        selected = !selected;
+        if(selected && vm.product.xp.OC_Facets[cat.ID]) {
+            if (vm.product.xp.OC_Facets[cat.ID][facetName]) {
+                vm.product.xp.OC_Facets[cat.ID][facetName].push(facetValue);
+            } else if (!vm.product.xp.OC_Facets[cat.ID][facetName]) {
+                vm.product.xp.OC_Facets[cat.ID][facetName] = [];
+                vm.product.xp.OC_Facets[cat.ID][facetName].push(facetValue);
             }
-        } else if (scope.selected && !vm.product.xp.OC_Facets[scope.$parent.cat.ID]) {
-            vm.product.xp.OC_Facets[scope.$parent.cat.ID] = {};
-            vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName] = [];
-            vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName].push(scope.facetValue);
+        } else if (selected && !vm.product.xp.OC_Facets[cat.ID]) {
+            vm.product.xp.OC_Facets[cat.ID] = {};
+            vm.product.xp.OC_Facets[cat.ID][facetName] = [];
+            vm.product.xp.OC_Facets[cat.ID][facetName].push(facetValue);
         }
         else {
-            vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName].splice(vm.product.xp.OC_Facets[scope.$parent.cat.ID][scope.$parent.facetName].indexOf(scope.facetValue), 1);
+            vm.product.xp.OC_Facets[cat.ID][facetName].splice(vm.product.xp.OC_Facets[cat.ID][facetName].indexOf(facetValue), 1);
         }
     };
 

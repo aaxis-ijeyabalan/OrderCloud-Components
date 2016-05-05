@@ -108,21 +108,24 @@ describe('Component: Product Facets', function() {
             facetedProductManageCtrl.newFacetValue = 'purple';
 
         }));
-        //TODO: figure out how to use the isolated scope here to get tests to run
-        xdescribe('setSelected', function(){
-           beforeEach(function(){
-               facetedProductManageCtrl.setSelected(scope);
-           });
-            it('should',function(){
-               expect(scope.selected).toEqual(product.xp.OC_Facets.TestCategory123456789.color[0]);
+        describe('setSelected', function(){
+            it('should return true', function(){
+               expect(facetedProductManageCtrl.setSelected(assignedCategory, 'color', 'blue')).toEqual(true);
+            });
+            it('should return false', function(){
+                expect(facetedProductManageCtrl.setSelected(assignedCategory, 'color', 'red')).toEqual(false);
             });
         });
-        xdescribe('toggleSelection', function(){
+        describe('toggleSelection', function(){
             beforeEach(function(){
-                facetedProductManageCtrl.toggleSelection(scope);
+                facetedProductManageCtrl.toggleSelection(assignedCategory, 'color', 'blue');
+                facetedProductManageCtrl.toggleSelection(assignedCategory, 'color', 'red');
             });
-            it('should',function(){
-                expect(scope.selected).toEqual(product.xp.OC_Facets.TestCategory123456789.color[0]);
+            it('should set selected to false',function(){
+                expect(facetedProductManageCtrl.setSelected(assignedCategory, 'color', 'blue')).toEqual(false);
+            });
+            it('should set selected to true',function(){
+                expect(facetedProductManageCtrl.setSelected(assignedCategory, 'color', 'red')).toEqual(true);
             });
         });
         describe('requiredFacet', function(){
@@ -149,19 +152,16 @@ describe('Component: Product Facets', function() {
                expect($state.go).toHaveBeenCalledWith($state.current, {}, {reload: true});
             }));
         });
-        xdescribe('addValueExisting', function(){
+        describe('addValueExisting', function(){
             beforeEach(inject(function($state) {
                 var defer = q.defer();
                 defer.resolve();
                 spyOn(oc.Categories, 'Update').and.returnValue(defer.promise);
                 spyOn(oc.Products, 'Update').and.returnValue(defer.promise);
                 spyOn($state, 'go').and.returnValue(null);
-                //facetedProductManageCtrl.newFacetValue = {
-                //    facetName: 'color'
-                //};
-                //assignedCategory.xp.OC_Facets = {
-                //    facetName: 'color'
-                //};
+                facetedProductManageCtrl.newFacetValue = {
+                    color: 'purple'
+                };
                 facetedProductManageCtrl.addValueExisting(assignedCategory, facetName);
                 scope.$digest();
             }));
