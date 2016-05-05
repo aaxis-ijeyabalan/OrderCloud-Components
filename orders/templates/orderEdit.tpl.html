@@ -289,7 +289,7 @@
                             <tbody ng-form="LineItems" class="form-group">
                             <tr ng-repeat="li in orderEdit.list.Items track by $index">
                                 <td class="text-center">
-                                    <i class="fa fa-trash fa-2x text-danger" ng-if="orderEdit.order.Status == 'Open' || 'Unsubmitted'" ng-click="$event.stopPropagation(); orderEdit.deleteLineItem(li)"></i>
+                                   <button class="btn btn-default"><i class="fa fa-trash fa-lg text-danger" ng-if="orderEdit.order.Status == 'Open' || 'Unsubmitted'" ng-click="$event.stopPropagation(); orderEdit.deleteLineItem(li)"></i></button>
                                 </td>
                                 <td>
                                     {{li.ID}}
