@@ -100,14 +100,14 @@ function RepeatOrderFactory($q, $state, $localForage, toastr, OrderCloud, appnam
         function ListAllProducts(){
             var dfd = $q.defer();
             var queue=[];
-            ( (userType === 'buyer') ? OrderCloud.Me.ListProducts(null,null,1,100) : OrderCloud.As().Me.ListProducts(null,null,1,100) )
+            ( (userType === 'buyer') ? OrderCloud.Me.ListProducts(null, 1, 100) : OrderCloud.As().Me.ListProducts(null, 1, 100) )
                 .then(function(data){
                     var productList = data;
                     if (data.Meta.TotalPages > data.Meta.Page) {
                         var page = data.Meta.Page;
                         while (page < data.Meta.TotalPages) {
                             page += 1;
-                            (userType === 'buyer') ? queue.push(OrderCloud.Me.ListProducts(null, null, page, 100)) : queue.push(OrderCloud.As().Me.ListProducts(null,null,1,100))
+                            (userType === 'buyer') ? queue.push(OrderCloud.Me.ListProducts(null, page, 100)) : queue.push(OrderCloud.As().Me.ListProducts(null, 1, 100))
                         }
                     }
                     $q.all(queue)

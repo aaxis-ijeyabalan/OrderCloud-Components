@@ -50,7 +50,7 @@ describe('Component: ExpressCheckout', function() {
         };
         addresses = {
             Meta: {},
-            Items: [{ID: "TestAddress123456789", Shipping: true, Biling: true}]
+            Items: [{ID: "TestAddress123456789", Shipping: true, Billing: true}]
         }
     }));
 
