@@ -1,4 +1,4 @@
-fdescribe('Component: Repeat Order', function(){
+describe('Component: Repeat Order', function(){
     var scope,
         q,
         scope,
