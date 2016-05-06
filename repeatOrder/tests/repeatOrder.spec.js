@@ -230,13 +230,13 @@ fdescribe('Component: Repeat Order', function(){
                 spyOn(LIHelpers, 'ListAll').and.returnValue(validLIdefer.promise);
                 repeatFactory.CheckLineItemsValid('admin', mockOrderID);
                 expect(oc.As).toHaveBeenCalled();
-                expect(oc.Me.ListProducts).toHaveBeenCalledWith(null,null,1,100);
+                expect(oc.Me.ListProducts).toHaveBeenCalledWith(null, 1, 100);
             });
             it('as a buyer it should call Me ListProducts', function(){
                 spyOn(LIHelpers, 'ListAll').and.returnValue(validLIdefer.promise);
                 repeatFactory.CheckLineItemsValid('buyer', mockOrderID);
                 scope.$digest();
-                expect(oc.Me.ListProducts).toHaveBeenCalledWith(null,null,1,100);
+                expect(oc.Me.ListProducts).toHaveBeenCalledWith(null,1,100);
                 expect(toaster.error).not.toHaveBeenCalled();
             });
             it('should display warning toaster if some of the line items are invalid', function(){

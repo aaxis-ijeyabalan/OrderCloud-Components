@@ -15,7 +15,7 @@ function checkoutBillingConfig($stateProvider) {
                     var dfd = $q.defer();
                     OrderCloud.Me.ListAddresses()
                         .then(function(data) {
-                            dfd.resolve(Underscore.where(data.Items, {Biling: true}));
+                            dfd.resolve(Underscore.where(data.Items, {Billing: true}));
                         });
                     return dfd.promise;
 				}

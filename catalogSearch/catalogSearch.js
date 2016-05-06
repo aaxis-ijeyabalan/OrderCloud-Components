@@ -15,7 +15,7 @@ function CatalogSearchConfig($stateProvider) {
             controllerAs: 'catalogSearchResults',
             resolve:{
                 CategoryList: function($stateParams, OrderCloud) {
-                    return OrderCloud.Me.ListCategories($stateParams.searchterm, 'all');
+                    return OrderCloud.Me.ListCategories($stateParams.searchterm, null, null, null, null, null, 'all');
                 },
                 ProductList: function ($stateParams, OrderCloud) {
                     return OrderCloud.Me.ListProducts($stateParams.searchterm);
@@ -40,7 +40,7 @@ function CatalogSearchController($scope, $state, $q, OrderCloud) {
         var dfd = $q.defer();
         var queue = [];
         queue.push(OrderCloud.Me.ListProducts(term, null, 1, maxProducts));
-        queue.push(OrderCloud.Me.ListCategories(term, 'all', 1, maxCategories));
+        queue.push(OrderCloud.Me.ListCategories(term, 1, maxCategories, null, null, null, 'all'));
         $q.all(queue)
             .then(function (responses) {
                 vm.productData = responses[0].Items;
