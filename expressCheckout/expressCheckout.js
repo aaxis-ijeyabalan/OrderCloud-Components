@@ -37,7 +37,7 @@ function ExpressCheckoutConfig($stateProvider) {
                             if (!order.BillingAddressID && CurrentUser.xp && CurrentUser.xp.defaultBillingAddressID) {
                                 queue.push(OrderCloud.Me.ListAddresses()
                                     .then(function(data){
-                                        if(Underscore.where(data.Items, {ID: CurrentUser.xp.defaultBillingAddressID, Biling: true}).length) {
+                                        if(Underscore.where(data.Items, {ID: CurrentUser.xp.defaultBillingAddressID, Billing: true}).length) {
                                             patchObj.BillingAddressID = CurrentUser.xp.defaultBillingAddressID;
                                         }
                                     }));
@@ -137,7 +137,7 @@ function ExpressCheckoutConfig($stateProvider) {
                     var dfd = $q.defer();
                     OrderCloud.Me.ListAddresses()
                         .then(function(data) {
-                            dfd.resolve(Underscore.where(data.Items, {Biling:true}));
+                            dfd.resolve(Underscore.where(data.Items, {Billing:true}));
                         });
                     return dfd.promise;
                 }
@@ -383,7 +383,7 @@ function ExpressCheckoutUserDefaultsController(Underscore, OrderCloud) {
     OrderCloud.Me.ListAddresses()
         .then(function (data) {
             vm.shippingAddresses = Underscore.where(data.Items, {Shipping: true});
-            vm.billingAddresses = Underscore.where(data.Items, {Biling: true});
+            vm.billingAddresses = Underscore.where(data.Items, {Billing: true});
         });
 
     vm.updateDefault = function () {
