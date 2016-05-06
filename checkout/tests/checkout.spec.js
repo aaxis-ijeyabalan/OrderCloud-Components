@@ -1,5 +1,5 @@
 //TODO: Fix this test to work with localforage.js
-xdescribe('Component: Checkout', function() {
+describe('Component: Checkout', function() {
     var scope,
         q,
         oc,
@@ -27,16 +27,21 @@ xdescribe('Component: Checkout', function() {
 
     describe('State: checkout', function () {
         var state;
-        beforeEach(inject(function ($state, CurrentOrder) {
+        beforeEach(inject(function ($state, CurrentOrder, OrderShippingAddress) {
             state = $state.get('checkout');
             var defer = q.defer();
             defer.resolve();
             spyOn(CurrentOrder, 'Get').and.returnValue(defer.promise);
+            spyOn(OrderShippingAddress, 'Get').and.returnValue(defer.promise);
             spyOn(oc.Me, 'ListAddresses').and.returnValue(defer.promise);
         }));
         it('should resolve Order', inject(function ($injector, CurrentOrder) {
             $injector.invoke(state.resolve.Order);
             expect(CurrentOrder.Get).toHaveBeenCalled();
+        }));
+        it('should resolve OrderShipAddress', inject(function ($injector, OrderShippingAddress) {
+            $injector.invoke(state.resolve.OrderShipAddress);
+            expect(OrderShippingAddress.Get).toHaveBeenCalled();
         }));
         it('should resolve ShippingAddresses', inject(function ($injector) {
             $injector.invoke(state.resolve.ShippingAddresses);
