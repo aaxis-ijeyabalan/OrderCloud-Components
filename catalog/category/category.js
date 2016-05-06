@@ -14,10 +14,10 @@ function CategoryConfig($stateProvider) {
             controllerAs: 'category',
             resolve: {
                 CategoryList: function(OrderCloud, $stateParams) {
-                    return OrderCloud.Me.ListSubcategories($stateParams.categoryid);
+                    return OrderCloud.Me.ListSubcategories(null, null, null, null, null, null, $stateParams.categoryid);
                 },
                 ProductList: function(OrderCloud, $stateParams) {
-                    return OrderCloud.Me.ListProducts(null, $stateParams.categoryid);
+                    return OrderCloud.Me.ListProducts(null, null, null, null, null, null, $stateParams.categoryid);
 
                 }
             }
