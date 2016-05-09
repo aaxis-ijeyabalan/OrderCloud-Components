@@ -25,7 +25,7 @@ function checkoutPaymentConfig($stateProvider) {
 		});
 }
 
-function CheckoutPaymentController($state, Underscore, AvailableCreditCards, AvailableSpendingAccounts, OrderCloud, toastr, OrderPayments, allowMultiplePayments) {
+function CheckoutPaymentController($state, Underscore, AvailableCreditCards, AvailableSpendingAccounts, OrderCloud, toastr, OrderPayments, allowMultiplePayments, creditCardExpirationDate) {
 	var vm = this;
     vm.allowMultiplePayments = allowMultiplePayments;
     vm.currentOrderPayments = OrderPayments.Items;
@@ -45,6 +45,8 @@ function CheckoutPaymentController($state, Underscore, AvailableCreditCards, Ava
     vm.today = new Date();
     vm.creditCards = AvailableCreditCards.Items;
     vm.spendingAccounts = AvailableSpendingAccounts.Items;
+    vm.expireMonth = creditCardExpirationDate.expirationMonth;
+    vm.expireYear = creditCardExpirationDate.expirationYear;
 
 
     vm.setCreditCard = SetCreditCard;
