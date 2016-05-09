@@ -41,7 +41,6 @@ function CheckoutPaymentController($state, Underscore, AvailableCreditCards, Ava
         'Discover',
         'Visa'
     ];
-    vm.creditCard = {};
     vm.today = new Date();
     vm.creditCards = AvailableCreditCards.Items;
     vm.spendingAccounts = AvailableSpendingAccounts.Items;
@@ -108,14 +107,14 @@ function CheckoutPaymentController($state, Underscore, AvailableCreditCards, Ava
         }
     }
 
-    function SaveCreditCard(order, index) {
+    function SaveCreditCard(order, card, index) {
         // TODO: Needs to save the credit card with integration plug in
-        if (vm.creditCard) {
+        if (card) {
             // This is just until Nick gives me the integration
             vm.Token = 'cc';
-            if (vm.creditCard.PartialAccountNumber.length === 16) {
-                vm.creditCard.PartialAccountNumber = vm.creditCard.PartialAccountNumber.substr(vm.creditCard.PartialAccountNumber.length - 4);
-                OrderCloud.CreditCards.Create(vm.creditCard)
+            if (card.PartialAccountNumber.length === 16) {
+                card.PartialAccountNumber = card.PartialAccountNumber.substr(card.PartialAccountNumber.length - 4);
+                OrderCloud.CreditCards.Create(card)
                     .then(function(CreditCard) {
                         OrderCloud.Me.Get()
                             .then(function(me) {
@@ -195,9 +194,9 @@ function CheckoutPaymentController($state, Underscore, AvailableCreditCards, Ava
         }
     }
 
-    function ExpirationDateChange() {
-        if (vm.creditCard.ExpirationMonth && vm.creditCard.ExpirationYear) {
-            vm.creditCard.ExpirationDate = new Date(vm.creditCard.ExpirationYear, vm.creditCard.ExpirationMonth, 0);
+    function ExpirationDateChange(index) {
+        if (vm.currentOrderPayments[index].CreditCard && vm.currentOrderPayments[index].CreditCard.ExpirationMonth && vm.currentOrderPayments[index].CreditCard.ExpirationYear) {
+            vm.currentOrderPayments[index].CreditCard.ExpirationDate = new Date(vm.currentOrderPayments[index].CreditCard.ExpirationYear, vm.currentOrderPayments[index].CreditCard.ExpirationMonth, 0);
         }
     }
 }
