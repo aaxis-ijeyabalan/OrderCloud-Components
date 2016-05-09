@@ -40,21 +40,16 @@
                         <label for="cardnum">Account Number</label>
                         <input id="cardnum" type="text" class="form-control" ng-model="checkoutPayment.creditCard.PartialAccountNumber">
                     </div>
-                    <div class="form-group col-md-6" ng-init="open = false">
-                        <label for="creditCardExpirationInput">Expiration Date</label>
-                        <input class="form-control"
-                               required="true"
-                               type="text"
-                               is-open="open"
-                               uib-datepicker-popup="MM/yy"
-                               datepicker-mode="'year'"
-                               min-mode="'month'"
-                               ng-click="open = !open"
-                               id="creditCardExpirationInput"
-                               datepicker-append-to-body="true"
-                               show-weeks="false"
-                               min-date="checkoutPayment.today"
-                               ng-model="checkoutPayment.creditCard.ExpirationDate"/>
+                    <div class="col-sm-3 col-md-6 form-group">
+                        <label>Expiration Date</label>
+                        <div class="row">
+                            <div class="col-sm-6 col-md-4 exp-mo">
+                                <select class="form-control" ng-model="checkoutPayment.selectedExpireMonth" ng-options="cc.string for cc in checkoutPayment.expireMonth"></select>
+                            </div>
+                            <div class="col-sm-6 col-md-8 exp-yr">
+                                <select class="form-control" ng-model="checkoutPayment.selectedExpireYear" ng-options="cc for cc in checkoutPayment.expireYear"></select>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <button ng-disabled="new_credit_card.$invalid" type="submit" class="btn btn-success pull-left">Submit</button>
