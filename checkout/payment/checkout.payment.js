@@ -41,13 +41,27 @@ function CheckoutPaymentController($state, Underscore, AvailableCreditCards, Ava
         'Discover',
         'Visa'
     ];
-    vm.creditCard = null;
+    vm.creditCard = {};
     vm.today = new Date();
     vm.creditCards = AvailableCreditCards.Items;
     vm.spendingAccounts = AvailableSpendingAccounts.Items;
+    vm.months =[
+        '01',
+        '02',
+        '03',
+        '04',
+        '05',
+        '06',
+        '07',
+        '08',
+        '09',
+        '10',
+        '11',
+        '12'
+    ];
+    vm.years = Underscore.range(vm.today.getFullYear(), vm.today.getFullYear() + 20, 1);
     vm.expireMonth = creditCardExpirationDate.expirationMonth;
     vm.expireYear = creditCardExpirationDate.expirationYear;
-
 
     vm.setCreditCard = SetCreditCard;
     vm.saveCreditCard = SaveCreditCard;
@@ -59,8 +73,7 @@ function CheckoutPaymentController($state, Underscore, AvailableCreditCards, Ava
     vm.patchPaymentAmount = PatchPaymentAmount;
     vm.setAmountMax = SetAmountMax;
     vm.savePONumber = SavePONumber;
-
-
+    vm.expirationDateChange = ExpirationDateChange;
 
     function CreatePayment(order) {
         OrderCloud.Payments.Create(order.ID, {Type: vm.currentOrderPayments[0].Type})
@@ -180,7 +193,13 @@ function CheckoutPaymentController($state, Underscore, AvailableCreditCards, Ava
         if(vm.currentOrderPayments[index].Type === "PurchaseOrder"){
             OrderCloud.Payments.Update(order.ID, vm.currentOrderPayments[index].ID, vm.currentOrderPayments[index]);
         }
-    };
+    }
+
+    function ExpirationDateChange() {
+        if (vm.creditCard.ExpirationMonth && vm.creditCard.ExpirationYear) {
+            vm.creditCard.ExpirationDate = new Date(vm.creditCard.ExpirationYear, vm.creditCard.ExpirationMonth, 0);
+        }
+    }
 }
 
 function OCCheckoutPayment() {
