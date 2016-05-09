@@ -49,6 +49,14 @@
                             <div class="form-group col-xs-6">
                                 <label for="creditCardExpirationYear">Expiration Year</label>
                                 <select id="creditCardExpirationYear" class="form-control" ng-model="checkoutPayment.creditCard.ExpirationYear" ng-options="year as year for year in checkoutPayment.years" ng-change="checkoutPayment.expirationDateChange()" />
+                    <div class="col-sm-3 col-md-6 form-group">
+                        <label>Expiration Date</label>
+                        <div class="row">
+                            <div class="col-sm-6 col-md-4 exp-mo">
+                                <select class="form-control" ng-model="checkoutPayment.selectedExpireMonth" ng-options="cc.string for cc in checkoutPayment.expireMonth"></select>
+                            </div>
+                            <div class="col-sm-6 col-md-8 exp-yr">
+                                <select class="form-control" ng-model="checkoutPayment.selectedExpireYear" ng-options="cc for cc in checkoutPayment.expireYear"></select>
                             </div>
                         </div>
                     </div>

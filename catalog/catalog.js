@@ -133,7 +133,7 @@ function CatalogTreeService($q, Underscore, OrderCloud) {
     function tree() {
         var tree = [];
         var dfd = $q.defer();
-        OrderCloud.Me.ListCategories(null, 'all', 1, 100)
+        OrderCloud.Me.ListCategories(null, 1, 100, null, null, null, 'all')
             .then(function(list) {
                 angular.forEach(Underscore.where(list.Items, {ParentID: null}), function(node) {
                     tree.push(getNode(node, list));

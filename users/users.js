@@ -30,14 +30,22 @@ function UsersConfig( $stateProvider ) {
             resolve: {
                 SelectedUser: function( $stateParams, OrderCloud) {
                     return OrderCloud.Users.Get( $stateParams.userid);
+                },
+                SecurityProfilesAvailable: function (OrderCloud) {
+                    return OrderCloud.SecurityProfiles.List();
                 }
             }
         })
         .state( 'users.create', {
             url: '/create',
-            templateUrl:'users/templates/userCreate.tpl.html',
-            controller:'UserCreateCtrl',
-            controllerAs: 'userCreate'
+            templateUrl: 'users/templates/userCreate.tpl.html',
+            controller: 'UserCreateCtrl',
+            controllerAs: 'userCreate',
+            resolve: {
+                SecurityProfilesAvailable: function (OrderCloud) {
+                    return OrderCloud.SecurityProfiles.List();
+                }
+            }
         })
 }
 
@@ -46,11 +54,12 @@ function UsersController( UserList ) {
     vm.list = UserList;
 }
 
-function UserEditController( $exceptionHandler, $state, OrderCloud, SelectedUser, toastr ) {
+function UserEditController( $exceptionHandler, $state, OrderCloud, SelectedUser, toastr, SecurityProfilesAvailable ) {
     var vm = this,
         userid = SelectedUser.ID;
     vm.userName = SelectedUser.Username;
     vm.user = SelectedUser;
+    vm.securityProfilesAvailable = SecurityProfilesAvailable.Items;
     if(vm.user.TermsAccepted != null) {
         vm.TermsAccepted = true;
     }
@@ -80,10 +89,11 @@ function UserEditController( $exceptionHandler, $state, OrderCloud, SelectedUser
     }
 }
 
-function UserCreateController( $exceptionHandler, $state, OrderCloud, toastr ) {
+function UserCreateController( $exceptionHandler, $state, OrderCloud, toastr, SecurityProfilesAvailable ) {
     var vm = this;
     vm.user = {Email:"", Password:""};
     vm.user.Active = false;
+    vm.securityProfilesAvailable = SecurityProfilesAvailable.Items;
     vm.Submit = function() {
         var today = new Date();
         vm.user.TermsAccepted = today;

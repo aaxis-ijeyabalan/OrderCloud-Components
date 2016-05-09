@@ -2,6 +2,8 @@ angular.module('orderCloud')
     .config(ExpressCheckoutConfig)
     .controller('ExpressCheckoutCtrl', ExpressCheckoutController)
     .controller('ExpressOrderReviewCtrl', ExpressOrderReviewController)
+    .directive('ordercloudUserDefaults', ExpressCheckoutUserDefaultsDirective)
+    .controller('ExpressCheckoutUserDefaultsCtrl', ExpressCheckoutUserDefaultsController)
 
 ;
 
@@ -35,7 +37,7 @@ function ExpressCheckoutConfig($stateProvider) {
                             if (!order.BillingAddressID && CurrentUser.xp && CurrentUser.xp.defaultBillingAddressID) {
                                 queue.push(OrderCloud.Me.ListAddresses()
                                     .then(function(data){
-                                        if(Underscore.where(data.Items, {ID: CurrentUser.xp.defaultBillingAddressID, Biling: true}).length) {
+                                        if(Underscore.where(data.Items, {ID: CurrentUser.xp.defaultBillingAddressID, Billing: true}).length) {
                                             patchObj.BillingAddressID = CurrentUser.xp.defaultBillingAddressID;
                                         }
                                     }));
@@ -135,7 +137,7 @@ function ExpressCheckoutConfig($stateProvider) {
                     var dfd = $q.defer();
                     OrderCloud.Me.ListAddresses()
                         .then(function(data) {
-                            dfd.resolve(Underscore.where(data.Items, {Biling:true}));
+                            dfd.resolve(Underscore.where(data.Items, {Billing:true}));
                         });
                     return dfd.promise;
                 }
@@ -355,7 +357,36 @@ function ExpressOrderReviewController(SubmittedOrder, isMultipleAddressShipping,
         OrderCloud.Orders.Patch(SubmittedOrder.ID, {xp: SubmittedOrder.xp} );
         toastr.success("Your order has been removed from Favorites", 'Success')
     }
+}
 
+function ExpressCheckoutUserDefaultsDirective() {
+        return {
+                templateUrl: 'expressCheckout/templates/expressCheckoutUserDefaults.tpl.html',
+                controller: 'ExpressCheckoutUserDefaultsCtrl',
+                controllerAs: 'expressCheckoutUserDefaults'
+        };
+    }
 
+function ExpressCheckoutUserDefaultsController(Underscore, OrderCloud) {
+    var vm = this;
 
+    OrderCloud.Me.Get()
+        .then(function (data) {
+            vm.me = data;
+        });
+
+    OrderCloud.Me.ListCreditCards()
+        .then(function (data) {
+            vm.creditCards = data;
+        });
+
+    OrderCloud.Me.ListAddresses()
+        .then(function (data) {
+            vm.shippingAddresses = Underscore.where(data.Items, {Shipping: true});
+            vm.billingAddresses = Underscore.where(data.Items, {Billing: true});
+        });
+
+    vm.updateDefault = function () {
+        OrderCloud.Me.Update(vm.me)
+    };
 }

@@ -31,7 +31,7 @@
             </div>
             <div class="form-group col-sm-6">
                 <label for="userEmailAddressInput">Email Address</label>
-                <input id="userEmailAddressInput" type="text" class="form-control" ng-model="adminUserCreate.adminUser.Email" required/>
+                <input id="userEmailAddressInput" type="email" class="form-control" ng-model="adminUserCreate.adminUser.Email" required/>
             </div>
         </div>
         <div class="row">
@@ -39,6 +39,11 @@
                 <label for="userPasswordInput">Password</label>
                 <input id="userPasswordInput" type="password" pattern='^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!$%@#£€*?&]{8,}$' pattern-err-type="customPassword" class="form-control" ng-model="adminUserCreate.adminUser.Password" confirmpassword="{{adminUserCreate.PasswordConfirm}}" required/>
             </div>
+             <div class="col-sm-6 form-group">
+                <label for="securityProfile">Security Profile</label>
+                 <select id="securityProfile"  class="form-control" ng-model="adminUserCreate.adminUser.SecurityProfileID" ng-options="sp.ID as sp.Name for sp in adminUserCreate.securityProfilesAvailable" required></select>
+            </div>
+
         </div>
         <div class="row">
             <div class="col-sm-6 form-group">
