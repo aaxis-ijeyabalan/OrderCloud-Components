@@ -49,9 +49,12 @@ function ShipmentsConfig( $stateProvider ) {
         })
 }
 
-function ShipmentsController( ShipmentList ) {
+function ShipmentsController( ShipmentList, TrackSearch ) {
     var vm = this;
     vm.list = ShipmentList;
+    vm.searching = function() {
+        return TrackSearch.GetTerm() ? true : false;
+    };
 }
 
 function ShipmentEditController( $exceptionHandler, $state, OrderCloud, SelectedShipment, OrderList, toastr) {
