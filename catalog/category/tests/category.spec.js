@@ -23,11 +23,11 @@ describe('Component: Catalog Category', function(){
         }));
         it('should resolve CategoryList', function(){
             injector.invoke(state.resolve.CategoryList);
-            expect(oc.Me.ListSubcategories).toHaveBeenCalledWith(stateParams.categoryid);
+            expect(oc.Me.ListSubcategories).toHaveBeenCalledWith(null, null, null, null, null, null, stateParams.categoryid);
         });
         it('should resolve ProductList', function(){
             injector.invoke(state.resolve.ProductList);
-            expect(oc.Me.ListProducts).toHaveBeenCalledWith(null,stateParams.categoryid);
+            expect(oc.Me.ListProducts).toHaveBeenCalledWith(null, null, null, null, null, null,stateParams.categoryid);
         })
     });
     describe('Controller: CategoryCtrl', function(){

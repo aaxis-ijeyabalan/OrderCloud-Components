@@ -113,68 +113,6 @@ describe('Component: Catalog Product', function(){
             }))
         })
     });
-    describe('Controller: OrderInputCtrl', function(){
-        var orderInputCtrl,
-            stateService
-            ;
-        beforeEach(inject(function($state, $controller){
-            stateService = $state;
-
-            orderInputCtrl = $controller('OrderInputCtrl', {
-                $scope:scope,
-                $localForage:localForage,
-                appname:'mockAppName',
-                $state:stateService
-            });
-            orderInputCtrl.currentState = 'initialState';
-            orderInputCtrl.price = null;
-            scope.product ={
-                item:{
-                    StandardPriceSchedule:{
-                        PriceBreaks:{
-                            priceBreak1:{
-                                Quantity:4,
-                                Price:2
-                            }
-                        }
-                    }
-                }
-            }
-        }));
-        describe('$rootScope.$on:$stateChangeSuccess', inject(function($rootScope){
-            it('should change value current state when broadcasted', function(){
-                expect(orderInputCtrl.currentState).toBe('initialState');
-                $rootScope.$broadcast('$stateChangeSuccess', {name:'newState'});
-                expect(orderInputCtrl.currentState).toBe('newState');
-            })
-        }));
-        describe('$watch expression on quantity entered',  function(){
-            it('should update price if quantity entered is greater than quantity on restricted price schedule', function(){
-                expect(orderInputCtrl.price).toBe(null);
-                orderInputCtrl.Quantity = 2;
-                scope.$digest();
-                orderInputCtrl.Quantity = 5;
-                scope.$digest();
-                expect(orderInputCtrl.price).toBe(10);
-            });
-            it('should not update price if entered quantity does not change', function(){
-                expect(orderInputCtrl.price).toBe(null);
-                orderInputCtrl.Quantity = 2;
-                scope.$digest();
-                orderInputCtrl.Quantity = 2;
-                scope.$digest();
-                expect(orderInputCtrl.price).toBe(null);
-            });
-            it('should not update price if quantity entered changes but is less than that on restricted price schedule', function(){
-                expect(orderInputCtrl.price).toBe(null);
-                orderInputCtrl.Quantity = 2;
-                scope.$digest();
-                orderInputCtrl.Quantity = 3;
-                scope.$digest();
-                expect(orderInputCtrl.price).toBe(null);
-            })
-        })
-    });
     describe('Directive: OCSpecForm', function(){
         var element;
         beforeEach(inject(function($compile) {
@@ -207,19 +145,19 @@ describe('Component: Catalog Product', function(){
             expect(oc.Specs.GetOption).toHaveBeenCalledWith('SpecsID12345', 1);
             expect(oc.Specs.GetOption.calls.count()).toEqual(2);
         });
-        describe('Directive: OCAddToOrder', function(){
-            var element
-                ;
-            beforeEach(inject(function($compile) {
-                scope.fakeProduct = mockProduct;
-                element = $compile('<oc-add-to-order product="fakeProduct" formname="mockName"></oc-add-to-order>')(scope);
-                scope.$digest();
-            }));
-            it('should initialize the isolate scope', function() {
-                expect(element.isolateScope().product).toEqual(mockProduct);
-                expect(element.isolateScope().formname).toBe("mockName");
-            });
-        })
+    });
+    describe('Directive: OCAddToOrder', function(){
+        var element
+            ;
+        beforeEach(inject(function($compile) {
+            scope.fakeProduct = mockProduct;
+            element = $compile('<oc-add-to-order product="fakeProduct" formname="mockName"></oc-add-to-order>')(scope);
+            scope.$digest();
+        }));
+        it('should initialize the isolate scope', function() {
+            expect(element.isolateScope().product).toEqual(mockProduct);
+            expect(element.isolateScope().formname).toBe("mockName");
+        });
     });
     describe('Controller: ProductCtrl', function(){
         var productCtrl,
