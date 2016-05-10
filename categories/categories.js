@@ -24,7 +24,7 @@ function CategoriesConfig( $stateProvider ) {
             data: {componentName: 'Categories'},
             resolve: {
                 CategoryList: function(OrderCloud) {
-                    return OrderCloud.Categories.List(null, 'all');
+                    return OrderCloud.Categories.List(null, null, null, null, null, null, null, 'all');
                 }
             }
         })
@@ -273,7 +273,8 @@ function CategoryTreeService($q, Underscore, OrderCloud) {
     function tree() {
         var tree = [];
         var deferred = $q.defer();
-        OrderCloud.Categories.List(null, 'all', 1, 100).then(function(list) {
+        OrderCloud.Categories.List(null, 1, 100, null, null, null, null, 'all')
+            .then(function(list) {
             angular.forEach(Underscore.where(list.Items, { ParentID: null}), function(node) {
                 tree.push(getnode(node));
             });
