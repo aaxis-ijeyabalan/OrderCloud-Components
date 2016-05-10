@@ -20,7 +20,8 @@
             </div>
             <div class="form-group col-sm-3">
                 <label for="shipDateInput">Ship Date</label>
-                <input id="shipDateInput" class="form-control" type="text" is-open="open1" uib-datepicker-popup="MM/dd/yyyy" ng-click="open1 = !open1"  datepicker-append-to-body="true" show-weeks="false" ng-model="shipmentCreate.shipment.DateShipped" required/>
+                <input class="form-control" ng-show="application.$ocMedia('max-width: 767px')" ng-required="application.$ocMedia('max-width: 767px')" type="date" id="shipmentDate" ng-model="shipmentCreate.shipment.DateShipped" />
+                <input id="shipDateInput" ng-hide="application.$ocMedia('max-width: 767px')" ng-required="!application.$ocMedia('max-width: 767px')" class="form-control" type="text" is-open="open1" uib-datepicker-popup="MM/dd/yyyy" ng-click="open1 = !open1"  datepicker-append-to-body="true" show-weeks="false" ng-model="shipmentCreate.shipment.DateShipped"/>
             </div>
             <div class="form-group col-sm-3">
                 <label for="costInput">Cost</label>

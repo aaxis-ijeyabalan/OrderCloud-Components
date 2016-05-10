@@ -25,20 +25,35 @@ function ProductConfig($stateProvider) {
                     return OrderCloud.Me.GetProduct($stateParams.productid);
                 },
                 SpecList: function(OrderCloud, $q, $stateParams) {
-                    var queue = [];
+                    var specQueue = [];
                     var dfd = $q.defer();
                     OrderCloud.Specs.ListProductAssignments(null, $stateParams.productid)
                         .then(function(data) {
                             angular.forEach(data.Items, function(assignment) {
-                                queue.push(OrderCloud.Specs.Get(assignment.SpecID));
+                                specQueue.push(OrderCloud.Specs.Get(assignment.SpecID));
                             });
-                            $q.all(queue)
+                            $q.all(specQueue)
                                 .then(function(result) {
+                                    var specOptionsQueue = [];
                                     angular.forEach(result, function(spec) {
                                         spec.Value = spec.DefaultValue;
                                         spec.OptionID = spec.DefaultOptionID;
+                                        spec.Options = [];
+                                        if (spec.OptionCount) {
+                                            specOptionsQueue.push((function() {
+                                                var d = $q.defer();
+                                                OrderCloud.Specs.ListOptions(spec.ID, null, 1, spec.OptionCount)
+                                                    .then(function(optionData) {
+                                                        spec.Options = optionData.Items;
+                                                        d.resolve();
+                                                    });
+                                                return d.promise;
+                                            })());
+                                        }
                                     });
-                                    dfd.resolve(result);
+                                    $q.all(specOptionsQueue).then(function() {
+                                        dfd.resolve(result);
+                                    });
                                 });
                         })
                         .catch(function(response) {
