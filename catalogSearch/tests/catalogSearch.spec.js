@@ -1,4 +1,4 @@
-fdescribe('Component: Catalog Search', function(){
+describe('Component: Catalog Search', function(){
     var scope,
         q,
         oc,
