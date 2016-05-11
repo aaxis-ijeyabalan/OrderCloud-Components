@@ -6,9 +6,6 @@ angular.module('orderCloud')
     .directive('ocAddToOrder', OCAddToOrder)
     .controller('ProductCtrl', ProductController)
     .controller('LineItemEditCtrl', LineItemEditController)
-    .controller('OrderInputCtrl', OrderInputController)
-
-
 ;
 
 function ProductConfig($stateProvider) {
@@ -113,39 +110,6 @@ function ProductConfig($stateProvider) {
                 }
             }
         });
-}
-
-function OrderInputController($state, appname, $scope, $localForage) {
-    var vm = this,
-        orderid;
-    vm.currentState = $state.current.name;
-    vm.price = null;
-
-    $localForage.getItem(appname + '.CurrentOrderID').then(function(data) {
-        orderid = data;
-    });
-
-    $scope.$on('$stateChangeSuccess', function(event, toState) {
-        vm.currentState = toState.name;
-    });
-
-    $scope.$watch(function() {
-        return vm.Quantity;
-    }, function(newValue, oldValue) {
-        if (newValue && newValue !== oldValue) {
-            var max_quantity = 0;
-            angular.forEach($scope.product.item.StandardPriceSchedule.PriceBreaks, function(PriceBreaks) {
-                if (vm.Quantity >= PriceBreaks.Quantity && PriceBreaks.Quantity > max_quantity) {
-                    max_quantity = PriceBreaks.Quantity;
-                    vm.price = PriceBreaks.Price * vm.Quantity;
-                }
-                else return null;
-            });
-        }
-        else if (!newValue) {
-            vm.price = null;
-        }
-    });
 }
 
 function OCSpecForm() {
