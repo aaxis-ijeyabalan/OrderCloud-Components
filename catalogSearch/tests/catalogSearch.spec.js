@@ -54,12 +54,12 @@ describe('Component: Catalog Search', function(){
         it('should resolve CategoryList', inject(function($injector, $stateParams) {
             $stateParams.searchterm = 'category';
             $injector.invoke(state.resolve.CategoryList);
-            expect(oc.Me.ListCategories).toHaveBeenCalledWith('category',  null, null, null, null, null, 'all');
+            expect(oc.Me.ListCategories).toHaveBeenCalledWith($stateParams.searchterm,  null, null, null, null, null, 'all');
         }));
         it('should resolve ProductList', inject(function($injector, $stateParams) {
             $stateParams.searchterm = 'product';
             $injector.invoke(state.resolve.ProductList);
-            expect(oc.Me.ListProducts).toHaveBeenCalledWith('product');
+            expect(oc.Me.ListProducts).toHaveBeenCalledWith($stateParams.searchterm);
         }))
     });
     describe('Controller: CatalogSearchController', function(){
