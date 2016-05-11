@@ -39,7 +39,7 @@ function CatalogSearchController($scope, $state, $q, OrderCloud) {
         var maxCategories = $scope.maxcats || 5;
         var dfd = $q.defer();
         var queue = [];
-        queue.push(OrderCloud.Me.ListProducts(term, null, 1, maxProducts));
+        queue.push(OrderCloud.Me.ListProducts(term, 1, maxProducts));
         queue.push(OrderCloud.Me.ListCategories(term, 1, maxCategories, null, null, null, 'all'));
         $q.all(queue)
             .then(function (responses) {

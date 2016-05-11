@@ -53,7 +53,7 @@ describe('Component: Catalog Search', function(){
         }));
         it('should resolve CategoryList', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.CategoryList);
-            expect(oc.Me.ListCategories).toHaveBeenCalledWith($stateParams.searchTerm,  null, null, null, 'all');
+            expect(oc.Me.ListCategories).toHaveBeenCalledWith($stateParams.searchTerm, null, null, null, null, null, 'all');
         }));
         it('should resolve ProductList', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.ProductList);
@@ -79,7 +79,7 @@ describe('Component: Catalog Search', function(){
                 scope.$digest();
             });
             it('should call the Me.ListProducts method', function(){
-                expect(oc.Me.ListProducts).toHaveBeenCalledWith(searchTerm, null, 1, 5)
+                expect(oc.Me.ListProducts).toHaveBeenCalledWith(searchTerm, 1, 5)
             });
             it('should call the Me.ListCategories method', function(){
                 expect(oc.Me.ListCategories).toHaveBeenCalledWith(searchTerm, 1, 5, null, null, null, 'all')

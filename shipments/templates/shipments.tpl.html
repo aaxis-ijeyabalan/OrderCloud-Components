@@ -3,8 +3,10 @@
         <h3 class="page-header">
             Shipments
         </h3>
+        <ordercloud-search servicename="Shipments" controlleras="shipments"></ordercloud-search>
         <div class="well well-lg text-center" ng-if="!shipments.list.Items.length">
-            <b>The selected buyer does not have any shipments.</b>
+            <b ng-if="!shipments.searching()">The selected buyer does not have any shipments.</b>
+            <b ng-if="shipments.searching()"><i class="fa fa-search"></i> No shipments match your search.</b>
         </div>
         <section class="table-fixed-header" ng-if="shipments.list.Items.length">
             <div class="table-header-bg"></div>
