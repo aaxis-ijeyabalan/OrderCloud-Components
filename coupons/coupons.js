@@ -251,13 +251,19 @@ function CouponAssignProductController($scope, OrderCloud, ProductList, ProductA
     }
 }
 
-function CouponAssignCategoryController(OrderCloud, CategoryList, CategoryAssignments, SelectedCoupon, Assignments, Paging, toastr) {
+function CouponAssignCategoryController($scope, OrderCloud, CategoryList, CategoryAssignments, SelectedCoupon, Assignments, Paging, toastr) {
     var vm = this;
     vm.list = CategoryList;
     vm.assignments = CategoryAssignments;
     vm.coupon = SelectedCoupon;
     vm.saveAssignments = SaveAssignment;
     vm.pagingfunction = PagingFunction;
+
+    $scope.$watchCollection(function(){
+        return vm.list;
+    }, function(){
+        Paging.setSelected(vm.list.Items, vm.assignments.Items, 'CategoryID')
+    });
 
     function SaveFunc(ItemID) {
         return OrderCloud.Coupons.SaveCategoryAssignment({
