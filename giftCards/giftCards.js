@@ -220,13 +220,19 @@ function GiftCardAssignGroupController($scope, $q, OrderCloud, UserGroupList, As
     }
 }
 
-function GiftCardAssignUserController($q, OrderCloud, UserList, AssignedUsers, SelectedGiftCard, Assignments, toastr) {
+function GiftCardAssignUserController($scope, $q, OrderCloud, UserList, AssignedUsers, SelectedGiftCard, Assignments, Paging, toastr) {
     var vm = this;
     vm.list = UserList;
     vm.assignments = AssignedUsers;
     vm.giftCard = SelectedGiftCard;
     vm.saveAssignments = SaveAssignments;
     vm.pagingfunction = PagingFunction;
+
+    $scope.$watchCollection(function(){
+        return vm.list;
+    }, function(){
+        Paging.setSelected(vm.list.Items, vm.assignments.Items, 'UserID')
+    });
 
     function SaveFunc(ItemID) {
         return OrderCloud.SpendingAccounts.SaveAssignment({
