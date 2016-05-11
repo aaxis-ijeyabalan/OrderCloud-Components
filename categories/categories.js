@@ -209,13 +209,19 @@ function CategoryAssignPartyController($scope, OrderCloud, Assignments, Paging, 
     }
 }
 
-function CategoryAssignProductController(OrderCloud, Assignments, Paging, ProductList, ProductAssignments, SelectedCategory, toastr) {
+function CategoryAssignProductController($scope, OrderCloud, Assignments, Paging, ProductList, ProductAssignments, SelectedCategory, toastr) {
     var vm = this;
     vm.Category = SelectedCategory;
     vm.list = ProductList;
     vm.assignments = ProductAssignments;
     vm.saveAssignments = SaveAssignment;
     vm.pagingfunction = PagingFunction;
+
+    $scope.$watchCollection(function(){
+        return vm.list;
+    }, function(){
+        Paging.setSelected(vm.list.Items, vm.assignments.Items, 'ProductID')
+    });
 
     function SaveFunc(ItemID) {
         return OrderCloud.Categories.SaveProductAssignment({
