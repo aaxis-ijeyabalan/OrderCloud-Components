@@ -158,7 +158,7 @@ function CreditCardCreateController( $exceptionHandler, $state, OrderCloud, toas
 
 }
 
-function CreditCardAssignController(OrderCloud, Buyer, UserGroupList, AssignedUserGroups, SelectedCreditCard, Assignments, Paging, toastr) {
+function CreditCardAssignController($scope, OrderCloud, Buyer, UserGroupList, AssignedUserGroups, SelectedCreditCard, Assignments, Paging, toastr) {
     var vm = this;
     vm.buyer = Buyer;
     vm.assignBuyer = false;
@@ -167,6 +167,12 @@ function CreditCardAssignController(OrderCloud, Buyer, UserGroupList, AssignedUs
     vm.creditCard = SelectedCreditCard;
     vm.saveAssignments = SaveAssignments;
     vm.pagingfunction = PagingFunction;
+
+    $scope.$watchCollection(function(){
+        return vm.list;
+    }, function(){
+        Paging.setSelected(vm.list.Items, vm.assignments.Items, 'UserGroupID')
+    });
 
     function SaveFunc(ItemID) {
         return OrderCloud.CreditCards.SaveAssignment({
