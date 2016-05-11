@@ -4,7 +4,9 @@ fdescribe('Component: Cart', function() {
         oc,
         currentOrder,
         lineItemHelpers,
-        lineItemsList
+        lineItemsList,
+        fakeOrder,
+        user
         ;
     beforeEach(module('orderCloud'));
     beforeEach(module('orderCloud.sdk'));
@@ -33,11 +35,19 @@ fdescribe('Component: Cart', function() {
                 "Page": 1,
                 "PageSize": 20,
                 "TotalCount":29,
-                "TotalPages": 2,
+                "TotalPages": 3,
                 "ItemRange" : [1,2]
              }
         };
+        user = {
+            ID: "TestUser132456789",
+            xp: {
+                defaultShippingAddressID: "TestAddress123456789",
+                defaultBillingAddressID: "TestAddress123456789",
+                defaultCreditCardID: "creditCard"
+            }
 
+        };
     }));
 
     describe('State: cart', function() {
@@ -103,66 +113,111 @@ fdescribe('Component: Cart', function() {
         });
     });
 
-    describe('Controller: MiniCartController',function(){
+    describe('Controller: MiniCartController',function() {
         var miniCartController;
 
-        beforeEach(inject(function ($state,$controller){
-            miniCartController = $controller('MiniCartCtrl',{
+
+        beforeEach(inject(function ($state, $controller) {
+            miniCartController = $controller('MiniCartCtrl', {
                 $scope: scope,
                 CurrentOrder: currentOrder,
                 LineItemHelpers: lineItemHelpers
             });
-            var defer= q.defer();
-            defer.resolve();
-            spyOn($state,'get').and.returnValue(defer.promise);
-            spyOn($state,'go').and.returnValue(null);
-            //spyOn(currentOrder,'Get').and.returnValue();
+            var defer = q.defer();
+            defer.resolve(lineItemsList);
+            spyOn(oc.LineItems, 'List').and.returnValue(defer.promise);
+            spyOn(lineItemHelpers, 'GetProductInfo').and.returnValue(defer.promise);
 
-            var orderdfd= q.defer();
-            orderdfd.resolve(fakeOrder.ID);
-            spyOn(oc.LineItems,'List').and.returnValue(orderdfd.promise)
-
+            var orderdfd = q.defer();
+            orderdfd.resolve(fakeOrder);
+            spyOn(currentOrder, 'Get').and.returnValue(orderdfd.promise);
 
         }));
 
-        //this test is mocking the functionality of the call, would there be a better way to test this?
-        //it('should call Get Method on CurrentOrder',function(){
-        //    currentOrder.Get();
-        //    expect(currentOrder.Get).toHaveBeenCalled();
-        //});
-
-        describe('CheckForExpress',function(){
-            var expressCheckout = false;
-            //var state ={'url' : '/expressCheckout'};
-            it('should change expressCheckout to true when in the corresponding state',inject(function($state){
-                var state ={'url' : '/expressCheckout'};
-
-                miniCartController.checkForExpress();
-                //angular.forEach(state);
-                expect($state.get).toHaveBeenCalled();
-                expect(expressCheckout).toEqual(true);
-            }));
-        });
-
-        describe('checkForCheckout',function(){
-
-        });
-
-        describe('goToCart',function(){
-            it('should call $state.go',inject(function($state){
-                miniCartController.goToCart();
-                expect($state.go).toHaveBeenCalled();
-            }));
+        it('should call Get Method on Current Order and lineItemCall', function () {
+            spyOn(miniCartController, 'lineItemCall').and.callThrough();
+            miniCartController.getLI();
+            expect(currentOrder.Get).toHaveBeenCalled();
+            scope.$digest();
+            expect(miniCartController.lineItemCall).toHaveBeenCalledWith(fakeOrder);
         });
         //
-        //describe('getLineItems',function(){
-        //    it('should call LineItems List method',function(){
-        //        expect(oc.LineItems.List).toHaveBeenCalledWith(fakeOrder.ID);
+        //describe('CheckForExpress',function(){
+        //    var expressCheckout = false;
+        //    var state ={'url' : '/expressCheckout'};
+        //
+        //    beforeEach(inject(function($injector,$state){
+        //        var statedfr = q.defer(state);
+        //        statedfr .resolve(state);
+        //        spyOn($state,'get').and.returnValue(statedfr.promise);
+        //        miniCartController.checkForExpress();
+        //    }));
+        //    it('should set expressCheckout to false',function(){
+        //        expect(expressCheckout).toEqual(false);
         //    });
-
+        //    it('should call the Get method on $state',function(){
+        //
+        //        expect($state.get).toHaveBeenCalled();
+        //    });
+        //
         //});
 
+        describe('should resolve lineItemCall', function () {
+            beforeEach(function () {
+                miniCartController.lineItemCall('mockOrder');
+                scope.$digest();
 
+            });
+            it('should call lineItems list method', function () {
+                expect(oc.LineItems.List).toHaveBeenCalled();
+                scope.$digest();
+                expect(miniCartController.LineItems).toBe(lineItemsList);
+            });
+            it('should call method list according to length of pages ', function () {
+                expect(oc.LineItems.List.calls.count()).toEqual(3);
+            });
+            it('should call method GetProductInfo ', function () {
+                expect(lineItemHelpers.GetProductInfo).toHaveBeenCalled();
+            });
+        });
+        describe('LineItemAddedToCart',function(){
+            it('should call Orders Get Method ', inject(function($rootScope){
+                spyOn(miniCartController, 'lineItemCall').and.callThrough();
+                $rootScope.$broadcast('LineItemAddedToCart' ,fakeOrder);
+                scope.$digest();
+                expect(miniCartController.lineItemCall).toHaveBeenCalledWith(fakeOrder);
+                expect(miniCartController.showLineItems).toEqual(true);
+            }))
+        });
+        describe('OC:RemoveOrder',function(){
+            it('should set Order to Null and LineItems to empty object', inject(function($rootScope){
+                $rootScope.$broadcast('OC:RemoveOrder' );
+                scope.$digest();
+                expect(miniCartController.Order).toEqual(null);
+                expect(miniCartController.LineItems).toBeTruthy();
+            }))
+        });
+
+
+
+        //
+        //describe('checkForCheckout',function(){
+        //
+        //});
+        //
+        //describe('goToCart',function(){
+        //    //it('should call $state.go',inject(function($state){
+        //    //    miniCartController.goToCart();
+        //    //    expect($state.go).toHaveBeenCalled();
+        //    //}));
+        //});
+        ////
+        ////describe('getLineItems',function(){
+        ////    it('should call LineItems List method',function(){
+        ////        expect(oc.LineItems.List).toHaveBeenCalledWith(fakeOrder.ID);
+        ////    });
+        //
+        ////});
     });
 
 });
