@@ -2,6 +2,7 @@
     <h3 class="page-header">
         User Group Assignments for {{spendingAccountAssignGroup.spendingAccount.Name}}
     </h3>
+    <ordercloud-search servicename="UserGroups" controlleras="spendingAccountAssignGroup"></ordercloud-search>
     <section class="table-fixed-header">
         <div class="table-header-bg"></div>
         <div class="table-container" ordercloud-infinite-scroll servicename="UserGroups" controlleras="spendingAccountAssignGroup" idname="UserGroupID" disable-dynamic-validation>
