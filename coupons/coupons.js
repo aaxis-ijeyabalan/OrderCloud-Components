@@ -171,7 +171,7 @@ function CouponCreateController( $exceptionHandler, $state, OrderCloud, toastr) 
     }
 }
 
-function CouponAssignController(OrderCloud, Buyer, UserGroupList, AssignedUserGroups, SelectedCoupon, Assignments, Paging, toastr) {
+function CouponAssignController($scope, OrderCloud, Buyer, UserGroupList, AssignedUserGroups, SelectedCoupon, Assignments, Paging, toastr) {
     var vm = this;
     vm.coupon = SelectedCoupon;
     vm.buyer = Buyer;
@@ -179,6 +179,12 @@ function CouponAssignController(OrderCloud, Buyer, UserGroupList, AssignedUserGr
     vm.assignments = AssignedUserGroups;
     vm.saveAssignments = saveAssignments;
     vm.pagingfunction = PagingFunction;
+
+    $scope.$watchCollection(function(){
+        return vm.list;
+    }, function(){
+        Paging.setSelected(vm.list.Items, vm.assignments.Items, 'UserGroupID')
+    });
 
     function SaveFunc(ItemID) {
         return OrderCloud.Coupons.SaveAssignment({
