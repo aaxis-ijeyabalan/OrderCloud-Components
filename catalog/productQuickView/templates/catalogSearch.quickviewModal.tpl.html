@@ -1,20 +1,23 @@
 <form class="quickViewModal"  name="product_spec_form" ng-submit="productQuickViewModal.addToCart(productQuickViewModal.selectedProduct)" >
     <div class="modal-header">
-        <i class="fa fa-times fa-3x fa-pull-right" ng-click="productQuickViewModal.cancel()"></i>
         <h3 class="modal-title">{{productQuickViewModal.selectedProduct.Name}}</h3>
         <h2 class="panel-title">{{productQuickViewModal.selectedProduct.ID}}</h2>
     </div>
-    <div class="col-md-6" ng-if="productQuickViewModal.selectedProduct.xp.image">
-        <img class="img-responsive" ng-src="{{productQuickViewModal.selectedProduct.xp.image.URL}}" alt="Product Image">
+    <div class="modal-body">
+        <div class="row">
+            <figure class="col-md-6" ng-if="productQuickViewModal.selectedProduct.xp.image">
+                <img class="img-responsive" ng-src="{{productQuickViewModal.selectedProduct.xp.image.URL}}" alt="Product Image">
+            </figure>
+            <div class="col-md-6">
+                <h4 ng-if="productQuickViewModal.selectedProduct.Description">Description</h4>
+                <p ng-bind-html="productQuickViewModal.selectedProduct.Description"></p>
+                <oc-spec-form product="productQuickViewModal.selectedProduct"></oc-spec-form>
+                <hr>
+                <oc-add-to-order formname="product_spec_form" product="productQuickViewModal.selectedProduct"></oc-add-to-order>
+            </div>
+        </div>
     </div>
-    <div class="panel-heading">
-        <h3 class="panel-title">Description</h3>
-    </div>
-    <div class="panel-body">
-        {{productQuickViewModal.selectedProduct.Description}}
-        <oc-spec-form product="productQuickViewModal.selectedProduct"></oc-spec-form>
-    </div>
-    <div class="modal-footer from-group">
-        <oc-add-to-order formname="product_spec_form" product="productQuickViewModal.selectedProduct"></oc-add-to-order>
+    <div class="modal-footer text-right">
+        <button type="button" class="btn btn-default" ng-click="productQuickViewModal.cancel()">Cancel</button>
     </div>
 </form>
