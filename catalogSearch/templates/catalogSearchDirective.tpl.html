@@ -7,7 +7,7 @@
                     placeholder="Search"
                     ng-model="catalogSearch.searchTerm"
                     uib-typeahead="item as item.Name for item in catalogSearch.popupResults($viewValue)"
-                    typeahead-popup-template-url="./catalogSearch/templates/catalogSearchDirective.popup.tpl.html"
+                    typeahead-popup-template-url="catalogSearch/templates/catalogSearchDirective.popup.tpl.html"
                     typeahead-on-select="catalogSearch.onSelect($item)"
                     typeahead-focus-first="false"
                     ng-model-options="{debounce:{'default':300,'blur':0}}"
