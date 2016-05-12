@@ -115,8 +115,6 @@ fdescribe('Component: Cart', function() {
 
     describe('Controller: MiniCartController',function() {
         var miniCartController;
-
-
         beforeEach(inject(function ($state, $controller) {
             miniCartController = $controller('MiniCartCtrl', {
                 $scope: scope,
@@ -131,7 +129,6 @@ fdescribe('Component: Cart', function() {
             var orderdfd = q.defer();
             orderdfd.resolve(fakeOrder);
             spyOn(currentOrder, 'Get').and.returnValue(orderdfd.promise);
-
         }));
 
         it('should call Get Method on Current Order and lineItemCall', function () {
@@ -141,26 +138,6 @@ fdescribe('Component: Cart', function() {
             scope.$digest();
             expect(miniCartController.lineItemCall).toHaveBeenCalledWith(fakeOrder);
         });
-        //
-        //describe('CheckForExpress',function(){
-        //    var expressCheckout = false;
-        //    var state ={'url' : '/expressCheckout'};
-        //
-        //    beforeEach(inject(function($injector,$state){
-        //        var statedfr = q.defer(state);
-        //        statedfr .resolve(state);
-        //        spyOn($state,'get').and.returnValue(statedfr.promise);
-        //        miniCartController.checkForExpress();
-        //    }));
-        //    it('should set expressCheckout to false',function(){
-        //        expect(expressCheckout).toEqual(false);
-        //    });
-        //    it('should call the Get method on $state',function(){
-        //
-        //        expect($state.get).toHaveBeenCalled();
-        //    });
-        //
-        //});
 
         describe('should resolve lineItemCall', function () {
             beforeEach(function () {
@@ -197,27 +174,6 @@ fdescribe('Component: Cart', function() {
                 expect(miniCartController.LineItems).toBeTruthy();
             }))
         });
-
-
-
-        //
-        //describe('checkForCheckout',function(){
-        //
-        //});
-        //
-        //describe('goToCart',function(){
-        //    //it('should call $state.go',inject(function($state){
-        //    //    miniCartController.goToCart();
-        //    //    expect($state.go).toHaveBeenCalled();
-        //    //}));
-        //});
-        ////
-        ////describe('getLineItems',function(){
-        ////    it('should call LineItems List method',function(){
-        ////        expect(oc.LineItems.List).toHaveBeenCalledWith(fakeOrder.ID);
-        ////    });
-        //
-        ////});
     });
 
 });
