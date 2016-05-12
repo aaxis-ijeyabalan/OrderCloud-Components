@@ -40,11 +40,26 @@ function ProductQuickViewController ($uibModal){
                             });
                             $q.all(queue)
                                 .then(function(result) {
+                                    var specOptionsQueue = [];
                                     angular.forEach(result, function(spec) {
                                         spec.Value = spec.DefaultValue;
                                         spec.OptionID = spec.DefaultOptionID;
+                                        spec.Options = [];
+                                        if (spec.OptionCount) {
+                                            specOptionsQueue.push((function() {
+                                                var d = $q.defer();
+                                                OrderCloud.Specs.ListOptions(spec.ID, null, 1, spec.OptionCount)
+                                                    .then(function(optionData) {
+                                                        spec.Options = optionData.Items;
+                                                        d.resolve();
+                                                    });
+                                                return d.promise;
+                                            })());
+                                        }
                                     });
-                                    dfd.resolve(result);
+                                    $q.all(specOptionsQueue).then(function() {
+                                        dfd.resolve(result);
+                                    });
                                 });
                         })
                         .catch(function(response) {
