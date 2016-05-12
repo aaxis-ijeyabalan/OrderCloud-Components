@@ -92,6 +92,16 @@ function CartController($q, $rootScope, OrderCloud, Order, LineItemsList, LineIt
                 vm.order = data;
             });
     });
+
+    $rootScope.$on('OC:UpdateLineItem', function(event,Order) {
+        OrderCloud.LineItems.List(Order.ID)
+            .then(function(data){
+             LineItemHelpers.GetProductInfo(data.Items)
+              .then(function() {
+                        vm.lineItems=data;
+                    });
+        });
+    });
 }
 
 function MiniCartController($q, $state, $rootScope, OrderCloud, LineItemHelpers, CurrentOrder) {
