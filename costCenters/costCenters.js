@@ -120,7 +120,7 @@ function CostCenterCreateController( $exceptionHandler,$state, OrderCloud, toast
     }
 }
 
-function CostCenterAssignController(Assignments, Paging, UserGroupList, AssignedUserGroups, SelectedCostCenter, OrderCloud, toastr) {
+function CostCenterAssignController($scope, Assignments, Paging, UserGroupList, AssignedUserGroups, SelectedCostCenter, OrderCloud, toastr) {
     var vm = this;
     vm.CostCenter = SelectedCostCenter;
     vm.list = UserGroupList;
@@ -136,6 +136,11 @@ function CostCenterAssignController(Assignments, Paging, UserGroupList, Assigned
         });
     }
 
+    $scope.$watchCollection(function(){
+        return vm.list;
+    }, function(){
+        Paging.setSelected(vm.list.Items, vm.assignments.Items, 'UserGroupID')
+    });
     function DeleteFunc(ItemID) {
         return OrderCloud.CostCenters.DeleteAssignment(vm.CostCenter.ID, null, ItemID);
     }

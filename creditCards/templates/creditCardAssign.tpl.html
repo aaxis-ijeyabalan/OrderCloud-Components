@@ -2,6 +2,7 @@
     <h3 class="page-header">
         Assignments for {{creditCardAssign.creditCard.ID}}
     </h3>
+    <ordercloud-search servicename="UserGroups" controlleras="creditCardAssign"></ordercloud-search>
     <section class="table-fixed-header">
         <div class="table-header-bg"></div>
         <div class="table-container" ordercloud-infinite-scroll servicename="UserGroups" controlleras="creditCardAssign" idname="UserGroupID" disable-dynamic-validation>

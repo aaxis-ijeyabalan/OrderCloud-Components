@@ -155,13 +155,19 @@ function SpendingAccountAssignGroupController($scope, UserGroupList, AssignedUse
     }
 }
 
-function SpendingAccountAssignUserController($scope, UserList, AssignedUsers, SelectedSpendingAccount, SpendingAccountAssignment, toastr) {
+function SpendingAccountAssignUserController($scope, UserList, AssignedUsers, SelectedSpendingAccount, SpendingAccountAssignment, Paging, toastr) {
     var vm = this;
     vm.list = UserList;
     vm.assignments = AssignedUsers;
     vm.spendingAccount = SelectedSpendingAccount;
     vm.pagingfunction = PagingFunction;
     vm.saveAssignments = SaveAssignments;
+
+    $scope.$watchCollection(function(){
+        return vm.list;
+    }, function(){
+        Paging.setSelected(vm.list.Items, vm.assignments.Items, 'UserID')
+    });
 
     $scope.$watchCollection(function() {
         return vm.list;
