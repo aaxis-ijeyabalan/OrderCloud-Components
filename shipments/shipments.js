@@ -32,7 +32,7 @@ function ShipmentsConfig( $stateProvider ) {
                     return OrderCloud.Shipments.Get($stateParams.shipmentid);
                 },
                 OrderList: function(OrderCloud) {
-                    return OrderCloud.Orders.List('incoming');
+                    return OrderCloud.Orders.ListIncoming();
                 }
             }
         })
@@ -43,7 +43,7 @@ function ShipmentsConfig( $stateProvider ) {
             controllerAs: 'shipmentCreate',
             resolve: {
                 OrderList: function(OrderCloud) {
-                    return OrderCloud.Orders.List('incoming');
+                     return OrderCloud.Orders.ListIncoming();
                 }
             }
         })
