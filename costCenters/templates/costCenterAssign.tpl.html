@@ -6,6 +6,7 @@
         <b>The selected buyer does not have any user groups, </b>
         <a type="button" ui-sref="^.groupCreate">create one now</a>
     </div>
+    <ordercloud-search servicename="UserGroups" controlleras="costCenterAssign"></ordercloud-search>
     <section class="table-fixed-header" ng-if="costCenterAssign.list.Items.length">
         <div class="table-header-bg"></div>
         <div class="table-container" ordercloud-infinite-scroll servicename="UserGroups" controlleras="costCenterAssign" idname="UserGroupID" disable-dynamic-validation>

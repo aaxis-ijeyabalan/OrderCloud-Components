@@ -169,13 +169,19 @@ function CategoryTreeController(Tree, CategoryTreeService) {
     };
 }
 
-function CategoryAssignPartyController(OrderCloud, Assignments, Paging, UserGroupList, AssignedUserGroups, SelectedCategory, toastr) {
+function CategoryAssignPartyController($scope, OrderCloud, Assignments, Paging, UserGroupList, AssignedUserGroups, SelectedCategory, toastr) {
     var vm = this;
     vm.Category = SelectedCategory;
     vm.list = UserGroupList;
     vm.assignments = AssignedUserGroups;
     vm.saveAssignments = SaveAssignment;
     vm.pagingfunction = PagingFunction;
+
+    $scope.$watchCollection(function(){
+        return vm.list;
+    }, function(){
+        Paging.setSelected(vm.list.Items, vm.assignments.Items, 'UserGroupID')
+    });
 
     function SaveFunc(ItemID) {
         return OrderCloud.Categories.SaveAssignment({
@@ -203,13 +209,19 @@ function CategoryAssignPartyController(OrderCloud, Assignments, Paging, UserGrou
     }
 }
 
-function CategoryAssignProductController(OrderCloud, Assignments, Paging, ProductList, ProductAssignments, SelectedCategory, toastr) {
+function CategoryAssignProductController($scope, OrderCloud, Assignments, Paging, ProductList, ProductAssignments, SelectedCategory, toastr) {
     var vm = this;
     vm.Category = SelectedCategory;
     vm.list = ProductList;
     vm.assignments = ProductAssignments;
     vm.saveAssignments = SaveAssignment;
     vm.pagingfunction = PagingFunction;
+
+    $scope.$watchCollection(function(){
+        return vm.list;
+    }, function(){
+        Paging.setSelected(vm.list.Items, vm.assignments.Items, 'ProductID')
+    });
 
     function SaveFunc(ItemID) {
         return OrderCloud.Categories.SaveProductAssignment({

@@ -3,6 +3,7 @@
     <div class="well well-lg text-center" ng-if="!giftCardAssignUser.list.Items.length">
         <b>There are no User Groups under the active Buyer company</b>
     </div>
+    <ordercloud-search servicename="Users" controlleras="giftCardAssignUser"></ordercloud-search>
     <section class="table-fixed-header" ng-if="giftCardAssignUser.list.Items.length">
         <div class="table-header-bg"></div>
         <div class="table-container" ordercloud-infinite-scroll servicename="Users" controlleras="giftCardAssignUser" idname="UserID">
@@ -36,7 +37,7 @@
     </section>
     <div class="form-group">
         <button type="button" class="btn btn-default" ui-sref="^"><i class="fa fa-arrow-left"></i> Back</button>
-        <button type="button" class="btn btn-primary" ng-click="giftCardAssignUser.saveAssignments()">Update Category Assignments</button>
+        <button type="button" class="btn btn-primary" ng-click="giftCardAssignUser.saveAssignments()">Update User Assignments</button>
         <button type="button" class="btn btn-default" ui-sref="^.assignGroup({giftCardid: giftCardAssignUser.giftCard.ID})">Assign Groups</button>
     </div>
 </article>

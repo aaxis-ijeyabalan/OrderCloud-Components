@@ -116,11 +116,16 @@ function MiniCartController($q, $state, $rootScope, OrderCloud, LineItemHelpers,
     vm.Order = null;
     vm.showLineItems = false;
 
-    CurrentOrder.Get()
+
+    vm.getLI = function(){
+        CurrentOrder.Get()
         .then(function(data) {
             vm.Order = data;
-            if (data) getLineItems(data);
+            if (data) vm.lineItemCall(data);
         });
+    };
+
+    vm.getLI();
 
     vm.checkForExpress = function() {
         var expressCheckout = false;
@@ -148,7 +153,7 @@ function MiniCartController($q, $state, $rootScope, OrderCloud, LineItemHelpers,
         $state.go('cart', {}, {reload: true});
     };
 
-    function getLineItems(order) {
+    vm.lineItemCall = function /*getLineItems*/(order) {
         var dfd = $q.defer();
         var queue = [];
         OrderCloud.LineItems.List(order.ID)
@@ -171,12 +176,12 @@ function MiniCartController($q, $state, $rootScope, OrderCloud, LineItemHelpers,
                     });
             });
         return dfd.promise;
-    }
+    };
 
     $rootScope.$on('LineItemAddedToCart', function() {
         CurrentOrder.Get()
             .then(function(order) {
-                getLineItems(order);
+                vm.lineItemCall(order);
                 vm.showLineItems = true;
             });
     });
