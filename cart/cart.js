@@ -61,13 +61,19 @@ function CartConfig($stateProvider) {
         });
 }
 
-function CartController($q, $rootScope, OrderCloud, Order, LineItemsList, LineItemHelpers) {
+function CartController($q, $rootScope, $timeout, OrderCloud, Order, LineItemsList, LineItemHelpers) {
     var vm = this;
     vm.order = Order;
     vm.lineItems = LineItemsList;
     vm.removeItem = LineItemHelpers.RemoveItem;
-    vm.updateQuantity = LineItemHelpers.UpdateQuantity;
     vm.pagingfunction = PagingFunction;
+
+    vm.updateQuantity = function(cartOrder,lineItem){
+        $timeout.cancel();
+        $timeout(function(){
+            LineItemHelpers.UpdateQuantity(cartOrder,lineItem);
+        },800);
+    };
 
     function PagingFunction() {
         var dfd = $q.defer();
@@ -91,6 +97,16 @@ function CartController($q, $rootScope, OrderCloud, Order, LineItemsList, LineIt
             .then(function(data) {
                 vm.order = data;
             });
+    });
+
+    $rootScope.$on('OC:UpdateLineItem', function(event,Order) {
+            OrderCloud.LineItems.List(Order.ID)
+                .then(function (data) {
+                    LineItemHelpers.GetProductInfo(data.Items)
+                        .then(function () {
+                            vm.lineItems = data;
+                        });
+                });
     });
 }
 
