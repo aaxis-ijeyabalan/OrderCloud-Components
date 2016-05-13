@@ -24,7 +24,7 @@ function OrderHistoryConfig( $stateProvider ) {
                     return JSON.parse(atob(OrderCloud.Auth.ReadToken().split('.')[1])).usrtype;
                 },
                 OrderList: function(OrderCloud, UserType) {
-                    return OrderCloud.Orders.List((UserType == 'admin' ? 'incoming' : 'outgoing'));
+                    return OrderCloud.Orders[UserType == 'admin' ? 'ListIncoming' : 'ListOutgoing']();
                 },
                 BuyerCompanies: function( $q, OrderCloud, UserType ) {
                     var deferred = $q.defer();
@@ -255,12 +255,12 @@ function OrderHistoryFactory( $q, Underscore, OrderCloud ) {
             deferred.resolve();
         }else{
             if(filters.favorite){
-                OrderCloud.Orders.List((userType == 'admin' ? 'incoming' : 'outgoing'), filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, filters.sortType, { ID: filters.OrderID, Status: filters.Status, FromUserID: filters.groupOrders, xp:{favorite:filters.favorite} }, filters.FromCompanyID)
+                OrderCloud.Orders[userType == 'admin' ? 'ListIncoming' : 'ListOutgoing']( filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, filters.sortType, { ID: filters.OrderID, Status: filters.Status, FromUserID: filters.groupOrders, xp:{favorite:filters.favorite} }, filters.FromCompanyID)
                     .then(function(data) {
                         deferred.resolve(data);
                     });
             }else{
-                OrderCloud.Orders.List((userType == 'admin' ? 'incoming' : 'outgoing'), filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, filters.sortType, { ID: filters.OrderID, Status: filters.Status, FromUserID: filters.groupOrders}, filters.FromCompanyID)
+                OrderCloud.Orders[userType == 'admin' ? 'ListIncoming' : 'ListOutgoing']( filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, filters.sortType, { ID: filters.OrderID, Status: filters.Status, FromUserID: filters.groupOrders}, filters.FromCompanyID)
                     .then(function(data) {
                         deferred.resolve(data);
                     });
