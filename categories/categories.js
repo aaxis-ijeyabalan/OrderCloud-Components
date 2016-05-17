@@ -158,10 +158,6 @@ function CategoryTreeController(Tree, CategoryTreeService) {
     var vm = this;
     vm.tree = Tree;
 
-    vm.toggle = function(scope) {
-        scope.toggle();
-    };
-
     vm.treeOptions = {
         dropped: function(event) {
             CategoryTreeService.UpdateCategoryNode(event);
