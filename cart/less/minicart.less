@@ -27,6 +27,19 @@
       }
     }
   }
+}
 
-
+#BASE_BOTTOM {
+  .dropdown .dropdown-menu {
+    top: auto;
+    bottom: 100%;
+    margin-bottom: 0;
+    .border-top-radius(@border-radius-base);
+    .border-bottom-radius(0);
   }
+  .caret {
+    border-top: 0;
+    border-bottom: 4px dashed;
+    content: "";
+  }
+}
