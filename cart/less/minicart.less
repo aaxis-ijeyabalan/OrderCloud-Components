@@ -5,15 +5,19 @@
     }
   }
   .dropdown-menu{
-    width: 250%;
+    width: 250px;
   }
 
   .express-checkout {
     margin-top: @form-group-margin-bottom;
   }
+
+  .badge {
+    background-color:@brand-primary;
+  }
   #minicart_line_item_list {
     padding: 0;
-    right: 0;
+    right: 15px;
     left: auto;
     .minicart-body {
       max-height: 30vh;
@@ -26,20 +30,5 @@
         }
       }
     }
-  }
-}
-
-#BASE_BOTTOM {
-  .dropdown .dropdown-menu {
-    top: auto;
-    bottom: 100%;
-    margin-bottom: 0;
-    .border-top-radius(@border-radius-base);
-    .border-bottom-radius(0);
-  }
-  .caret {
-    border-top: 0;
-    border-bottom: 4px dashed;
-    content: "";
   }
 }
