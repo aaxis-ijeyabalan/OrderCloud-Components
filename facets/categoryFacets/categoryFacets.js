@@ -18,7 +18,7 @@ function CategoryFacetsConfig( $stateProvider ) {
         data: {componentName: 'Category Facets'},
         resolve: {
             CategoryList: function(OrderCloud) {
-                return OrderCloud.Categories.List(null, 'all');
+                return OrderCloud.Categories.List(null, null, null, null, null, null, null, 'all');
             }
         }
     })
