@@ -46,7 +46,7 @@ function CouponsConfig( $stateProvider ) {
             }
         })
         .state( 'coupons.create', {
-            url: '/coupons/create',
+            url: '/create',
             templateUrl: 'coupons/templates/couponCreate.tpl.html',
             controller: 'CouponCreateCtrl',
             controllerAs: 'couponCreate'
