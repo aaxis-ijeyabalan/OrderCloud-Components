@@ -56,7 +56,7 @@
                     <div class="col-sm-6" ng-form="BillingAddressID">
                         <fieldset class="form-group">
                             <label for="orderBillAddInput">Billing Address ID
-                                <i class="fa fa-question-circle" uib-tooltip="Write only field. Updates Billing Address ID for entire Order."></i>
+                                <i class="fa fa-question-circle" uib-tooltip="Updates Billing Address ID for entire Order."></i>
                             </label>
                             <input id="orderBillAddInput"
                                 name="orderBillAddInput"
@@ -158,7 +158,7 @@
                 <div class="form-group col-sm-6" ng-form="ShippingAdddressID">
                     <label for="orderShipAddInput">Shipping Address ID
                         <i class="fa fa-question-circle"
-                           uib-tooltip="Write only field. Updates the Shipping Address ID on all Line Items associated with this Order."></i>
+                           uib-tooltip="Updates the Shipping Address ID on all Line Items associated with this Order. If all Line Items associated with this Order share the same Shipping Address ID, this field's value will be provided. Otherwise, null."></i>
                     </label>
                     <input
 
@@ -299,7 +299,7 @@
                                     <a ui-sref="products.edit({productid: li.ProductID})" target="_blank">{{li.ProductID}}</a>
                                 </td>
                                 <td>
-                                    {{li.ShippingAddressID}}
+                                    {{li.ShippingAddressID || li.ShippingAddress.ID}}
                                 </td>
                                 <td><input type="number" name="{{'Quantity' + $index}}" ng-model="li.Quantity" class="form-control" /></td>
                                 <td><input type="number" name="{{'UnitPrice' + $index}}" ng-model="li.UnitPrice" class="form-control" /></td>
