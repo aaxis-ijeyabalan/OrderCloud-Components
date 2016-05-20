@@ -25,10 +25,10 @@
                                     <col class="action-column"/>
                                 </colgroup>
                                 <tbody>
-                                <tr ng-repeat="facetValue in facet.Values track by $index" ng-init="facetedProdManage.setSelected(this)">
+                                <tr ng-repeat="facetValue in facet.Values track by $index">
                                     <td>
-                                        <input type="checkbox" ng-checked="this.selected"
-                                               ng-click="facetedProdManage.toggleSelection(this)"/>
+                                        <input type="checkbox" ng-checked="facetedProdManage.setSelected(cat, facetName, facetValue)"
+                                               ng-click="facetedProdManage.toggleSelection(cat, facetName, facetValue)"/>
                                     </td>
                                     <td>{{facetValue}}</td>
                                 </tr>

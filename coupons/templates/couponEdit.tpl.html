@@ -55,11 +55,13 @@
         <div class="row">
             <div class="form-group col-sm-3">
                 <label for="couponStartInput">Start Date</label>
-                <input class="form-control" type="text" is-open="open1" uib-datepicker-popup="MM/dd/yyyy" ng-click="open1 = !open1" id="couponStartInput" datepicker-append-to-body="true" show-weeks="false" ng-model="couponEdit.coupon.StartDate"/>
+                <input class="form-control" ng-show="application.$ocMedia('max-width: 767px')" type="date" id="couponStartInput" ng-model="couponEdit.coupon.StartDate"/>
+                <input class="form-control"  ng-hide="application.$ocMedia('max-width: 767px')" type="text" is-open="open1" uib-datepicker-popup="MM/dd/yyyy" ng-click="open1 = !open1" id="couponStartInput2" datepicker-append-to-body="true"  ng-model="couponEdit.coupon.StartDate"/>
             </div>
             <div class="form-group col-sm-3">
                 <label for="couponExpirationInput">Expiration</label>
-                <input class="form-control" type="text" is-open="open2" uib-datepicker-popup="MM/dd/yyyy" ng-click="open2 = !open2" id="couponExpirationInput" datepicker-append-to-body="true" show-weeks="false" ng-model="couponEdit.coupon.ExpirationDate" min-date="couponEdit.coupon.StartDate"/>
+                <input class="form-control" ng-show="application.$ocMedia('max-width: 767px')" type="date" id="couponExpirationInput" ng-model="couponEdit.coupon.ExpirationDate"/>
+                <input class="form-control" ng-hide="application.$ocMedia('max-width: 767px')"  type="text" is-open="open2" uib-datepicker-popup="MM/dd/yyyy" ng-click="open2 = !open2" id="couponExpirationInput2" datepicker-append-to-body="true" show-weeks="false" ng-model="couponEdit.coupon.ExpirationDate" min-date="couponEdit.coupon.ExpirationDate"/>
             </div>
             <div class="col-sm-6 form-group">
                 <label for="couponMinimumPurchaseInput">Minimum Purchase</label>

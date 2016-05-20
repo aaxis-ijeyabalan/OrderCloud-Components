@@ -18,16 +18,12 @@ function OrderCloudOrderInputDirective() {
     };
 }
 
-function OrderInputController($state, appname, $scope, $rootScope, $localForage, OrderCloud, LineItemHelpers, Underscore, CurrentOrder) {
-    var vm = this,
-        orderid;
+function OrderInputController($state, $scope, $rootScope, OrderCloud, LineItemHelpers, Underscore, CurrentOrder) {
+    var vm = this;
     vm.currentState = $state.current.name;
     vm.price = null;
     vm.addToCart = AddToCart;
 
-    $localForage.getItem(appname + '.CurrentOrderID').then(function(data) {
-        orderid = data;
-    });
     $scope.$on('$stateChangeSuccess', function(event, toState) {vm.currentState = toState.name;});
 
     $scope.$watch(function() {

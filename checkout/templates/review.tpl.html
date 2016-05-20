@@ -47,6 +47,9 @@
                     </div>
                     <div ng-if="payment.Type == 'PurchaseOrder'">
                         Purchase Order
+                        <span ng-if="payment.xp.PONumber">
+                         : {{orderReview.orderPayments[$index].xp.PONumber}}
+                        </span>
                     </div>
                     <!--<div>-->
                     <!--Subtotal: {{orderConfirmation.currentOrder.Subtotal | currency}}-->

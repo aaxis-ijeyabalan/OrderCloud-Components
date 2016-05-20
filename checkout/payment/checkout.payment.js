@@ -25,7 +25,7 @@ function checkoutPaymentConfig($stateProvider) {
 		});
 }
 
-function CheckoutPaymentController($state, Underscore, AvailableCreditCards, AvailableSpendingAccounts, OrderCloud, toastr, OrderPayments, allowMultiplePayments) {
+function CheckoutPaymentController($state, Underscore, AvailableCreditCards, AvailableSpendingAccounts, OrderCloud, toastr, OrderPayments, allowMultiplePayments, creditCardExpirationDate) {
 	var vm = this;
     vm.allowMultiplePayments = allowMultiplePayments;
     vm.currentOrderPayments = OrderPayments.Items;
@@ -41,11 +41,26 @@ function CheckoutPaymentController($state, Underscore, AvailableCreditCards, Ava
         'Discover',
         'Visa'
     ];
-    vm.creditCard = null;
     vm.today = new Date();
     vm.creditCards = AvailableCreditCards.Items;
     vm.spendingAccounts = AvailableSpendingAccounts.Items;
-
+    vm.months =[
+        '01',
+        '02',
+        '03',
+        '04',
+        '05',
+        '06',
+        '07',
+        '08',
+        '09',
+        '10',
+        '11',
+        '12'
+    ];
+    vm.years = Underscore.range(vm.today.getFullYear(), vm.today.getFullYear() + 20, 1);
+    vm.expireMonth = creditCardExpirationDate.expirationMonth;
+    vm.expireYear = creditCardExpirationDate.expirationYear;
 
     vm.setCreditCard = SetCreditCard;
     vm.saveCreditCard = SaveCreditCard;
@@ -56,6 +71,8 @@ function CheckoutPaymentController($state, Underscore, AvailableCreditCards, Ava
     vm.canAddPayment = CanAddPayment;
     vm.patchPaymentAmount = PatchPaymentAmount;
     vm.setAmountMax = SetAmountMax;
+    vm.savePONumber = SavePONumber;
+    vm.expirationDateChange = ExpirationDateChange;
 
     function CreatePayment(order) {
         OrderCloud.Payments.Create(order.ID, {Type: vm.currentOrderPayments[0].Type})
@@ -90,14 +107,14 @@ function CheckoutPaymentController($state, Underscore, AvailableCreditCards, Ava
         }
     }
 
-    function SaveCreditCard(order, index) {
+    function SaveCreditCard(order, card, index) {
         // TODO: Needs to save the credit card with integration plug in
-        if (vm.creditCard) {
+        if (card) {
             // This is just until Nick gives me the integration
             vm.Token = 'cc';
-            if (vm.creditCard.PartialAccountNumber.length === 16) {
-                vm.creditCard.PartialAccountNumber = vm.creditCard.PartialAccountNumber.substr(vm.creditCard.PartialAccountNumber.length - 4);
-                OrderCloud.CreditCards.Create(vm.creditCard)
+            if (card.PartialAccountNumber.length === 16) {
+                card.PartialAccountNumber = card.PartialAccountNumber.substr(card.PartialAccountNumber.length - 4);
+                OrderCloud.CreditCards.Create(card)
                     .then(function(CreditCard) {
                         OrderCloud.Me.Get()
                             .then(function(me) {
@@ -168,6 +185,19 @@ function CheckoutPaymentController($state, Underscore, AvailableCreditCards, Ava
             payment.MaxAmount = (payment.Amount + maxAmount).toString();
         });
 
+    }
+
+    function SavePONumber(index,order){
+        !vm.currentOrderPayments[index].xp ? vm.currentOrderPayments[index].xp = {} : vm.currentOrderPayments[index].xp;
+        if(vm.currentOrderPayments[index].Type === "PurchaseOrder"){
+            OrderCloud.Payments.Update(order.ID, vm.currentOrderPayments[index].ID, vm.currentOrderPayments[index]);
+        }
+    }
+
+    function ExpirationDateChange(index) {
+        if (vm.currentOrderPayments[index].CreditCard && vm.currentOrderPayments[index].CreditCard.ExpirationMonth && vm.currentOrderPayments[index].CreditCard.ExpirationYear) {
+            vm.currentOrderPayments[index].CreditCard.ExpirationDate = new Date(vm.currentOrderPayments[index].CreditCard.ExpirationYear, vm.currentOrderPayments[index].CreditCard.ExpirationMonth, 0);
+        }
     }
 }
 

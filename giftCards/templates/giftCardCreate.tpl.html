@@ -16,11 +16,13 @@
         <div class="row">
             <div class="form-group col-md-6">
                 <label for="giftCardStartDate">Start Date</label>
-                <input id="giftCardStartDate" type="text" ng-click="open1 = !open1" is-open="open1" uib-datepicker-popup="{{giftCardCreate.format}}" datepicker-append-to-body="true" class="form-control" ng-model="giftCardCreate.giftCard.StartDate">
+                <input class="form-control" ng-show="application.$ocMedia('max-width: 767px')" type="date" id="giftcardcreateStartinput2" ng-model="giftCardCreate.giftCard.StartDate"/>
+                <input id="giftCardStartDate" ng-hide="application.$ocMedia('max-width: 767px')" type="text" ng-click="open1 = !open1" is-open="open1" uib-datepicker-popup="{{giftCardCreate.format}}" datepicker-append-to-body="true" class="form-control" ng-model="giftCardCreate.giftCard.StartDate">
             </div>
             <div class="form-group col-md-6">
                 <label for="giftCardExpirationDate">End Date</label>
-                <input id="giftCardExpirationDate" type="text" ng-click="open2 = !open2" is-open="open2" min-date="giftCardCreate.giftCard.StartDate" ng-disabled="!giftCardCreate.giftCard.StartDate" uib-datepicker-popup="{{giftCardCreate.format}}" datepicker-append-to-body="true" class="form-control" ng-model="giftCardCreate.giftCard.EndDate">
+                <input class="form-control"  ng-disabled="!giftCardCreate.giftCard.StartDate" ng-show="application.$ocMedia('max-width: 767px')" type="date" id="giftcardStartcreateinput2" ng-model="giftCardCreate.giftCard.EndDate"/>
+                <input id="giftCardExpirationDate" ng-hide="application.$ocMedia('max-width: 767px')"  type="text" ng-click="open2 = !open2" is-open="open2" min-date="giftCardCreate.giftCard.StartDate" ng-disabled="!giftCardCreate.giftCard.StartDate" uib-datepicker-popup="{{giftCardCreate.format}}" datepicker-append-to-body="true" class="form-control" ng-model="giftCardCreate.giftCard.EndDate">
             </div>
         </div>
         <div class="row">

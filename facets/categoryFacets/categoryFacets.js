@@ -54,7 +54,6 @@ function FacetedCategoryManageController ( $state, Category, OrderCloud, toastr,
 
     vm.createFacetModal = function() {
         var modalInstance = $uibModal.open({
-            animation: vm.animationsEnabled,
             templateUrl: 'facets/categoryFacets/templates/categoryFacets.modal.tpl.html',
             controller: 'CategoryFacetsModalCtrl',
             controllerAs: 'catFacetModal'
@@ -66,7 +65,7 @@ function FacetedCategoryManageController ( $state, Category, OrderCloud, toastr,
             vm.category.xp.OC_Facets[facetToSave.facet.toLowerCase()] = {};
             vm.category.xp.OC_Facets[facetToSave.facet.toLowerCase()].Values = facetToSave.facetValues;
             vm.category.xp.OC_Facets[facetToSave.facet.toLowerCase()].isRequired = facetToSave.isRequired;
-            (OrderCloud.Categories.Update(vm.category.ID, vm.category))
+            OrderCloud.Categories.Update(vm.category.ID, vm.category)
                 .then(function() {
                     toastr.success('Your category facet has been saved successfully');
                     $state.reload();

@@ -2,6 +2,7 @@
     <h3 class="page-header">
         Product Assignments for {{couponAssignProd.coupon.Label}}
     </h3>
+    <ordercloud-search servicename="Products" controlleras="couponAssignProd"></ordercloud-search>
     <section class="table-fixed-header">
         <div class="table-header-bg"></div>
         <div class="table-container" ordercloud-infinite-scroll servicename="Products" idname="ProductID" controlleras="couponAssignProd" disable-dynamic-validation>

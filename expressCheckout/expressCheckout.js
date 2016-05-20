@@ -2,6 +2,8 @@ angular.module('orderCloud')
     .config(ExpressCheckoutConfig)
     .controller('ExpressCheckoutCtrl', ExpressCheckoutController)
     .controller('ExpressOrderReviewCtrl', ExpressOrderReviewController)
+    .directive('ordercloudUserDefaults', ExpressCheckoutUserDefaultsDirective)
+    .controller('ExpressCheckoutUserDefaultsCtrl', ExpressCheckoutUserDefaultsController)
 
 ;
 
@@ -17,26 +19,44 @@ function ExpressCheckoutConfig($stateProvider) {
                 CurrentUser: function(OrderCloud) {
                     return OrderCloud.Me.Get();
                 },
-                Order: function($q, $state, toastr, OrderCloud, CurrentOrder, CurrentUser) {
+                Order: function($q, $state, toastr, Underscore, OrderCloud, CurrentOrder, CurrentUser) {
                     var dfd = $q.defer();
                     CurrentOrder.Get()
                         .then(function(order) {
                             var patchObj = {};
-                            if (!order.ShippingAddressID && CurrentUser.xp && CurrentUser.xp.defaultShippingAddressID)
-                                patchObj.ShippingAddressID = CurrentUser.xp.defaultShippingAddressID;
-                            if (!order.BillingAddressID && CurrentUser.xp && CurrentUser.xp.defaultBillingAddressID)
-                                patchObj.BillingAddressID = CurrentUser.xp.defaultBillingAddressID;
-                            if (!patchObj.ShippingAddressID && !patchObj.BillingAddressID)
-                                dfd.resolve(order);
-                            else {
-                                OrderCloud.Orders.Patch(order.ID, patchObj)
-                                    .then(function() {
-                                        OrderCloud.Orders.Get(order.ID)
-                                            .then(function(newOrder) {
-                                                dfd.resolve(newOrder);
-                                            });
-                                    });
+                            var queue = []
+                            if (!order.ShippingAddressID && CurrentUser.xp && CurrentUser.xp.defaultShippingAddressID) {
+                                queue.push(OrderCloud.Me.ListAddresses()
+                                    .then(function(data){
+                                        if(Underscore.where(data.Items, {ID: CurrentUser.xp.defaultShippingAddressID, Shipping: true}).length) {
+                                            patchObj.ShippingAddressID = CurrentUser.xp.defaultShippingAddressID;
+                                        }
+                                    }));
                             }
+
+                            if (!order.BillingAddressID && CurrentUser.xp && CurrentUser.xp.defaultBillingAddressID) {
+                                queue.push(OrderCloud.Me.ListAddresses()
+                                    .then(function(data){
+                                        if(Underscore.where(data.Items, {ID: CurrentUser.xp.defaultBillingAddressID, Billing: true}).length) {
+                                            patchObj.BillingAddressID = CurrentUser.xp.defaultBillingAddressID;
+                                        }
+                                    }));
+                            }
+                            $q.all(queue)
+                                .then(function(){
+                                    if (!patchObj.ShippingAddressID && !patchObj.BillingAddressID) {
+                                        dfd.resolve(order);
+                                    }
+                                    else  {
+                                        OrderCloud.Orders.Patch(order.ID, patchObj)
+                                            .then(function() {
+                                                OrderCloud.Orders.Get(order.ID)
+                                                    .then(function(newOrder) {
+                                                        dfd.resolve(newOrder);
+                                                    });
+                                            });
+                                    }
+                                });
                         })
                         .catch(function() {
                             toastr.error('You do not have an active open order.', 'Error');
@@ -47,20 +67,34 @@ function ExpressCheckoutConfig($stateProvider) {
                         });
                     return dfd.promise;
                 },
-                OrderPayments: function($q, OrderCloud, CurrentUser, CurrentOrder) {
+                OrderPayments: function($q, $state, toastr, Underscore, OrderCloud, CurrentUser, CurrentOrder) {
                   var dfd = $q.defer();
                     CurrentOrder.Get()
                         .then(function(order){
                            OrderCloud.Payments.List(order.ID)
                                .then(function(payments){
                                    if(!payments.Items.length && CurrentUser.xp && CurrentUser.xp.defaultCreditCardID){
-                                       OrderCloud.Payments.Create(order.ID, {Type: 'CreditCard', CreditCardID: CurrentUser.xp.defaultCreditCardID})
-                                           .then(function(){
-                                              OrderCloud.Payments.List(order.ID)
-                                                  .then(function(newPayments){
-                                                      dfd.resolve(newPayments);
-                                                  });
-                                           });
+                                       OrderCloud.Me.ListCreditCards()
+                                           .then(function(data){
+                                               if(Underscore.where(data.Items, {ID: CurrentUser.xp.defaultCreditCardID}).length) {
+                                                   OrderCloud.Payments.Create(order.ID, {Type: 'CreditCard', CreditCardID: CurrentUser.xp.defaultCreditCardID})
+                                                       .then(function(){
+                                                           OrderCloud.Payments.List(order.ID)
+                                                               .then(function(newPayments){
+                                                                   dfd.resolve(newPayments);
+                                                               });
+                                                       });
+                                               }
+                                               else {
+                                                   OrderCloud.Payments.Create(order.ID, {})
+                                                       .then(function(){
+                                                           OrderCloud.Payments.List(order.ID)
+                                                               .then(function(newPayments){
+                                                                   dfd.resolve(newPayments);
+                                                               })
+                                                       })
+                                               }
+                                           })
                                    }
                                    else if (!payments.Items.length) {
                                        OrderCloud.Payments.Create(order.ID, {})
@@ -72,9 +106,16 @@ function ExpressCheckoutConfig($stateProvider) {
                                            })
                                    }
                                    else {
-                                       dfd.resolve(payments)
+                                       dfd.resolve(payments);
                                    }
                                });
+                        })
+                        .catch(function(){
+                            toastr.error('You do not have an active open order.', 'Error');
+                            if ($state.current.name.indexOf('expressCheckout') > -1) {
+                                $state.go('home');
+                            }
+                            dfd.reject();
                         });
                     return dfd.promise;
                 },
@@ -96,7 +137,7 @@ function ExpressCheckoutConfig($stateProvider) {
                     var dfd = $q.defer();
                     OrderCloud.Me.ListAddresses()
                         .then(function(data) {
-                            dfd.resolve(Underscore.where(data.Items, {Biling:true}));
+                            dfd.resolve(Underscore.where(data.Items, {Billing:true}));
                         });
                     return dfd.promise;
                 }
@@ -115,7 +156,7 @@ function ExpressCheckoutConfig($stateProvider) {
                     OrderCloud.Orders.Get($stateParams.orderid)
                         .then(function(order){
                             if(order.Status == 'Unsubmitted') {
-                                $state.go('checkout.shipping')
+                                $state.go('expressCheckout')
                                     .then(function() {
                                         toastr.error('You cannot review an Unsubmitted Order', 'Error');
                                         dfd.reject();
@@ -163,6 +204,13 @@ function ExpressCheckoutController($state, $rootScope, toastr, OrderCloud, Curre
             });
     };
 
+    vm.savePONumber = function(order){
+        !vm.orderPayments[0].xp ? vm.orderPayments[0].xp = {} : vm.orderPayments[0].xp;
+        if(vm.orderPayments[0].Type === "PurchaseOrder"){
+            OrderCloud.Payments.Update(order.ID, vm.orderPayments[0].ID, vm.orderPayments[0]);
+        }
+    };
+
     function checkPaymentType() {
         if(vm.orderPayments[0].Type == 'CreditCard' && vm.orderPayments[0].CreditCardID) {
             OrderCloud.CreditCards.Get(vm.orderPayments[0].CreditCardID)
@@ -181,22 +229,13 @@ function ExpressCheckoutController($state, $rootScope, toastr, OrderCloud, Curre
     checkPaymentType();
 
     vm.setPaymentMethod = function(order) {
-        if (!vm.orderPayments.length) {
-            // When Order Payment Method is changed it will clear out all saved payment information
-            OrderCloud.Payments.Create(order.ID, {Type: vm.orderPayments[0].Type})
-                .then(function() {
-                    $state.reload();
-                });
-        }
-        else {
-            OrderCloud.Payments.Delete(order.ID, vm.orderPayments[0].ID)
-                .then(function(){
-                    OrderCloud.Payments.Create(order.ID, {Type: vm.orderPayments[0].Type})
-                        .then(function() {
-                            $state.reload();
-                        });
-                })
-        }
+        OrderCloud.Payments.Delete(order.ID, vm.orderPayments[0].ID)
+            .then(function(){
+                OrderCloud.Payments.Create(order.ID, {Type: vm.orderPayments[0].Type})
+                    .then(function() {
+                        $state.reload();
+                    });
+            })
     };
 
     vm.setCreditCard = function(order) {
@@ -229,7 +268,7 @@ function ExpressCheckoutController($state, $rootScope, toastr, OrderCloud, Curre
             .then(function() {
                 CurrentOrder.Remove()
                     .then(function(){
-                        $state.go('orderReview', {orderid: vm.currentOrder.ID});
+                        $state.go('expressOrderReview', {orderid: vm.currentOrder.ID});
                         $rootScope.$broadcast('OC:RemoveOrder');
                         toastr.success('Your order has been submitted', 'Success');
                     })
@@ -249,8 +288,6 @@ function ExpressOrderReviewController(SubmittedOrder, isMultipleAddressShipping,
     OrderCloud.Payments.List(vm.submittedOrder.ID)
         .then(function(data){
             vm.orderPayments = data.Items;
-        })
-        .then(function(){
             angular.forEach(vm.orderPayments, function(payment, index){
                 if(payment.Type === 'CreditCard' && payment.CreditCardID) {
                     OrderCloud.CreditCards.Get(payment.CreditCardID)
@@ -307,7 +344,7 @@ function ExpressOrderReviewController(SubmittedOrder, isMultipleAddressShipping,
         }
         SubmittedOrder.xp.favorite = true;
 
-        OrderCloud.Orders.Update(SubmittedOrder.ID, SubmittedOrder)
+        OrderCloud.Orders.Patch(SubmittedOrder.ID, {xp: SubmittedOrder.xp.favorite} )
             .then(function(){
                 toastr.success("Your order has been added to Favorites! You can now easily find your order in 'Order History'", 'Success')
             })
@@ -317,10 +354,39 @@ function ExpressOrderReviewController(SubmittedOrder, isMultipleAddressShipping,
     };
     vm.removeFromFavorites = function(){
         delete SubmittedOrder.xp.favorite;
-        OrderCloud.Orders.Patch(SubmittedOrder.ID, {"xp": null} );
+        OrderCloud.Orders.Patch(SubmittedOrder.ID, {xp: SubmittedOrder.xp} );
         toastr.success("Your order has been removed from Favorites", 'Success')
     }
+}
 
+function ExpressCheckoutUserDefaultsDirective() {
+        return {
+                templateUrl: 'expressCheckout/templates/expressCheckoutUserDefaults.tpl.html',
+                controller: 'ExpressCheckoutUserDefaultsCtrl',
+                controllerAs: 'expressCheckoutUserDefaults'
+        };
+    }
 
+function ExpressCheckoutUserDefaultsController(Underscore, OrderCloud) {
+    var vm = this;
 
+    OrderCloud.Me.Get()
+        .then(function (data) {
+            vm.me = data;
+        });
+
+    OrderCloud.Me.ListCreditCards()
+        .then(function (data) {
+            vm.creditCards = data;
+        });
+
+    OrderCloud.Me.ListAddresses()
+        .then(function (data) {
+            vm.shippingAddresses = Underscore.where(data.Items, {Shipping: true});
+            vm.billingAddresses = Underscore.where(data.Items, {Billing: true});
+        });
+
+    vm.updateDefault = function () {
+        OrderCloud.Me.Update(vm.me)
+    };
 }

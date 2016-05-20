@@ -284,7 +284,7 @@ describe('Component: Categories', function() {
             });
 
             it ('should call the Categories List method', function() {
-                expect(oc.Categories.List).toHaveBeenCalledWith(null, 'all', 1, 100);
+                expect(oc.Categories.List).toHaveBeenCalledWith(null, 1, 100, null, null, null, null, 'all');
             });
         });
     });

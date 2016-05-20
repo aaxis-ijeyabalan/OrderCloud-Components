@@ -1,30 +1,30 @@
 angular.module('orderCloud')
-    .directive( 'ordercloudQuickView', ordercloudQuickViewDirective)
-    .controller( 'QuickViewCtrl', QuickViewController)
-    .controller ('QuickViewModalCtrl', QuickViewModalController)
+    .directive( 'ordercloudProductQuickView', ordercloudProductQuickViewDirective)
+    .controller( 'ProductQuickViewCtrl', ProductQuickViewController)
+    .controller ('ProductQuickViewModalCtrl', ProductQuickViewModalController)
 ;
 
-function ordercloudQuickViewDirective(){
+function ordercloudProductQuickViewDirective(){
     return{
         scope:{
             product: '='
         },
         restrict:'E',
         templateUrl:'catalog/productQuickView/templates/catalogSearch.quickview.tpl.html',
-        controller:'QuickViewCtrl',
-        controllerAs:'quickView'
+        controller:'ProductQuickViewCtrl',
+        controllerAs:'productQuickView'
     }
 }
 
-function QuickViewController ($uibModal){
+function ProductQuickViewController ($uibModal){
     var vm = this;
     vm.open = function (product){
         $uibModal.open({
             animation:true,
             size:'lg',
             templateUrl: 'catalog/productQuickView/templates/catalogSearch.quickviewModal.tpl.html',
-            controller: 'QuickViewModalCtrl',
-            controllerAs: 'quickViewModal',
+            controller: 'ProductQuickViewModalCtrl',
+            controllerAs: 'productQuickViewModal',
 
             resolve: {
                 SelectedProduct: function (OrderCloud) {
@@ -40,11 +40,26 @@ function QuickViewController ($uibModal){
                             });
                             $q.all(queue)
                                 .then(function(result) {
+                                    var specOptionsQueue = [];
                                     angular.forEach(result, function(spec) {
                                         spec.Value = spec.DefaultValue;
                                         spec.OptionID = spec.DefaultOptionID;
+                                        spec.Options = [];
+                                        if (spec.OptionCount) {
+                                            specOptionsQueue.push((function() {
+                                                var d = $q.defer();
+                                                OrderCloud.Specs.ListOptions(spec.ID, null, 1, spec.OptionCount)
+                                                    .then(function(optionData) {
+                                                        spec.Options = optionData.Items;
+                                                        d.resolve();
+                                                    });
+                                                return d.promise;
+                                            })());
+                                        }
                                     });
-                                    dfd.resolve(result);
+                                    $q.all(specOptionsQueue).then(function() {
+                                        dfd.resolve(result);
+                                    });
                                 });
                         })
                         .catch(function(response) {
@@ -57,7 +72,7 @@ function QuickViewController ($uibModal){
     };
 }
 
-function QuickViewModalController($uibModalInstance, SelectedProduct, SpecList, AddToOrder){
+function ProductQuickViewModalController($uibModalInstance, SelectedProduct, SpecList, AddToOrder){
     var vm = this;
     vm.selectedProduct = SelectedProduct;
     vm.selectedProduct.item = {Specs: SpecList};

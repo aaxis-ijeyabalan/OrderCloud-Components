@@ -111,13 +111,19 @@ function UserGroupCreateController( $exceptionHandler, $state, OrderCloud, toast
     }
 }
 
-function UserGroupAssignController(OrderCloud, Assignments, Paging, UserList, AssignedUsers, SelectedUserGroup, toastr) {
+function UserGroupAssignController($scope, OrderCloud, Assignments, Paging, UserList, AssignedUsers, SelectedUserGroup, toastr) {
     var vm = this;
     vm.UserGroup = SelectedUserGroup;
     vm.list = UserList;
     vm.assignments = AssignedUsers;
     vm.saveAssignments = SaveAssignment;
     vm.pagingfunction = PagingFunction;
+
+    $scope.$watchCollection(function(){
+        return vm.list;
+    }, function(){
+        Paging.setSelected(vm.list.Items, vm.assignments.Items, 'UserID')
+    });
 
     function SaveFunc(ItemID) {
         return OrderCloud.UserGroups.SaveUserAssignment({

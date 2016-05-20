@@ -61,13 +61,19 @@ function CartConfig($stateProvider) {
         });
 }
 
-function CartController($q, $rootScope, OrderCloud, Order, LineItemsList, LineItemHelpers) {
+function CartController($q, $rootScope, $timeout, OrderCloud, Order, LineItemsList, LineItemHelpers) {
     var vm = this;
     vm.order = Order;
     vm.lineItems = LineItemsList;
     vm.removeItem = LineItemHelpers.RemoveItem;
-    vm.updateQuantity = LineItemHelpers.UpdateQuantity;
     vm.pagingfunction = PagingFunction;
+
+    vm.updateQuantity = function(cartOrder,lineItem){
+        $timeout.cancel();
+        $timeout(function(){
+            LineItemHelpers.UpdateQuantity(cartOrder,lineItem);
+        },800);
+    };
 
     function PagingFunction() {
         var dfd = $q.defer();
@@ -92,6 +98,16 @@ function CartController($q, $rootScope, OrderCloud, Order, LineItemsList, LineIt
                 vm.order = data;
             });
     });
+
+    $rootScope.$on('OC:UpdateLineItem', function(event,Order) {
+            OrderCloud.LineItems.List(Order.ID)
+                .then(function (data) {
+                    LineItemHelpers.GetProductInfo(data.Items)
+                        .then(function () {
+                            vm.lineItems = data;
+                        });
+                });
+    });
 }
 
 function MiniCartController($q, $state, $rootScope, OrderCloud, LineItemHelpers, CurrentOrder) {
@@ -100,11 +116,16 @@ function MiniCartController($q, $state, $rootScope, OrderCloud, LineItemHelpers,
     vm.Order = null;
     vm.showLineItems = false;
 
-    CurrentOrder.Get()
+
+    vm.getLI = function(){
+        CurrentOrder.Get()
         .then(function(data) {
             vm.Order = data;
-            if (data) getLineItems(data);
+            if (data) vm.lineItemCall(data);
         });
+    };
+
+    vm.getLI();
 
     vm.checkForExpress = function() {
         var expressCheckout = false;
@@ -132,7 +153,7 @@ function MiniCartController($q, $state, $rootScope, OrderCloud, LineItemHelpers,
         $state.go('cart', {}, {reload: true});
     };
 
-    function getLineItems(order) {
+    vm.lineItemCall = function /*getLineItems*/(order) {
         var dfd = $q.defer();
         var queue = [];
         OrderCloud.LineItems.List(order.ID)
@@ -155,12 +176,12 @@ function MiniCartController($q, $state, $rootScope, OrderCloud, LineItemHelpers,
                     });
             });
         return dfd.promise;
-    }
+    };
 
     $rootScope.$on('LineItemAddedToCart', function() {
         CurrentOrder.Get()
             .then(function(order) {
-                getLineItems(order);
+                vm.lineItemCall(order);
                 vm.showLineItems = true;
             });
     });

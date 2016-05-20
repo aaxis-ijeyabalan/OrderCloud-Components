@@ -6,9 +6,6 @@ angular.module('orderCloud')
     .directive('ocAddToOrder', OCAddToOrder)
     .controller('ProductCtrl', ProductController)
     .controller('LineItemEditCtrl', LineItemEditController)
-    .controller('OrderInputCtrl', OrderInputController)
-
-
 ;
 
 function ProductConfig($stateProvider) {
@@ -28,20 +25,35 @@ function ProductConfig($stateProvider) {
                     return OrderCloud.Me.GetProduct($stateParams.productid);
                 },
                 SpecList: function(OrderCloud, $q, $stateParams) {
-                    var queue = [];
+                    var specQueue = [];
                     var dfd = $q.defer();
                     OrderCloud.Specs.ListProductAssignments(null, $stateParams.productid)
                         .then(function(data) {
                             angular.forEach(data.Items, function(assignment) {
-                                queue.push(OrderCloud.Specs.Get(assignment.SpecID));
+                                specQueue.push(OrderCloud.Specs.Get(assignment.SpecID));
                             });
-                            $q.all(queue)
+                            $q.all(specQueue)
                                 .then(function(result) {
+                                    var specOptionsQueue = [];
                                     angular.forEach(result, function(spec) {
                                         spec.Value = spec.DefaultValue;
                                         spec.OptionID = spec.DefaultOptionID;
+                                        spec.Options = [];
+                                        if (spec.OptionCount) {
+                                            specOptionsQueue.push((function() {
+                                                var d = $q.defer();
+                                                OrderCloud.Specs.ListOptions(spec.ID, null, 1, spec.OptionCount)
+                                                    .then(function(optionData) {
+                                                        spec.Options = optionData.Items;
+                                                        d.resolve();
+                                                    });
+                                                return d.promise;
+                                            })());
+                                        }
                                     });
-                                    dfd.resolve(result);
+                                    $q.all(specOptionsQueue).then(function() {
+                                        dfd.resolve(result);
+                                    });
                                 });
                         })
                         .catch(function(response) {
@@ -98,39 +110,6 @@ function ProductConfig($stateProvider) {
                 }
             }
         });
-}
-
-function OrderInputController($state, appname, $scope, $localForage) {
-    var vm = this,
-        orderid;
-    vm.currentState = $state.current.name;
-    vm.price = null;
-
-    $localForage.getItem(appname + '.CurrentOrderID').then(function(data) {
-        orderid = data;
-    });
-
-    $scope.$on('$stateChangeSuccess', function(event, toState) {
-        vm.currentState = toState.name;
-    });
-
-    $scope.$watch(function() {
-        return vm.Quantity;
-    }, function(newValue, oldValue) {
-        if (newValue && newValue !== oldValue) {
-            var max_quantity = 0;
-            angular.forEach($scope.product.item.StandardPriceSchedule.PriceBreaks, function(PriceBreaks) {
-                if (vm.Quantity >= PriceBreaks.Quantity && PriceBreaks.Quantity > max_quantity) {
-                    max_quantity = PriceBreaks.Quantity;
-                    vm.price = PriceBreaks.Price * vm.Quantity;
-                }
-                else return null;
-            });
-        }
-        else if (!newValue) {
-            vm.price = null;
-        }
-    });
 }
 
 function OCSpecForm() {
