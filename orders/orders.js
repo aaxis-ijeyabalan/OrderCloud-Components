@@ -10,14 +10,18 @@ function OrdersConfig( $stateProvider ) {
     $stateProvider
         .state( 'orders', {
             parent: 'base',
-            url: '/orders',
+            url: '/orders?from&to&search&page&pageSize&searchOn&sortBy&filters',
             templateUrl:'orders/templates/orders.tpl.html',
             controller:'OrdersCtrl',
             controllerAs: 'orders',
             data: {componentName: 'Orders'},
             resolve: {
-                OrderList: function(OrderCloud) {
-                    return OrderCloud.Orders.ListIncoming();
+                OrderList: function(OrderCloud, $stateParams) {
+                    var filterObj = null;
+                    if ($stateParams.filters) {
+                        filterObj = JSON.parse($stateParams.filters);
+                    }
+                    return OrderCloud.Orders.ListIncoming(null, null, $stateParams.search, $stateParams.page, $stateParams.pageSize || 12, $stateParams.searchOn, $stateParams.sortBy, filterObj);
                 }
             }
         })
@@ -33,7 +37,6 @@ function OrdersConfig( $stateProvider ) {
                 SelectedPayments: function($stateParams, $q, OrderCloud){
                     var dfd = $q.defer();
                     var paymentList = {};
-
 
                     OrderCloud.Payments.List($stateParams.orderid, null, 1, 100)
                         .then(function(data) {
@@ -60,9 +63,34 @@ function OrdersConfig( $stateProvider ) {
     ;
 }
 
-function OrdersController(OrderList) {
+function OrdersController($state, $stateParams, Underscore, OrderList, OrderCloud) {
     var vm = this;
     vm.list = OrderList;
+
+    //console.log($stateParams);
+    //var explicitParams = ['from', 'to', 'search', 'page', 'pageSize', 'searchOn', 'sortBy'];
+    //var filters = Underscore.omit($stateParams, explicitParams);
+    vm.applyFilters = function() {
+        var filterObj = {
+            CouponCost:0
+        };
+        var filterString = JSON.stringify(filterObj);
+        console.log(filterString);
+        $state.go('.', {filters:filterString});
+    };
+
+    vm.pageChanged = function() {
+        $state.go('.', {search:$stateParams.search, page:vm.list.Meta.Page, pageSize:$stateParams.pageSize});
+    };
+
+    vm.pageFunction = function() {
+        return OrderCloud.Orders.ListIncoming($stateParams.from, $stateParams.to, $stateParams.search, vm.list.Meta.Page + 1, $stateParams.pageSize || vm.list.Meta.PageSize)
+            .then(function(data) {
+                console.log(data.Items);
+                vm.list.Items = vm.list.Items.concat(data.Items);
+                vm.list.Meta = data.Meta;
+            });
+    }
 }
 
 function OrderEditController( $scope, $q, $exceptionHandler, $state, OrderCloud, SelectedOrder, SelectedPayments, OrdersTypeAheadSearchFactory, LineItemList, toastr) {

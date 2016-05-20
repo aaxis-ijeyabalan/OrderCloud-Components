@@ -1,68 +1,50 @@
-<ui-view>
-    <article class="container-fluid">
-        <h3 class="page-header">
-            Orders
-        </h3>
-        <ordercloud-order-search controlleras="orderHistory" filters="orderHistory.filters" usertype="{{orderHistory.userType}}" buyercompanies="orderHistory.buyerCompanies" usergroups="orderHistory.userGroups"></ordercloud-order-search>
-        <div class="well well-lg text-center" ng-if="!orderHistory.list.Items.length">
-            <b ng-if="!orderHistory.searching()">The selected buyer does not have any orderHistory.</b>
-            <b ng-if="orderHistory.searching()"><i class="fa fa-search"></i> No orders match your search.</b>
-        </div>
-        <div class="toggle-favorites-button">
-            <button class="btn btn-primary" ng-click="orderHistory.toggleFavorites()" ng-if="!orderHistory.filters.favorite">
-                <i class="fa fa-star"> </i> Filter by Favorites
-            </button>
-            <button class="btn btn-info" ng-click="orderHistory.toggleFavorites()" ng-if="orderHistory.filters.favorite">
-                <i class="fa fa-star"> </i> Show All Results
-            </button>
-        </div>
-        <section class="table-fixed-header" ng-if="orderHistory.list.Items.length">
-            <div class="table-header-bg"></div>
-            <div class="table-container" ordercloud-infinite-scroll servicename="Orders" controlleras="orderHistory">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th>
-                            <div>
-                                <a href="#" ng-click="orderHistory.setSort('ID')">
-                                    ID
-                                    <i ng-show="orderHistory.filters.sortType === 'ID' || orderHistory.filters.sortType === '-ID' " class="fa" ng-class="orderHistory.sortReverse ? 'fa-caret-up' : 'fa-caret-down'"></i>
-                                </a>
-                            </div>
-                        </th>
-                        <th>
-                            <div>
-                                <a href="#" ng-click="orderHistory.setSort('Status')">
-                                    Status
-                                    <i ng-show="orderHistory.filters.sortType === 'Status' || orderHistory.filters.sortType === '-Status'" class="fa" ng-class="orderHistory.sortReverse ? 'fa-caret-up' : 'fa-caret-down'"></i>
-                                </a>
-                            </div>
-                        </th>
-                        <th>
-                            <div>
-                                <a href="#" ng-click="orderHistory.setSort('DateCreated')">
-                                    Date Created/Submitted
-                                    <i ng-show="orderHistory.filters.sortType === 'DateCreated' || orderHistory.filters.sortType === '-DateCreated'" class="fa" ng-class="orderHistory.sortReverse ? 'fa-caret-up' : 'fa-caret-down'"></i>
-                                </a>
-                            </div>
-                        </th>
-                        <th>
-                            <div>
-                                Total
-                            </div>
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr ng-repeat="order in orderHistory.list.Items">
-                        <td ui-sref="orderHistory.detail({orderid: order.ID})">{{order.ID}}</td>
-                        <td>{{order.Status}}</td>
-                        <td>{{(order.DateSubmitted ||  order.DateCreated) | date}}</td>
-                        <td>{{order.Total | currency}}</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    </article>
-</ui-view>
+<div class="well text-center" ng-if="!orderHistory.list.Items.length">
+    <b>No matches found.</b>
+</div>
+<div ng-if="orderHistory.list.Items.length">
+    <b class="pull-right">{{(application.$ocMedia('min-width:768px') ? orderHistory.list.Meta.ItemRange[0] : '1') + ' - ' +  orderHistory.list.Meta.ItemRange[1] + ' of ' + orderHistory.list.Meta.TotalCount + ' results'}}</b>
+    <table class="table table-hover table-bordered oc-table-responsive">
+        <thead>
+        <tr>
+            <th scope="col">
+                <a href="#" role="button" ng-click="orderHistory.updateSort('ID')">
+                    ID
+                    <i class="fa fa-caret-down" ng-show="orderHistory.parameters.sortBy == 'ID'"></i>
+                    <i class="fa fa-caret-up" ng-show="orderHistory.parameters.sortBy == '!ID'"></i>
+                </a>
+            </th>
+            <th scope="col">
+                <a href="#" role="button" ng-click="orderHistory.updateSort('Status')">
+                    Status
+                    <i class="fa fa-caret-down" ng-show="orderHistory.parameters.sortBy == 'Status'"></i>
+                    <i class="fa fa-caret-up" ng-show="orderHistory.parameters.sortBy == '!Status'"></i>
+                </a>
+            </th>
+            <th scope="col">
+                <a href="#" role="button" ng-click="orderHistory.updateSort('DateCreated')">
+                    Date Created/Submitted
+                    <i class="fa fa-caret-down" ng-show="orderHistory.parameters.sortBy == 'DateCreated'"></i>
+                    <i class="fa fa-caret-up" ng-show="orderHistory.parameters.sortBy == '!DateCreated'"></i>
+                </a>
+            </th>
+            <th scope="col">Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="order in orderHistory.list.Items">
+            <th ui-sref="orderHistory.detail({orderid: order.ID})" scope="row">{{order.ID}}</th>
+            <td data-title="Status">{{order.Status}}</td>
+            <td data-title="Date Created/Submitted">{{(order.DateSubmitted ||  order.DateCreated) | date}}</td>
+            <td data-title="Total">{{order.Total | currency}}</td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="text-center" ng-if="application.$ocMedia('min-width:768px')">
+        <uib-pagination boundary-links="orderHistory.list.Meta.TotalPages > 15" total-items="orderHistory.list.Meta.TotalCount" items-per-page="orderHistory.list.Meta.PageSize" ng-model="orderHistory.list.Meta.Page" ng-change="orderHistory.pageChanged()"></uib-pagination>
+    </div>
+    <button type="button"
+            ng-if="application.$ocMedia('max-width:767px')"
+            class="btn btn-default btn-block btn-lg"
+            ng-show="orderHistory.list.Meta.Page < orderHistory.list.Meta.TotalPages"
+            ng-click="orderHistory.loadMore()">Load More</button>
+</div>
