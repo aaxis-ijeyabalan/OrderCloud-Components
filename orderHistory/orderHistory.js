@@ -5,8 +5,7 @@ angular.module( 'orderCloud' )
     .controller( 'OrderHistoryDetailCtrl', OrderHistoryDetailController )
     .controller( 'OrderHistoryDetailLineItemCtrl', OrderHistoryDetailLineItemController )
     .factory( 'OrderHistoryFactory', OrderHistoryFactory )
-    .directive( 'ordercloudOrderSearch', ordercloudOrderSearch )
-    .controller( 'OrderHistorySearchCtrl', OrderHistorySearchController )
+    .factory('OrderCloudParameters', OrderCloudParametersService)
     .filter('paymentmethods', paymentmethods)
 ;
 
@@ -14,67 +13,31 @@ function OrderHistoryConfig( $stateProvider ) {
     $stateProvider
         .state( 'orderHistory', {
             parent: 'base',
-            url: '/order-history',
-            templateUrl:'orderHistory/templates/orderHistory.list.tpl.html',
-            controller:'OrderHistoryCtrl',
-            controllerAs: 'orderHistory',
+            views: {
+                '': {
+                    templateUrl:'orderHistory/templates/orderHistory.tpl.html',
+                    controller:'OrderHistoryCtrl',
+                    controllerAs: 'orderHistory'
+                },
+                'filters@orderHistory': {
+                    templateUrl:'orderHistory/templates/orderHistory.filters.tpl.html'
+                },
+                'list@orderHistory': {
+                    templateUrl:'orderHistory/templates/orderHistory.list.tpl.html'
+                }
+            },
+            url: '/order-history?from&to&search&page&pageSize&searchOn&sortBy&filters',
+
             data: {componentName: 'Order History'},
             resolve: {
                 UserType: function(OrderCloud) {
                     return JSON.parse(atob(OrderCloud.Auth.ReadToken().split('.')[1])).usrtype;
                 },
-                OrderList: function(OrderCloud, UserType) {
-                    return OrderCloud.Orders[UserType == 'admin' ? 'ListIncoming' : 'ListOutgoing']();
+                Parameters: function( $stateParams, OrderCloudParameters ) {
+                    return OrderCloudParameters.Get($stateParams);
                 },
-                BuyerCompanies: function( $q, OrderCloud, UserType ) {
-                    var deferred = $q.defer();
-
-                    if (UserType == 'admin') {
-                        var returnObject = {};
-                        var queue = [];
-                        OrderCloud.Buyers.List(null, 1, 100)
-                            .then(function(data) {
-                                returnObject = data;
-                                for (var i = 1; i < data.Meta.TotalPages; i++) {
-                                    queue.push(OrderCloud.Buyers.List(null, i, 100));
-                                }
-
-                                if (queue.length) {
-                                    $q.all(queue).then(function(results) {
-                                        angular.forEach(results, function(result) {
-                                            returnObject.Items = returnObject.concat(result.Items);
-                                            deferred.resolve(returnObject);
-                                        });
-                                    });
-                                }
-                                else {
-                                    deferred.resolve(returnObject);
-                                }
-                            });
-                    }
-                    else {
-                        deferred.resolve();
-                    }
-
-                    return deferred.promise;
-                },
-                UserGroups: function($q, OrderCloud,UserType){
-                    var dfd = $q.defer();
-                    var groups;
-                    var queue = [];
-                    if(UserType === 'admin') {
-                        OrderCloud.UserGroups.List(null, 1, 100)
-                            .then(function (data) {
-                                groups = [].concat(data.Items);
-                                $q.all(queue)
-                                    .then(function (results) {
-                                        dfd.resolve(groups);
-                                    });
-                            });
-                    } else{
-                        dfd.resolve();
-                    }
-                    return dfd.promise;
+                OrderList: function( OrderCloud, Parameters, UserType ) {
+                    return OrderCloud.Orders[UserType == 'admin' ? 'ListIncoming' : 'ListOutgoing'](Parameters.from, Parameters.to, Parameters.search, Parameters.page, Parameters.pageSize || 12, Parameters.searchOn, Parameters.sortBy, Parameters.filters);
                 }
             }
         })
@@ -103,24 +66,79 @@ function OrderHistoryConfig( $stateProvider ) {
     ;
 }
 
-function OrderHistoryController( OrderList, UserType, BuyerCompanies, UserGroups ) {
+function OrderHistoryController( $state, $ocMedia, OrderCloudParameters, OrderCloud, UserType, OrderList, Parameters ) {
     var vm = this;
-    vm.filters = {};
     vm.list = OrderList;
-    vm.userType = UserType;
-    vm.buyerCompanies = BuyerCompanies;
-    vm.userGroups = UserGroups;
-    vm.sortReverse =false;
+    vm.parameters = Parameters;
+    vm.sortSelection = Parameters.sortBy ? (Parameters.sortBy.indexOf('!') == 0 ? Parameters.sortBy.split('!')[1] : Parameters.sortBy) : null;
 
-    vm.toggleFavorites = function(){
-        vm.filters.favorite ? delete vm.filters.favorite : vm.filters.favorite = true;
+    //Check if filters are applied
+    vm.filtersApplied = vm.parameters.filters || vm.parameters.from || vm.parameters.to || ($ocMedia('max-width:767px') && vm.sortSelection); //Sort by is a filter on mobile devices
+    vm.showFilters = vm.filtersApplied;
+
+    //Check if search was used
+    vm.searchResults = Parameters.search && Parameters.search.length > 0;
+
+    //Reload the state with new parameters
+    vm.filter = function(resetPage) {
+        $state.go('.', OrderCloudParameters.Create(vm.parameters, resetPage));
     };
 
-    vm.setSort = function(newSort){
-        vm.sortReverse ? vm.filters.sortType = '-' + newSort : vm.filters.sortType = newSort;
-        vm.sortReverse = !vm.sortReverse;
+    //Reload the state with new search parameter & reset the page
+    vm.search = function() {
+        vm.filter(true);
     };
 
+    //Clear the search parameter, reload the state & reset the page
+    vm.clearSearch = function() {
+        vm.parameters.search = null;
+        vm.filter(true);
+    };
+
+    //Clear relevant filters, reload the state & reset the page
+    vm.clearFilters = function() {
+        vm.parameters.filters = null;
+        vm.parameters.from = null;
+        vm.parameters.to = null;
+        $ocMedia('max-width:767px') ? vm.parameters.sortBy = null : angular.noop(); //Clear out sort by on mobile devices
+        vm.filter(true);
+    };
+
+    //Conditionally set, reverse, remove the sortBy parameter & reload the state
+    vm.updateSort = function(value) {
+        value ? angular.noop() : value = vm.sortSelection;
+        switch(vm.parameters.sortBy) {
+            case value:
+                vm.parameters.sortBy = '!' + value;
+                break;
+            case '!' + value:
+                vm.parameters.sortBy = null;
+                break;
+            default:
+                vm.parameters.sortBy = value;
+        }
+        vm.filter(false);
+    };
+
+    //Used on mobile devices
+    vm.reverseSort = function() {
+        Parameters.sortBy.indexOf('!') == 0 ? vm.parameters.sortBy = Parameters.sortBy.split('!')[1] : vm.parameters.sortBy = '!' + Parameters.sortBy;
+        vm.filter(false);
+    };
+
+    //Reload the state with the incremented page parameter
+    vm.pageChanged = function() {
+        $state.go('.', {page:vm.list.Meta.Page});
+    };
+
+    //Load the next page of results with all of the same parameters
+    vm.loadMore = function() {
+        return OrderCloud.Orders[UserType == 'admin' ? 'ListIncoming' : 'ListOutgoing'](Parameters.from, Parameters.to, Parameters.search, vm.list.Meta.Page + 1, Parameters.pageSize || vm.list.Meta.PageSize, Parameters.searchOn, Parameters.sortBy, Parameters.filters)
+            .then(function(data) {
+                vm.list.Items = vm.list.Items.concat(data.Items);
+                vm.list.Meta = data.Meta;
+            });
+    };
 }
 
 function OrderHistoryDetailController( SelectedOrder, toastr, OrderCloud ) {
@@ -175,11 +193,11 @@ function OrderHistoryFactory( $q, Underscore, OrderCloud ) {
             });
 
         function gatherLineItems() {
-            OrderCloud.LineItems.List(orderID, 1, 100)
+            OrderCloud.LineItems.List(orderID, null, 1, 100)
                 .then(function(data) {
                     order.LineItems = order.LineItems.concat(data.Items);
                     for (var i = 2; i <= data.Meta.TotalPages; i++) {
-                        lineItemQueue.push(OrderCloud.LineItems.List(orderID, i, 100));
+                        lineItemQueue.push(OrderCloud.LineItems.List(orderID, null, i, 100));
                     }
                     $q.all(lineItemQueue).then(function(results) {
                         angular.forEach(results, function(result) {
@@ -306,74 +324,35 @@ function OrderHistoryFactory( $q, Underscore, OrderCloud ) {
     return service;
 }
 
-function ordercloudOrderSearch() {
-    return {
-        scope: {
-            controlleras: '=',
-            filters: '=',
-            usertype: '@',
-            buyercompanies: '=',
-            usergroups:'='
-        },
-        restrict: 'E',
-        templateUrl: 'orderHistory/templates/orderHistory.search.tpl.html',
-        controller: 'OrderHistorySearchCtrl',
-        controllerAs: 'ocOrderSearch',
-        replace: true
+function OrderCloudParametersService() {
+    var service = {
+        Get: _get, //get params for use in OrderCloud service
+        Create: _create //create params obj ready for use in OrderCloud $state.go()
+    };
+
+    function _get(stateParams) {
+        var params = angular.copy(stateParams);
+        params.filters = params.filters ? JSON.parse(params.filters) : null;
+        params.from ? params.from = new Date(params.from) : angular.noop(); //Translate date string to date obj
+        params.to ? params.to = new Date(params.to) : angular.noop(); //Translate date string to date obj
+        return params;
     }
-}
 
-function OrderHistorySearchController( $scope, $timeout, OrderHistoryFactory ) {
-    var vm = this;
-    $scope.userGroupList = [];
-    $scope.filters.searchingGroupOrders = false;
-
-    $scope.statuses = [
-        {Name: 'Unsubmitted', Value: 'Unsubmitted'},
-        {Name: 'Open', Value: 'Open'},
-        {Name: 'Awaiting Approval', Value: 'AwaitingApproval'},
-        {Name: 'Completed', Value: 'Completed'},
-        {Name: 'Declined', Value: 'Declined'},
-        {Name: 'Cancelled', Value: 'Cancelled'}
-    ];
-
-    $scope.removeGroup = function(index){
-        $scope.userGroupList.splice(index,1);
-        OrderHistoryFactory.GetGroupOrders($scope.userGroupList)
-            .then(function(orderIDFilter){
-                $scope.filters.groupOrders = orderIDFilter;
-                $scope.filters.searchingGroupOrders = $scope.userGroupList.length;
-            })
-    };
-
-    $scope.onSelect = function(item,model,label){
-        $scope.userGroupList.push(label);
-        OrderHistoryFactory.GetGroupOrders($scope.userGroupList)
-            .then(function(orderIDFilter){
-                $scope.filters.groupOrders = orderIDFilter;
-                $scope.filters.searchingGroupOrders = true;
-            })
-    };
-
-    var searching;
-    $scope.$watch('filters', function(n,o) {
-        if (n == o) {
-            if (searching) $timeout.cancel(searching);
-        } else {
-            if (searching) $timeout.cancel(searching);
-            searching = $timeout(function() {
-                angular.forEach($scope.filters, function(value, key) {
-                   value == '' ? $scope.filters[key] = null : angular.noop();
-                });
-
-                OrderHistoryFactory.SearchOrders($scope.filters, $scope.usertype)
-                    .then(function(data) {
-                        $scope.controlleras.list = data;
-                    });
-
-            }, 300);
+    function _create(params, resetPage) {
+        var parameters = angular.copy(params);
+        resetPage ? parameters.page = null : angular.noop(); //Reset page when filters are applied
+        if (parameters.filters) {
+            parameters.filters.type == "" ? delete parameters.filters.type : angular.noop();
+            parameters.filters.status == "" ? delete parameters.filters.status : angular.noop();
+            parameters.filters = JSON.stringify(parameters.filters); //Translate filter object to string
+            parameters.filters == '{}' ? parameters.filters = null : angular.noop(); //Null out the filter string if it's an empty obj
         }
-    }, true);
+        parameters.from ? parameters.from = parameters.from.toISOString() : angular.noop();
+        parameters.to ? parameters.to = parameters.to.toISOString() : angular.noop();
+        return parameters;
+    }
+
+    return service;
 }
 
 function paymentmethods() {
