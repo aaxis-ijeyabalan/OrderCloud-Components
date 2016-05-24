@@ -65,13 +65,16 @@ function OrdersController(OrderList) {
     vm.list = OrderList;
 }
 
-function OrderEditController( $scope, $q, $exceptionHandler, $state, OrderCloud, SelectedOrder, SelectedPayments, OrdersTypeAheadSearchFactory, LineItemList, toastr) {
+function OrderEditController( $scope, $q, $exceptionHandler, $state, OrderCloud, SelectedOrder, SelectedPayments, OrdersTypeAheadSearchFactory, LineItemList, toastr, OCGeography) {
     var vm = this,
         orderid = SelectedOrder.ID;
     vm.order = SelectedOrder;
     vm.orderID = SelectedOrder.ID;
     vm.list = LineItemList;
     vm.paymentList = SelectedPayments;
+    vm.states = OCGeography.states;
+    vm.countries = OCGeography.countries;
+
 
     vm.pagingfunction = PagingFunction;
     $scope.isCollapsedPayment = true;
