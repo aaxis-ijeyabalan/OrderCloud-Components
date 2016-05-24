@@ -71,11 +71,14 @@ function AddressesController( AddressList, TrackSearch ) {
     };
 }
 
-function AddressEditController( $exceptionHandler, $state, OrderCloud, SelectedAddress, toastr ) {
+function AddressEditController( $exceptionHandler, $state, OrderCloud, SelectedAddress, toastr, OCGeography ) {
 	var vm = this,
         addressID = SelectedAddress.ID;
 	vm.addressName = SelectedAddress.AddressName;
 	vm.address = SelectedAddress;
+    vm.countries = OCGeography.countries;
+    vm.states = OCGeography.states;
+
 
 	vm.Submit = function() {
 		OrderCloud.Addresses.Update(addressID, vm.address)
@@ -100,9 +103,11 @@ function AddressEditController( $exceptionHandler, $state, OrderCloud, SelectedA
 	};
 }
 
-function AddressCreateController($exceptionHandler, $state, OrderCloud, toastr) {
+function AddressCreateController($exceptionHandler, $state, OrderCloud, toastr, OCGeography) {
 	var vm = this;
 	vm.address = {};
+    vm.countries = OCGeography.countries;
+    vm.states = OCGeography.states;
 
 	vm.Submit = function() {
 		OrderCloud.Addresses.Create(vm.address)
