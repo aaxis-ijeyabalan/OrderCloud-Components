@@ -1,5 +1,5 @@
 <form name="OCProductForm" ng-submit="product.addToCart(product.item)" id="product_view">
-    <article class="row form-group" id="product_view">
+    <fieldset class="form-group">
         <div class="row">
             <div ng-class="{'col-md-6': product.item.xp.image, 'col-md-12': !product.item.xp.image}">
                 <!--PRODUCT IMAGE-->
@@ -48,5 +48,5 @@
                 <oc-add-to-order product="product" formname="OCProductForm"></oc-add-to-order>
             </div>
         </div>
-    </article>
+    </fieldset>
 </form>
