@@ -106,7 +106,7 @@ function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Unders
 
     vm.Submit = function() {
         var expiration = new Date();
-        expiration.setMonth(vm.creditCard.selectedExpireMonth.number -1);
+        vm.creditCard.selectedExpireMonth.number == 2 ? expiration.setMonth(vm.creditCard.selectedExpireMonth.number,-1) : expiration.setMonth(vm.creditCard.selectedExpireMonth.number,0);
         expiration.setYear(vm.creditCard.selectedExpireYear);
         vm.creditCard.ExpirationDate = expiration;
 
@@ -142,7 +142,7 @@ function CreditCardCreateController( $exceptionHandler, $state, OrderCloud, toas
 
     vm.Submit= function(){
         var expiration = new Date();
-        expiration.setMonth(vm.selectedExpireMonth.number -1);
+        vm.selectedExpireMonth.number == 2 ? expiration.setMonth(vm.selectedExpireMonth.number,-1): expiration.setMonth(vm.selectedExpireMonth.number,0);
         expiration.setYear(vm.selectedExpireYear);
         vm.creditCard.ExpirationDate = expiration;
         OrderCloud.CreditCards.Create(vm.creditCard)

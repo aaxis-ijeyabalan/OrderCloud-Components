@@ -1,4 +1,5 @@
-<article class="container-fluid" id="cart_view">
+<article id="COMPONENT_Cart" class="container-fluid">
+    <h3 class="page-header">Shopping Cart</h3>
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">
@@ -53,8 +54,8 @@
             </table>
         </div>
         <div class="panel-footer">
-            <p class="lead">Subtotal: <span class="text-success pull-right">{{cart.order.Subtotal | currency}}</span></p>
+            <h4>Subtotal: <span class="text-success pull-right">{{cart.order.Subtotal | currency}}</span></h4>
         </div>
     </div>
-    <button type="button" ui-sref="checkout" class="btn btn-success pull-right">Checkout</button>
+    <button type="button" ui-sref="checkout" class="btn btn-lg btn-success pull-right">Checkout</button>
 </article>
