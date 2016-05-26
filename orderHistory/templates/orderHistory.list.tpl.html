@@ -40,7 +40,7 @@
         </tbody>
     </table>
     <div class="text-center" ng-if="application.$ocMedia('min-width:768px')">
-        <uib-pagination boundary-links="orderHistory.list.Meta.TotalPages > 15" total-items="orderHistory.list.Meta.TotalCount" items-per-page="orderHistory.list.Meta.PageSize" ng-model="orderHistory.list.Meta.Page" ng-change="orderHistory.pageChanged()"></uib-pagination>
+        <uib-pagination boundary-links="orderHistory.list.Meta.TotalPages > 8" total-items="orderHistory.list.Meta.TotalCount" items-per-page="orderHistory.list.Meta.PageSize" ng-model="orderHistory.list.Meta.Page" ng-change="orderHistory.pageChanged()"></uib-pagination>
     </div>
     <button type="button"
             ng-if="application.$ocMedia('max-width:767px')"
