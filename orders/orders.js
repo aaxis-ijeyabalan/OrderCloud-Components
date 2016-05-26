@@ -65,13 +65,16 @@ function OrdersController(OrderList) {
     vm.list = OrderList;
 }
 
-function OrderEditController( $scope, $q, $exceptionHandler, $state, OrderCloud, SelectedOrder, SelectedPayments, OrdersTypeAheadSearchFactory, LineItemList, toastr) {
+function OrderEditController( $scope, $q, $exceptionHandler, $state, OrderCloud, SelectedOrder, SelectedPayments, OrdersTypeAheadSearchFactory, LineItemList, toastr, OCGeography) {
     var vm = this,
-    orderid = SelectedOrder.ID;
+        orderid = SelectedOrder.ID;
     vm.order = SelectedOrder;
     vm.orderID = SelectedOrder.ID;
     vm.list = LineItemList;
     vm.paymentList = SelectedPayments;
+    vm.states = OCGeography.states;
+    vm.countries = OCGeography.countries;
+
 
     vm.pagingfunction = PagingFunction;
     $scope.isCollapsedPayment = true;
@@ -104,17 +107,17 @@ function OrderEditController( $scope, $q, $exceptionHandler, $state, OrderCloud,
         OrderCloud.Orders.Update(orderid, vm.order)
             .then(function(){
                 OrderCloud.Orders.SetBillingAddress(orderid, vm.order.BillingAddress)
-                .then(function() {
-                    $state.go($state.current, {}, {reload: true});
-                });
-        })
+                    .then(function() {
+                        $state.go($state.current, {}, {reload: true});
+                    });
+            })
     };
 
     vm.updateShippingAddress = function(){
         OrderCloud.Orders.SetShippingAddress(orderid, vm.ShippingAddress);
-            //.then(function() {
-            //    $state.go($state.current, {}, {reload: true});
-            //});
+        //.then(function() {
+        //    $state.go($state.current, {}, {reload: true});
+        //});
     };
 
     vm.Submit = function() {

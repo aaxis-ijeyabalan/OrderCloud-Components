@@ -56,7 +56,7 @@
                     <div class="col-sm-6" ng-form="BillingAddressID">
                         <fieldset class="form-group">
                             <label for="orderBillAddInput">Billing Address ID
-                                <i class="fa fa-question-circle" uib-tooltip="Write only field. Updates Billing Address ID for entire Order."></i>
+                                <i class="fa fa-question-circle" uib-tooltip="Updates Billing Address ID for entire Order."></i>
                             </label>
                             <input id="orderBillAddInput"
                                 name="orderBillAddInput"
@@ -121,7 +121,7 @@
                                     </div>
                                     <div class="col-sm-3 form-group">
                                         <label for="orderStateInput">State</label>
-                                        <input id="orderStateInput" type="text" class="form-control" ng-model="orderEdit.order.BillingAddress.State"/>
+                                        <select id="orderStateInput" class="form-control" ng-options="state.value as state.label for state in orderEdit.states" ng-model="orderEdit.order.BillingAddress.State" required/>
                                     </div>
                                     <div class="col-sm-3 form-group">
                                         <label for="orderZipInput">Zip</label>
@@ -131,7 +131,7 @@
                                 <div class="row">
                                     <div class="col-sm-6 form-group">
                                         <label for="orderCountryInput">Country</label>
-                                        <input id="orderCountryInput" type="text" class="form-control" ng-model="orderEdit.order.BillingAddress.Country" maxlength="2"/>
+                                        <select id="orderCountryInput" class="form-control" ng-options="country.value as country.label for country in orderEdit.countries" ng-model="orderEdit.order.BillingAddress.State" required/>
                                     </div>
                                     <div class="col-sm-6 form-group">
                                         <label for="orderPhoneInput">Phone Number</label>
@@ -147,112 +147,112 @@
                 </div>
             </div>
         </div>
-    <div class="panel panel-default">
-        <div class="panel-heading" ng-click="isCollapsedShipping = !isCollapsedShipping">
-            <h4 class="panel-title">
-                Shipping Address
-            </h4>
-        </div>
-        <div class="panel-body" uib-collapse="isCollapsedShipping">
-            <div class="row">
-                <div class="form-group col-sm-6" ng-form="ShippingAdddressID">
-                    <label for="orderShipAddInput">Shipping Address ID
-                        <i class="fa fa-question-circle"
-                           uib-tooltip="Write only field. Updates the Shipping Address ID on all Line Items associated with this Order."></i>
-                    </label>
-                    <input
+        <div class="panel panel-default">
+            <div class="panel-heading" ng-click="isCollapsedShipping = !isCollapsedShipping">
+                <h4 class="panel-title">
+                    Shipping Address
+                </h4>
+            </div>
+            <div class="panel-body" uib-collapse="isCollapsedShipping">
+                <div class="row">
+                    <div class="form-group col-sm-6" ng-form="ShippingAdddressID">
+                        <label for="orderShipAddInput">Shipping Address ID
+                            <i class="fa fa-question-circle"
+                               uib-tooltip="Updates the Shipping Address ID on all Line Items associated with this Order. If all Line Items associated with this Order share the same Shipping Address ID, this field's value will be provided. Otherwise, null."></i>
+                        </label>
+                        <input
 
-                            id="orderShipAddInput"
-                            type="text"
-                            class="form-control"
-                            ng-model="orderEdit.order.ShippingAddressID"
-                            uib-typeahead="address.ID as address.AddressName for address in orderEdit.shippingAddressTypeAhead($viewValue)"
-                    />
-                </div>
-                <div class="form-group col-sm-6" ng-form="CustomShippingAddress">
-                    <button type="button" class="btn btn-default btn-block"
-                            ng-click="customShippingAddress = !customShippingAddress">Use Custom Address
-                    </button>
-                    <div uib-collapse="!customShippingAddress">
-                        <hr>
-                        <div class="well well-lg">
-                            <div class="row">
-                                <div class="col-sm-6 form-group">
-                                    <label for="orderSNameInput">Address Name</label>
-                                    <input id="orderSNameInput" type="text" class="form-control"
-                                           ng-model="orderEdit.ShippingAddress.AddressName"/>
+                                id="orderShipAddInput"
+                                type="text"
+                                class="form-control"
+                                ng-model="orderEdit.order.ShippingAddressID"
+                                uib-typeahead="address.ID as address.AddressName for address in orderEdit.shippingAddressTypeAhead($viewValue)"
+                        />
+                    </div>
+                    <div class="form-group col-sm-6" ng-form="CustomShippingAddress">
+                        <button type="button" class="btn btn-default btn-block"
+                                ng-click="customShippingAddress = !customShippingAddress">Use Custom Address
+                        </button>
+                        <div uib-collapse="!customShippingAddress">
+                            <hr>
+                            <div class="well well-lg">
+                                <div class="row">
+                                    <div class="col-sm-6 form-group">
+                                        <label for="orderSNameInput">Address Name</label>
+                                        <input id="orderSNameInput" type="text" class="form-control"
+                                               ng-model="orderEdit.ShippingAddress.AddressName"/>
+                                    </div>
+                                    <div class="col-sm-6 form-group">
+                                        <label for="orderSCompanyNameInput">Company Name</label>
+                                        <input id="orderSCompanyNameInput" type="text" class="form-control"
+                                               ng-model="orderEdit.ShippingAddress.CompanyName"/>
+                                    </div>
                                 </div>
-                                <div class="col-sm-6 form-group">
-                                    <label for="orderSCompanyNameInput">Company Name</label>
-                                    <input id="orderSCompanyNameInput" type="text" class="form-control"
-                                           ng-model="orderEdit.ShippingAddress.CompanyName"/>
+                                <div class="row">
+                                    <div class="col-sm-6 form-group">
+                                        <label for="orderSFirstNameInput">First Name</label>
+                                        <input id="orderSFirstNameInput" ng-required="true" type="text" class="form-control"
+                                               ng-model="orderEdit.ShippingAddress.FirstName"/>
+                                    </div>
+                                    <div class="col-sm-6 form-group">
+                                        <label for="orderSLastNameInput">Last Name</label>
+                                        <input id="orderSLastNameInput" type="text" class="form-control"
+                                               ng-model="orderEdit.ShippingAddress.LastName"/>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-6 form-group">
-                                    <label for="orderSFirstNameInput">First Name</label>
-                                    <input id="orderSFirstNameInput" ng-required="true" type="text" class="form-control"
-                                           ng-model="orderEdit.ShippingAddress.FirstName"/>
+                                <div class="row">
+                                    <div class="col-sm-6 form-group">
+                                        <label for="orderSStreet1Input">Street 1</label>
+                                        <input id="orderSStreet1Input" type="text" class="form-control"
+                                               ng-model="orderEdit.ShippingAddress.Street1"/>
+                                    </div>
+                                    <div class="col-sm-6 form-group">
+                                        <label for="orderSStreet2Input">Street 2</label>
+                                        <input id="orderSStreet2Input" type="text" class="form-control"
+                                               ng-model="orderEdit.ShippingAddress.Street2"/>
+                                    </div>
                                 </div>
-                                <div class="col-sm-6 form-group">
-                                    <label for="orderSLastNameInput">Last Name</label>
-                                    <input id="orderSLastNameInput" type="text" class="form-control"
-                                           ng-model="orderEdit.ShippingAddress.LastName"/>
+                                <div class="row">
+                                    <div class="col-sm-6 form-group">
+                                        <label for="orderSCityInput">City</label>
+                                        <input id="orderSCityInput" type="text" class="form-control"
+                                               ng-model="orderEdit.ShippingAddress.City"/>
+                                    </div>
+                                    <div class="col-sm-3 form-group">
+                                        <label for="orderSStateInput">State</label>
+                                        <input id="orderSStateInput" type="text" class="form-control"
+                                               ng-model="orderEdit.ShippingAddress.State"/>
+                                    </div>
+                                    <div class="col-sm-3 form-group">
+                                        <label for="orderSZipInput">Zip</label>
+                                        <input id="orderSZipInput" type="text" class="form-control"
+                                               ng-model="orderEdit.ShippingAddress.Zip"/>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-6 form-group">
-                                    <label for="orderSStreet1Input">Street 1</label>
-                                    <input id="orderSStreet1Input" type="text" class="form-control"
-                                           ng-model="orderEdit.ShippingAddress.Street1"/>
+                                <div class="row">
+                                    <div class="col-sm-6 form-group">
+                                        <label for="orderSCountryInput">Country</label>
+                                        <input id="orderSCountryInput" type="text" class="form-control"
+                                               ng-model="orderEdit.ShippingAddress.Country" maxlength="2"/>
+                                    </div>
+                                    <div class="col-sm-6 form-group">
+                                        <label for="orderSPhoneInput">Phone Number</label>
+                                        <input id="orderSPhoneInput" type="text" class="form-control"
+                                               ng-model="orderEdit.ShippingAddress.Phone"/>
+                                    </div>
                                 </div>
-                                <div class="col-sm-6 form-group">
-                                    <label for="orderSStreet2Input">Street 2</label>
-                                    <input id="orderSStreet2Input" type="text" class="form-control"
-                                           ng-model="orderEdit.ShippingAddress.Street2"/>
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-primary"
+                                            ng-click="orderEdit.updateShippingAddress()"
+                                            ng-disabled="CustomShippingAddress.$invalid">Save
+                                    </button>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-6 form-group">
-                                    <label for="orderSCityInput">City</label>
-                                    <input id="orderSCityInput" type="text" class="form-control"
-                                           ng-model="orderEdit.ShippingAddress.City"/>
-                                </div>
-                                <div class="col-sm-3 form-group">
-                                    <label for="orderSStateInput">State</label>
-                                    <input id="orderSStateInput" type="text" class="form-control"
-                                           ng-model="orderEdit.ShippingAddress.State"/>
-                                </div>
-                                <div class="col-sm-3 form-group">
-                                    <label for="orderSZipInput">Zip</label>
-                                    <input id="orderSZipInput" type="text" class="form-control"
-                                           ng-model="orderEdit.ShippingAddress.Zip"/>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-6 form-group">
-                                    <label for="orderSCountryInput">Country</label>
-                                    <input id="orderSCountryInput" type="text" class="form-control"
-                                           ng-model="orderEdit.ShippingAddress.Country" maxlength="2"/>
-                                </div>
-                                <div class="col-sm-6 form-group">
-                                    <label for="orderSPhoneInput">Phone Number</label>
-                                    <input id="orderSPhoneInput" type="text" class="form-control"
-                                           ng-model="orderEdit.ShippingAddress.Phone"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <button type="button" class="btn btn-primary"
-                                        ng-click="orderEdit.updateShippingAddress()"
-                                        ng-disabled="CustomShippingAddress.$invalid">Save
-                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
         <div class="panel panel-default">
             <div class="panel-heading" ng-click="isCollapsedLineItems = !isCollapsedLineItems">
                 <h4 class="panel-title">
@@ -299,7 +299,7 @@
                                     <a ui-sref="products.edit({productid: li.ProductID})" target="_blank">{{li.ProductID}}</a>
                                 </td>
                                 <td>
-                                    {{li.ShippingAddressID}}
+                                    {{li.ShippingAddressID || li.ShippingAddress.ID}}
                                 </td>
                                 <td><input type="number" name="{{'Quantity' + $index}}" ng-model="li.Quantity" class="form-control" /></td>
                                 <td><input type="number" name="{{'UnitPrice' + $index}}" ng-model="li.UnitPrice" class="form-control" /></td>
@@ -318,4 +318,5 @@
             <button type="button" class="btn btn-default" ui-sref="^">Cancel</button>
             <button type="button" class="btn btn-default" ng-if="orderEdit.order.Status == 'Open' || 'Unsubmitted'" ng-click="orderEdit.Delete()"><i class="fa fa-trash text-danger"></i></button>
         </div>
+    </div>
 </article>

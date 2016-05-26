@@ -1,12 +1,12 @@
-<div id="minicart" uib-dropdown is-open="minicart.showLineItems" ng-if="minicart.LineItems.Items.length">
+<div id="minicart" class="dropdown" uib-dropdown is-open="minicart.showLineItems" ng-if="minicart.LineItems.Items.length">
     <div class="btn-group" uib-dropdown-toggle>
-        <label class="btn btn-primary">
+        <div class="btn btn-default">
             <span>
                 <i class="fa fa-shopping-cart"></i>
                 <i class="badge">{{minicart.LineItems.Meta.TotalCount}}</i>
             </span>
-        </label>
-        <label class="btn btn-default">{{order.Subtotal | currency}} <i class="fa fa-caret-down"></i></label>
+        </div>
+        <div class="btn btn-default">{{order.Subtotal | currency}} <span class="caret"></span></div>
     </div>
     <div id="minicart_line_item_list" uib-dropdown-menu role="menu" class="panel panel-primary">
         <div class="panel-heading">

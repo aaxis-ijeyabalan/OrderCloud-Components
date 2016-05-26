@@ -3,9 +3,7 @@
 	<b>If you have included the Price Schedules component you can create them there.</b>
 </div>
 
-
 <div ng-if="(productCreateAssignment.priceSchedules | filter:{OrderType:'Replenishment'}).length || (productCreateAssignment.priceSchedules | filter:{OrderType:'Standard'}).length">
-	<article class="container-fluid">
 	<h3>Choose the assignee(s)</h3>
 	<p class="text-muted">You can assign a product to a specific UserGroup or to the entire Buyer Company.  UserGroup assignments will take precedent over Buyer assignments.</p>
 	<div class="row" >
@@ -107,7 +105,5 @@
 	</div>
 	<button type="button" class="btn btn-default" ui-sref="^.assignments({productid:productCreateAssignment.model.ProductID})">Cancel</button>
 	<button type="button" class="btn btn-primary" ng-click="productCreateAssignment.submit()" ng-disabled="!( ((productCreateAssignment.list.Items | filter:{selected:true}).length || productCreateAssignment.assignBuyer) && (productCreateAssignment.model.StandardPriceScheduleID.length || productCreateAssignment.model.ReplenishmentPriceScheduleID.length) )">Save Assignment</button>
-
-
-</article></div>
+</div>
 
