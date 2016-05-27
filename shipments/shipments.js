@@ -143,9 +143,11 @@ function ShipmentCreateController( $exceptionHandler, $state, OrderCloud, OrderL
     vm.shipment.Items = [];
     vm.lineitems = {};
     vm.lineitems.list = [];
+    vm.orderID;
 
     vm.goToLineItems = function(order) {
-        OrderCloud.LineItems.List(order.ID, 1, 20)
+        vm.orderID=order.ID;
+        OrderCloud.LineItems.List(order.ID,null, 1, 20)
             .then(function(data){
                 vm.lineitems.list = data;
                 vm.OrderSelected = true;
@@ -163,7 +165,7 @@ function ShipmentCreateController( $exceptionHandler, $state, OrderCloud, OrderL
     vm.Submit = function() {
         angular.forEach(vm.lineitems.list.Items, function(li) {
             if(li.addToShipment){
-                vm.shipment.Items.push({OrderID: li.OrderID, LineItemId: li.ID, QuantityShipped: li.QuantityShipped});
+                vm.shipment.Items.push({OrderID: vm.orderID, LineItemId: li.ID, QuantityShipped: li.QuantityShipped});
             }
         });
         OrderCloud.Shipments.Create(vm.shipment)
