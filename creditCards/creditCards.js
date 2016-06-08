@@ -99,9 +99,10 @@ function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Unders
 
     if(vm.creditCard.ExpirationDate != null){
         vm.creditCard.ExpirationDate = new Date(vm.creditCard.ExpirationDate);
+        vm.creditCard.selectedExpireMonth = Underscore.findWhere(vm.expireMonth,{number: vm.creditCard.ExpirationDate.getMonth() +1});
+        vm.creditCard.selectedExpireYear = vm.expireYear[vm.expireYear.indexOf(vm.creditCard.ExpirationDate.getFullYear())];
     }
-   vm.creditCard.selectedExpireMonth = Underscore.findWhere(vm.expireMonth,{number: vm.creditCard.ExpirationDate.getMonth() +1});
-    vm.creditCard.selectedExpireYear = vm.expireYear[vm.expireYear.indexOf(vm.creditCard.ExpirationDate.getFullYear())];
+   
     vm.creditCard.Token = "token";
 
     vm.Submit = function() {
