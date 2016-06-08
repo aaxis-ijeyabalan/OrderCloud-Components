@@ -108,13 +108,15 @@ function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Unders
     vm.Submit = function() {
         var expiration = new Date();
         //If the expiration date field is left blank, selectedExpireMonth will be undefined, so we don't want it to error 
-        if(vm.selectedExpireMonth != undefined){
-            var monthNum = vm.selectedExpireMonth.number-1;//Javascript uses 0 based month number
-            //Handle special case for February 
-            monthNum == 1 ? expiration.setMonth(monthNum,-1): expiration.setMonth(monthNum,0);
+        if(vm.creditCard.selectedExpireMonth != undefined){
+            var monthNum = vm.creditCard.selectedExpireMonth.number;
+            //Pushes the date back to the last day of the previous month
+            //Special case for February, always set back one more day to avoid leap year problems
+            monthNum == 2 ? expiration.setMonth(monthNum,-1): expiration.setMonth(monthNum,0);
         } else {
             expiration.setMonth(undefined);
         }
+
         expiration.setYear(vm.creditCard.selectedExpireYear);
         vm.creditCard.ExpirationDate = expiration;
 
@@ -151,10 +153,11 @@ function CreditCardCreateController( $exceptionHandler, $state, OrderCloud, toas
     vm.Submit= function(){
         var expiration = new Date();
         //If the expiration date field is left blank, selectedExpireMonth will be undefined, so we don't want it to error 
-        if(vm.selectedExpireMonth != undefined){
-            var monthNum = vm.selectedExpireMonth.number-1;//Javascript uses 0 based month number
-            //Handle special case for February 
-            monthNum == 1 ? expiration.setMonth(monthNum,-1): expiration.setMonth(monthNum,0);
+        if(vm.creditCard.selectedExpireMonth != undefined){
+            var monthNum = vm.creditCard.selectedExpireMonth.number;
+            //Pushes the date back to the last day of the previous month
+            //Special case for February, always set back one more day to avoid leap year problems
+            monthNum == 2 ? expiration.setMonth(monthNum,-1): expiration.setMonth(monthNum,0);
         } else {
             expiration.setMonth(undefined);
         }
