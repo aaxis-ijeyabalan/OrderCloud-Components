@@ -109,9 +109,10 @@ function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Unders
         var expiration = new Date();
         //If the expiration date field is left blank, selectedExpireMonth will be undefined, so we don't want it to error 
         if(vm.selectedExpireMonth != undefined){
-            var monthNum = vm.selectedExpireMonth.number-1;//Javascript uses 0 based month number
-            //Handle special case for February 
-            monthNum == 1 ? expiration.setMonth(monthNum,-1): expiration.setMonth(monthNum,0);
+            var monthNum = vm.selectedExpireMonth.number;
+            //Pushes the date back to the last day of the previous month
+            //Special case for February, always set back one more day to avoid leap year problems
+            monthNum == 2 ? expiration.setMonth(monthNum,-1): expiration.setMonth(monthNum,0);
         } else {
             expiration.setMonth(undefined);
         }
@@ -152,9 +153,10 @@ function CreditCardCreateController( $exceptionHandler, $state, OrderCloud, toas
         var expiration = new Date();
         //If the expiration date field is left blank, selectedExpireMonth will be undefined, so we don't want it to error 
         if(vm.selectedExpireMonth != undefined){
-            var monthNum = vm.selectedExpireMonth.number-1;//Javascript uses 0 based month number
-            //Handle special case for February 
-            monthNum == 1 ? expiration.setMonth(monthNum,-1): expiration.setMonth(monthNum,0);
+            var monthNum = vm.selectedExpireMonth.number;
+            //Pushes the date back to the last day of the previous month
+            //Special case for February, always set back one more day to avoid leap year problems
+            monthNum == 2 ? expiration.setMonth(monthNum,-1): expiration.setMonth(monthNum,0);
         } else {
             expiration.setMonth(undefined);
         }
