@@ -99,14 +99,22 @@ function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Unders
 
     if(vm.creditCard.ExpirationDate != null){
         vm.creditCard.ExpirationDate = new Date(vm.creditCard.ExpirationDate);
+        vm.creditCard.selectedExpireMonth = Underscore.findWhere(vm.expireMonth,{number: vm.creditCard.ExpirationDate.getMonth() +1});
+        vm.creditCard.selectedExpireYear = vm.expireYear[vm.expireYear.indexOf(vm.creditCard.ExpirationDate.getFullYear())];
     }
-   vm.creditCard.selectedExpireMonth = Underscore.findWhere(vm.expireMonth,{number: vm.creditCard.ExpirationDate.getMonth() +1});
-    vm.creditCard.selectedExpireYear = vm.expireYear[vm.expireYear.indexOf(vm.creditCard.ExpirationDate.getFullYear())];
+   
     vm.creditCard.Token = "token";
 
     vm.Submit = function() {
         var expiration = new Date();
-        vm.creditCard.selectedExpireMonth.number == 2 ? expiration.setMonth(vm.creditCard.selectedExpireMonth.number,-1) : expiration.setMonth(vm.creditCard.selectedExpireMonth.number,0);
+        //If the expiration date field is left blank, selectedExpireMonth will be undefined, so we don't want it to error 
+        if(vm.selectedExpireMonth != undefined){
+            var monthNum = vm.selectedExpireMonth.number-1;//Javascript uses 0 based month number
+            //Handle special case for February 
+            monthNum == 1 ? expiration.setMonth(monthNum,-1): expiration.setMonth(monthNum,0);
+        } else {
+            expiration.setMonth(undefined);
+        }
         expiration.setYear(vm.creditCard.selectedExpireYear);
         vm.creditCard.ExpirationDate = expiration;
 
@@ -142,7 +150,14 @@ function CreditCardCreateController( $exceptionHandler, $state, OrderCloud, toas
 
     vm.Submit= function(){
         var expiration = new Date();
-        vm.selectedExpireMonth.number == 2 ? expiration.setMonth(vm.selectedExpireMonth.number,-1): expiration.setMonth(vm.selectedExpireMonth.number,0);
+        //If the expiration date field is left blank, selectedExpireMonth will be undefined, so we don't want it to error 
+        if(vm.selectedExpireMonth != undefined){
+            var monthNum = vm.selectedExpireMonth.number-1;//Javascript uses 0 based month number
+            //Handle special case for February 
+            monthNum == 1 ? expiration.setMonth(monthNum,-1): expiration.setMonth(monthNum,0);
+        } else {
+            expiration.setMonth(undefined);
+        }
         expiration.setYear(vm.selectedExpireYear);
         vm.creditCard.ExpirationDate = expiration;
         OrderCloud.CreditCards.Create(vm.creditCard)
