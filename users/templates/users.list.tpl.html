@@ -1,0 +1,63 @@
+<b class="pull-right">{{(application.$ocMedia('min-width:768px') ? users.list.Meta.ItemRange[0] : '1') + ' - ' +  users.list.Meta.ItemRange[1] + ' of ' + users.list.Meta.TotalCount + ' results'}}</b>
+<table class="table table-hover table-bordered oc-table-responsive">
+    <thead>
+    <tr>
+        <th scope="col">
+            <a href="#" role="button" ng-click="users.updateSort('ID')">
+                ID
+                <i class="fa fa-caret-down" ng-show="users.parameters.sortBy == 'ID'"></i>
+                <i class="fa fa-caret-up" ng-show="users.parameters.sortBy == '!ID'"></i>
+            </a>
+        </th>
+        <th scope="col">
+            <a href="#" role="button" ng-click="users.updateSort('Username')">
+                Username
+                <i class="fa fa-caret-down" ng-show="users.parameters.sortBy == 'Username'"></i>
+                <i class="fa fa-caret-up" ng-show="users.parameters.sortBy == '!Username'"></i>
+            </a>
+        </th>
+        <th scope="col">
+            <a href="#" role="button" ng-click="users.updateSort('FirstName')">
+                First Name
+                <i class="fa fa-caret-down" ng-show="users.parameters.sortBy == 'FirstName'"></i>
+                <i class="fa fa-caret-up" ng-show="users.parameters.sortBy == '!FirstName'"></i>
+            </a>
+        </th>
+        <th scope="col">
+            <a href="#" role="button" ng-click="users.updateSort('LastName')">
+                Last Name
+                <i class="fa fa-caret-down" ng-show="users.parameters.sortBy == 'LastName'"></i>
+                <i class="fa fa-caret-up" ng-show="users.parameters.sortBy == '!LastName'"></i>
+            </a>
+        </th>
+        <th scope="col">
+            <a href="#" role="button" ng-click="users.updateSort('Email')">
+                Email
+                <i class="fa fa-caret-down" ng-show="users.parameters.sortBy == 'Email'"></i>
+                <i class="fa fa-caret-up" ng-show="users.parameters.sortBy == '!Email'"></i>
+            </a>
+        </th>
+
+    </tr>
+    </thead>
+    <tbody>
+
+    <tr ng-repeat="user in users.list.Items">
+        <th ui-sref="users.edit({userid:user.ID})" scope="row">{{user.ID}}</th>
+        <td data-title="Username">{{user.Username}}</td>
+        <td data-title="FirstName">{{user.FirstName}}</td>
+        <td data-title="LastName">{{user.LastName}}</td>
+        <td data-title="Email">{{user.Email}}</td>
+
+    </tr>
+    </tbody>
+</table>
+
+<div class="text-center" ng-if="application.$ocMedia('min-width:768px')">
+    <uib-pagination boundary-links="users.list.Meta.TotalPages > 8" max-size="5" total-items="users.list.Meta.TotalCount" items-per-page="users.list.Meta.PageSize" ng-model="users.list.Meta.Page" ng-change="users.pageChanged()"></uib-pagination>
+</div>
+<button type="button"
+        ng-if="application.$ocMedia('max-width:767px')"
+        class="btn btn-default btn-block btn-lg"
+        ng-show="users.list.Meta.Page < users.list.Meta.TotalPages"
+        ng-click="users.loadMore()">Load More</button>
