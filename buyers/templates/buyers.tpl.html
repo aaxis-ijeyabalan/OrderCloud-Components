@@ -1,46 +1,93 @@
 <article id="COMPONENT_Buyers" ui-view class="container-fluid">
-    <h3 class="page-header">
-        Buyers
-    </h3>
-    <ordercloud-search servicename="Buyers" controlleras="buyers"></ordercloud-search>
-    <div class="well well-lg text-center" ng-if="!buyers.list.Items.length">
-        <b>No buyers have been created yet.</b>
+    <div class="page-header">
+        <button type="button" class="btn btn-success pull-right" ui-sref=".create"><i class="fa fa-plus-circle"></i> Create New</button>
+        <h3>Buyers</h3>
     </div>
-    <section class="table-fixed-header" ng-if="buyers.list.Items.length">
-        <div class="table-header-bg"></div>
-        <div class="table-container" ordercloud-infinite-scroll servicename="Buyers" controlleras="buyers">
-            <table class="table table-hover">
-                <colgroup>
-                    <col class="action-column">
-                </colgroup>
-                <thead>
-                <tr>
-                    <th>
-                    </th>
-                    <th>
-                        <div>ID</div>
-                    </th>
-                    <th>
-                        <div>Name</div>
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="buyer in buyers.list.Items track by $index">
-                    <td>
-                        <div class="btn-group btn-block" uib-dropdown dropdown-append-to-body>
-                            <button class="btn btn-default btn-block" uib-dropdown-toggle><i class="fa fa-cog"></i> <span class="caret"></span></button>
-                            <ul uib-dropdown-menu role="menu">
-                                <li role="menuitem"><a ui-sref=".edit">Edit Buyer</a></li>
-                            </ul>
+    <!--========== Filters =========== -->
+    <div ui-view="filters">
+        <form name="OrdersSearchForm" class="form-inline" ng-submit="buyers.search()">
+            <fieldset class="form-group">
+                <input type="search" placeholder="Search buyers..." ng-model="buyers.parameters.search" class="form-control">
+            </fieldset>
+            <fieldset class="form-group" ng-class="{'text-center':application.$ocMedia('max-width:767px')}">
+                <span ng-class="{'btn-group':buyers.searchResults}">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <button ng-if="buyers.searchResults" ng-click="buyers.clearSearch()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
+                </span>
+                <span ng-class="{'btn-group':buyers.filtersApplied}" >
+                    <button type="button" class="btn btn-default" ng-click="buyers.showFilters = !buyers.showFilters" ng-show="application.$ocMedia('max-width:767px')"><i class="fa fa-filter"></i> Filters</button>
+                    <button ng-if="buyers.filtersApplied" ng-click="buyers.clearFilters()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
+                </span>
+            </fieldset>
+        </form>
+        <div class="row" style="margin-top:15px;" uib-collapse="!buyers.showFilters">
+            <div class="col-md-6 col-lg-4">
+                <div class="form-group" ng-if="application.$ocMedia('max-width:767px')">
+                    <label>Sorty By:</label>
+                    <div ng-class="{'input-group':buyers.sortSelection}">
+                        <select placeholder="Sort" class="form-control" ng-model="buyers.sortSelection" ng-change="buyers.updateSort()">
+                            <option value="">None</option>
+                            <option value="ID">ID</option>
+                            <option value="Name">Name</option>
+                        </select>
+                        <div ng-if="buyers.sortSelection" class="input-group-btn">
+                            <button class="btn btn-default" ng-click="buyers.reverseSort()">
+                                <i class="fa fa-sort"></i>
+                            </button>
                         </div>
-                    </td>
-                    <td>{{buyer.ID}}</td>
-                    <td>{{buyer.Name}}</td>
-                </tr>
-                </tbody>
-            </table>
+
+                    </div>
+                </div>
+                
+            </div>
+           
         </div>
-    </section>
-    <button type="button" class="btn btn-success" ui-sref=".create"><i class="fa fa-plus-circle"></i> Create New</button>
+
+    </div>
+    <!--========== List =========== -->
+    <div ui-view="list">
+        <div class="well text-center" ng-if="!buyers.list.Items.length">
+            <b>No matches found.</b>
+        </div>
+
+    <div ng-if="buyers.list.Items.length">
+        <b class="pull-right">{{(application.$ocMedia('min-width:768px') ? buyers.list.Meta.ItemRange[0] : '1') + ' - ' +  buyers.list.Meta.ItemRange[1] + ' of ' + buyers.list.Meta.TotalCount + ' results'}}</b>
+        <table class="table table-hover table-bordered oc-table-responsive">
+            <thead>
+            <tr>
+                <th scope="col">
+                    <a href="#" role="button" ng-click="buyers.updateSort('ID')">
+                        ID
+                        <i class="fa fa-caret-down" ng-show="buyers.parameters.sortBy == 'ID'"></i>
+                        <i class="fa fa-caret-up" ng-show="buyers.parameters.sortBy == '!ID'"></i>
+                    </a>
+                </th>
+                <th scope="col">
+                    <a href="#" role="button" ng-click="buyers.updateSort('Name')">
+                        Name
+                        <i class="fa fa-caret-down" ng-show="buyers.parameters.sortBy == 'Name'"></i>
+                        <i class="fa fa-caret-up" ng-show="buyers.parameters.sortBy == '!Name'"></i>
+                    </a>
+                </th>
+                
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="buyer in buyers.list.Items">
+                <th ui-sref="buyers.edit({buyerid: buyer.ID})" scope="row">{{buyer.ID}}</th>
+                <td data-title="Name">{{buyer.Name}}</td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="text-center" ng-if="application.$ocMedia('min-width:768px') && buyers.list.Meta.TotalPages > 1">
+            <uib-pagination boundary-links="buyers.list.Meta.TotalPages > 8" max-size="5" total-items="buyers.list.Meta.TotalCount" items-per-page="buyers.list.Meta.PageSize" ng-model="buyers.list.Meta.Page" ng-change="buyers.pageChanged()"></uib-pagination>
+        </div>
+        <button type="button"
+                ng-if="application.$ocMedia('max-width:767px')"
+                class="btn btn-default btn-block btn-lg"
+                ng-show="buyers.list.Meta.Page < buyers.list.Meta.TotalPages"
+                ng-click="buyers.loadMore()">Load More</button>
+    </div>
+
+    </div>
 </article>
