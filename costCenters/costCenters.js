@@ -87,7 +87,7 @@ function CostCentersController( CostCentersList, TrackSearch, Parameters, $ocMed
     vm.sortSelection = Parameters.sortBy ? (Parameters.sortBy.indexOf('!') == 0 ? Parameters.sortBy.split('!')[1] : Parameters.sortBy) : null;
 
     //Check if filters are applied
-    vm.filtersApplied = vm.parameters.filters || vm.parameters.from || vm.parameters.to || ($ocMedia('max-width:767px') && vm.sortSelection); //Sort by is a filter on mobile devices
+    vm.filtersApplied = vm.parameters.filters || ($ocMedia('max-width:767px') && vm.sortSelection); //Sort by is a filter on mobile devices
     vm.showFilters = vm.filtersApplied;
 
     //Check if search was used
@@ -112,8 +112,6 @@ function CostCentersController( CostCentersList, TrackSearch, Parameters, $ocMed
     //Clear relevant filters, reload the state & reset the page
     vm.clearFilters = function() {
         vm.parameters.filters = null;
-        vm.parameters.from = null;
-        vm.parameters.to = null;
         $ocMedia('max-width:767px') ? vm.parameters.sortBy = null : angular.noop(); //Clear out sort by on mobile devices
         vm.filter(true);
     };
@@ -147,7 +145,7 @@ function CostCentersController( CostCentersList, TrackSearch, Parameters, $ocMed
 
     //Load the next page of results with all of the same parameters
     vm.loadMore = function() {
-        return OrderCloud.Orders[UserType == 'admin' ? 'ListIncoming' : 'ListOutgoing'](Parameters.from, Parameters.to, Parameters.search, vm.list.Meta.Page + 1, Parameters.pageSize || vm.list.Meta.PageSize, Parameters.searchOn, Parameters.sortBy, Parameters.filters)
+        return OrderCloud.Orders[UserType == 'admin' ? 'ListIncoming' : 'ListOutgoing'](Parameters.search, vm.list.Meta.Page + 1, Parameters.pageSize || vm.list.Meta.PageSize, Parameters.searchOn, Parameters.sortBy, Parameters.filters)
             .then(function(data) {
                 vm.list.Items = vm.list.Items.concat(data.Items);
                 vm.list.Meta = data.Meta;
