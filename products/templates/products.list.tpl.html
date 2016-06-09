@@ -7,11 +7,19 @@
     <tr>
         <th>
         </th>
-        <th>
-            <div>ID</div>
+        <th scope="col">
+            <a href="#" role="button" ng-click="products.updateSort('ID')">
+                ID
+                <i class="fa fa-caret-down" ng-show="products.parameters.sortBy == 'ID'"></i>
+                <i class="fa fa-caret-up" ng-show="products.parameters.sortBy == '!ID'"></i>
+            </a>
         </th>
         <th>
-            <div>Name</div>
+            <a href="#" role="button" ng-click="products.updateSort('Name')">
+                Name
+                <i class="fa fa-caret-down" ng-show="products.parameters.sortBy == 'Name'"></i>
+                <i class="fa fa-caret-up" ng-show="products.parameters.sortBy == '!Name'"></i>
+            </a>
         </th>
     </tr>
     </thead>

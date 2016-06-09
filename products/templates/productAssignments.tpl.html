@@ -1,4 +1,8 @@
-<h3 class="page-header">Assignments for {{productAssignments.productName}}</h3>
+<div class="page-header">
+	<button class="btn btn-success pull-right" ui-sref="^.createAssignment({productid:productAssignments.productID})"><i class="fa fa-plus-circle"></i> New Assignment</button>
+	<button type="button" class="btn btn-default pull-right" ui-sref="^"><i class="fa fa-arrow-left"></i> Back</button>
+	<h3>Assignments for {{productAssignments.productName}}</h3>
+</div>
 <div class="well well-lg text-center" ng-if="!productAssignments.list.length">
 	<b>This product does not have any assignments for the active Buyer company.</b>
 </div>
@@ -37,5 +41,3 @@
 		</table>
 	</div>
 </section>
-<button type="button" class="btn btn-default" ui-sref="^"><i class="fa fa-arrow-left"></i> Back</button>
-<button class="btn btn-success" ui-sref="^.createAssignment({productid:productAssignments.productID})"><i class="fa fa-plus-circle"></i> New Assignment</button>
