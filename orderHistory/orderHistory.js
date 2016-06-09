@@ -112,7 +112,7 @@ function OrderHistoryController( $state, $ocMedia, OrderCloudParameters, OrderCl
                 break;
             case '!' + value:
                 vm.parameters.sortBy = null;
-                break;
+                break
             default:
                 vm.parameters.sortBy = value;
         }
