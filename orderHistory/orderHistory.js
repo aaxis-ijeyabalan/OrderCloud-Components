@@ -27,7 +27,6 @@ function OrderHistoryConfig( $stateProvider ) {
                 }
             },
             url: '/order-history?from&to&search&page&pageSize&searchOn&sortBy&filters',
-
             data: {componentName: 'Order History'},
             resolve: {
                 UserType: function(OrderCloud) {
