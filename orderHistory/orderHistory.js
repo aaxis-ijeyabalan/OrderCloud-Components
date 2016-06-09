@@ -341,6 +341,7 @@ function OrderCloudParametersService() {
         var parameters = angular.copy(params);
         resetPage ? parameters.page = null : angular.noop(); //Reset page when filters are applied
         if (parameters.filters) {
+            parameters.filters.orderType == "" ? delete parameters.filters.orderType : angular.noop();
             parameters.filters.type == "" ? delete parameters.filters.type : angular.noop();
             parameters.filters.status == "" ? delete parameters.filters.status : angular.noop();
             parameters.filters = JSON.stringify(parameters.filters); //Translate filter object to string
