@@ -1,8 +1,11 @@
 <article id="COMPONENT_PriceSchedules" ui-view class="container-fluid">
-    <h3 class="page-header">
-        Price Schedules
-    </h3>
-    <ordercloud-search servicename="PriceSchedules" controlleras="priceSchedules"></ordercloud-search>
+    <div class="page-header">
+        <button type="button" class="btn btn-success pull-right" ui-sref=".create"><i class="fa fa-plus-circle"></i> Create New</button>
+        <h3>Price Schedules</h3>
+    </div>
+    <div ui-view="filters"></div>
+    <div ui-view="list"></div>
+    <!--<ordercloud-search servicename="PriceSchedules" controlleras="priceSchedules"></ordercloud-search>
     <div class="well well-lg text-center" ng-if="!priceSchedules.list.Items.length">
         <b ng-if="!priceSchedules.searching()">The selected buyer does not have any price schedules.</b>
         <b ng-if="priceSchedules.searching()"><i class="fa fa-search"></i> No price schedules match your search.</b>
@@ -43,5 +46,5 @@
             </table>
         </div>
     </section>
-    <button type="button" class="btn btn-success" ui-sref=".create"><i class="fa fa-plus-circle"></i> Create New</button>
+    -->
 </article>
