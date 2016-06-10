@@ -1,4 +1,4 @@
-describe('Component: OrderHistory', function() {
+describe('Component: Orders', function() {
     var scope,
         q,
         oc,
@@ -106,10 +106,10 @@ describe('Component: OrderHistory', function() {
         };
     }));
 
-    describe('State: orderHistory', function() {
+    describe('State: orders', function() {
         var state;
         beforeEach(inject(function($state) {
-            state = $state.get('orderHistory');
+            state = $state.get('orders');
             spyOn(oc.Auth, 'ReadToken').and.returnValue('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c3IiOiJDT05OT1JfSk9ITlNPTiIsImNpZCI6ImY1NjdjZTQ2LTNjMjQtNDZiZS1hOWM5LTMyN2ZhYmFkZWJiMyIsImltcCI6ImMxIiwidXNydHlwZSI6ImJ1eWVyIiwicm9sZSI6IkZ1bGxBY2Nlc3MiLCJpc3MiOiJodHRwczovL2F1dGgub3JkZXJjbG91ZC5pbyIsImF1ZCI6Imh0dHBzOi8vYXBpLm9yZGVyY2xvdWQuaW8iLCJleHAiOjE0NTQ5NzI2MDgsIm5iZiI6MTQ1NDk2OTAwOH0.RmWy4hoDzSLaWmlY3pxkOZ3OC2ZTRgzmpiEu_SN8YMk');
             spyOn(oc.Orders, 'List').and.returnValue(null);
         }));
@@ -131,35 +131,35 @@ describe('Component: OrderHistory', function() {
         }));
     });
 
-    describe('State: orderHistory.detail', function() {
+    describe('State: orders.detail', function() {
         var state;
-        beforeEach(inject(function($state, OrderHistoryFactory) {
-            state = $state.get('orderHistory.detail');
-            spyOn(OrderHistoryFactory, 'GetOrderDetails').and.returnValue(null);
+        beforeEach(inject(function($state, OrdersFactory) {
+            state = $state.get('orders.detail');
+            spyOn(OrdersFactory, 'GetOrderDetails').and.returnValue(null);
         }));
-        it('should resolve SelectedOrder', inject(function($injector, $stateParams, OrderHistoryFactory) {
+        it('should resolve SelectedOrder', inject(function($injector, $stateParams, OrdersFactory) {
             $injector.invoke(state.resolve.SelectedOrder);
-            expect(OrderHistoryFactory.GetOrderDetails).toHaveBeenCalledWith($stateParams.orderid);
+            expect(OrdersFactory.GetOrderDetails).toHaveBeenCalledWith($stateParams.orderid);
         }));
     });
 
-    describe('State: orderHistory.detail.lineItem', function() {
+    describe('State: orders.detail.lineItem', function() {
         var state;
-        beforeEach(inject(function($state, OrderHistoryFactory) {
-            state = $state.get('orderHistory.detail.lineItem');
-            spyOn(OrderHistoryFactory, 'GetLineItemDetails').and.returnValue(null);
+        beforeEach(inject(function($state, OrdersFactory) {
+            state = $state.get('orders.detail.lineItem');
+            spyOn(OrdersFactory, 'GetLineItemDetails').and.returnValue(null);
         }));
-        it('should resolve SelectedLineItem', inject(function($injector, $stateParams, OrderHistoryFactory) {
+        it('should resolve SelectedLineItem', inject(function($injector, $stateParams, OrdersFactory) {
             $injector.invoke(state.resolve.SelectedLineItem);
-            expect(OrderHistoryFactory.GetLineItemDetails).toHaveBeenCalledWith($stateParams.orderid, $stateParams.lineitemid);
+            expect(OrdersFactory.GetLineItemDetails).toHaveBeenCalledWith($stateParams.orderid, $stateParams.lineitemid);
         }));
     });
 
 
-    describe('Factory: OrderHistoryFactory', function() {
-        var orderHistoryService, orderID, productID, filters;
-        beforeEach(inject(function(OrderHistoryFactory) {
-            orderHistoryService = OrderHistoryFactory;
+    describe('Factory: OrdersFactory', function() {
+        var ordersService, orderID, productID, filters;
+        beforeEach(inject(function(OrdersFactory) {
+            ordersService = OrdersFactory;
             var orderDefer = q.defer();
             var orderListDefer = q.defer();
             var lineItemDefer = q.defer();
@@ -182,7 +182,7 @@ describe('Component: OrderHistory', function() {
             beforeEach(function() {
                 orderID = "TestOrder123456789";
                 productID = "TestProduct1234";
-                orderHistoryService.GetOrderDetails(orderID);
+                ordersService.GetOrderDetails(orderID);
                 scope.$digest();
             });
             it ('should call an Order Get', function() {
@@ -199,7 +199,7 @@ describe('Component: OrderHistory', function() {
         describe('SearchOrders', function() {
             beforeEach(function() {
                 filters = {OrderID: "TestOrder123456789", Status: "Open", FromCompanyID: "TestCompany", FromDate: new Date(), ToDate: new Date(), searchTerm: "TestTerm"};
-                orderHistoryService.SearchOrders(filters, 'admin');
+                ordersService.SearchOrders(filters, 'admin');
                 scope.$digest();
 
             });

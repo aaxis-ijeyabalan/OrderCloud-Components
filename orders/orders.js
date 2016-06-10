@@ -1,33 +1,33 @@
 angular.module( 'orderCloud' )
 
-    .config( OrderHistoryConfig )
-    .controller( 'OrderHistoryCtrl', OrderHistoryController )
-    .controller( 'OrderHistoryDetailCtrl', OrderHistoryDetailController )
-    .controller( 'OrderHistoryDetailLineItemCtrl', OrderHistoryDetailLineItemController )
-    .factory( 'OrderHistoryFactory', OrderHistoryFactory )
+    .config( OrdersConfig )
+    .controller( 'OrdersCtrl', OrdersController )
+    .controller( 'OrdersDetailCtrl', OrdersDetailController )
+    .controller( 'OrdersDetailLineItemCtrl', OrdersDetailLineItemController )
+    .factory( 'OrdersFactory', OrdersFactory )
     .factory('OrderCloudParameters', OrderCloudParametersService)
     .filter('paymentmethods', paymentmethods)
 ;
 
-function OrderHistoryConfig( $stateProvider ) {
+function OrdersConfig( $stateProvider ) {
     $stateProvider
-        .state( 'orderHistory', {
+        .state( 'orders', {
             parent: 'base',
             views: {
                 '': {
-                    templateUrl:'orderHistory/templates/orderHistory.tpl.html',
-                    controller:'OrderHistoryCtrl',
-                    controllerAs: 'orderHistory'
+                    templateUrl:'orders/templates/orders.tpl.html',
+                    controller:'OrdersCtrl',
+                    controllerAs: 'orders'
                 },
-                'filters@orderHistory': {
-                    templateUrl:'orderHistory/templates/orderHistory.filters.tpl.html'
+                'filters@orders': {
+                    templateUrl:'orders/templates/orders.filters.tpl.html'
                 },
-                'list@orderHistory': {
-                    templateUrl:'orderHistory/templates/orderHistory.list.tpl.html'
+                'list@orders': {
+                    templateUrl:'orders/templates/orders.list.tpl.html'
                 }
             },
-            url: '/order-history?from&to&search&page&pageSize&searchOn&sortBy&filters',
-            data: {componentName: 'Order History'},
+            url: '/orders?from&to&search&page&pageSize&searchOn&sortBy&filters',
+            data: {componentName: 'Orders'},
             resolve: {
                 UserType: function(OrderCloud) {
                     return JSON.parse(atob(OrderCloud.Auth.ReadToken().split('.')[1])).usrtype;
@@ -40,32 +40,32 @@ function OrderHistoryConfig( $stateProvider ) {
                 }
             }
         })
-        .state( 'orderHistory.detail', {
+        .state( 'orders.detail', {
             url: '/:orderid',
-            templateUrl: 'orderHistory/templates/orderHistory.detail.tpl.html',
-            controller: 'OrderHistoryDetailCtrl',
-            controllerAs: 'orderHistoryDetail',
+            templateUrl: 'orders/templates/orders.detail.tpl.html',
+            controller: 'OrdersDetailCtrl',
+            controllerAs: 'ordersDetail',
             resolve: {
-                SelectedOrder: function($stateParams, OrderHistoryFactory) {
-                    return OrderHistoryFactory.GetOrderDetails($stateParams.orderid);
+                SelectedOrder: function($stateParams, OrdersFactory) {
+                    return OrdersFactory.GetOrderDetails($stateParams.orderid);
                 }
             }
         })
-        .state( 'orderHistory.detail.lineItem', {
+        .state( 'orders.detail.lineItem', {
             url: '/:lineitemid',
-            templateUrl: 'orderHistory/templates/orderHistory.detail.lineItem.tpl.html',
-            controller: 'OrderHistoryDetailLineItemCtrl',
-            controllerAs: 'orderHistoryDetailLineItem',
+            templateUrl: 'orders/templates/orders.detail.lineItem.tpl.html',
+            controller: 'OrdersDetailLineItemCtrl',
+            controllerAs: 'ordersDetailLineItem',
             resolve: {
-                SelectedLineItem: function($stateParams, OrderHistoryFactory) {
-                    return OrderHistoryFactory.GetLineItemDetails($stateParams.orderid, $stateParams.lineitemid);
+                SelectedLineItem: function($stateParams, OrdersFactory) {
+                    return OrdersFactory.GetLineItemDetails($stateParams.orderid, $stateParams.lineitemid);
                 }
             }
         })
     ;
 }
 
-function OrderHistoryController( $state, $ocMedia, OrderCloudParameters, OrderCloud, UserType, OrderList, Parameters ) {
+function OrdersController( $state, $ocMedia, OrderCloudParameters, OrderCloud, UserType, OrderList, Parameters ) {
     var vm = this;
     vm.list = OrderList;
     vm.parameters = Parameters;
@@ -140,7 +140,7 @@ function OrderHistoryController( $state, $ocMedia, OrderCloudParameters, OrderCl
     };
 }
 
-function OrderHistoryDetailController( SelectedOrder, toastr, OrderCloud ) {
+function OrdersDetailController( SelectedOrder, toastr, OrderCloud ) {
     var vm = this;
     vm.order = SelectedOrder;
     vm.addToFavorites = function(){
@@ -165,12 +165,12 @@ function OrderHistoryDetailController( SelectedOrder, toastr, OrderCloud ) {
     }
 }
 
-function OrderHistoryDetailLineItemController( SelectedLineItem ) {
+function OrdersDetailLineItemController( SelectedLineItem ) {
     var vm = this;
     vm.lineItem = SelectedLineItem;
 }
 
-function OrderHistoryFactory( $q, Underscore, OrderCloud ) {
+function OrdersFactory( $q, Underscore, OrderCloud ) {
     var service = {
         GetOrderDetails: _getOrderDetails,
         GetLineItemDetails: _getLineItemDetails,
