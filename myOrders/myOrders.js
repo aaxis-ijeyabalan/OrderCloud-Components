@@ -17,7 +17,7 @@ function MyOrdersConfig( $stateProvider ) {
             data: {componentName: 'My Orders'},
             resolve: {
                 OrderList: function(OrderCloud) {
-                    return OrderCloud.Orders.ListIncoming();
+                    return OrderCloud.Me.ListIncomingOrders();
                 }
             }
         })
@@ -28,7 +28,7 @@ function MyOrdersConfig( $stateProvider ) {
             controllerAs: 'myOrderEdit',
             resolve: {
                 SelectedOrder: function($stateParams, OrderCloud) {
-                    return OrderCloud.Orders.Get($stateParams.orderid);
+                    return OrderCloud.Me.GetOrder($stateParams.orderid);
                 },
                 SelectedPayments: function($stateParams, $q, OrderCloud){
                     var dfd = $q.defer();
