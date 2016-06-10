@@ -10,7 +10,7 @@ function MyOrdersConfig( $stateProvider ) {
     $stateProvider
         .state( 'myOrders', {
             parent: 'base',
-            url: '/orders',
+            url: '/myorders',
             templateUrl:'myOrders/templates/myOrders.tpl.html',
             controller:'MyOrdersCtrl',
             controllerAs: 'myOrders',
