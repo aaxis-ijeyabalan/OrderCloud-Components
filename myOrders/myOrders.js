@@ -1,31 +1,31 @@
 angular.module( 'orderCloud' )
 
-    .config( OrdersConfig )
-    .controller( 'OrdersCtrl', OrdersController )
-    .controller( 'OrderEditCtrl', OrderEditController )
-    .factory( 'OrdersTypeAheadSearchFactory', OrdersTypeAheadSearchFactory )
+    .config( MyOrdersConfig )
+    .controller( 'MyOrdersCtrl', MyOrdersController )
+    .controller( 'MyOrderEditCtrl', MyOrderEditController )
+    .factory( 'MyOrdersTypeAheadSearchFactory', MyOrdersTypeAheadSearchFactory )
 ;
 
-function OrdersConfig( $stateProvider ) {
+function MyOrdersConfig( $stateProvider ) {
     $stateProvider
-        .state( 'orders', {
+        .state( 'myOrders', {
             parent: 'base',
             url: '/orders',
-            templateUrl:'orders/templates/orders.tpl.html',
-            controller:'OrdersCtrl',
-            controllerAs: 'orders',
-            data: {componentName: 'Orders'},
+            templateUrl:'myOrders/templates/myOrders.tpl.html',
+            controller:'MyOrdersCtrl',
+            controllerAs: 'myOrders',
+            data: {componentName: 'My Orders'},
             resolve: {
                 OrderList: function(OrderCloud) {
                     return OrderCloud.Orders.ListIncoming();
                 }
             }
         })
-        .state( 'orders.edit', {
+        .state( 'myOrders.edit', {
             url: '/:orderid/edit',
-            templateUrl:'orders/templates/orderEdit.tpl.html',
-            controller:'OrderEditCtrl',
-            controllerAs: 'orderEdit',
+            templateUrl:'myOrders/templates/MyorderEdit.tpl.html',
+            controller:'MyOrderEditCtrl',
+            controllerAs: 'myOrderEdit',
             resolve: {
                 SelectedOrder: function($stateParams, OrderCloud) {
                     return OrderCloud.Orders.Get($stateParams.orderid);
@@ -60,12 +60,12 @@ function OrdersConfig( $stateProvider ) {
     ;
 }
 
-function OrdersController(OrderList) {
+function MyOrdersController(OrderList) {
     var vm = this;
     vm.list = OrderList;
 }
 
-function OrderEditController( $scope, $q, $exceptionHandler, $state, OrderCloud, SelectedOrder, SelectedPayments, OrdersTypeAheadSearchFactory, LineItemList, toastr, OCGeography) {
+function MyOrderEditController( $scope, $q, $exceptionHandler, $state, OrderCloud, SelectedOrder, SelectedPayments, MyOrdersTypeAheadSearchFactory, LineItemList, toastr, OCGeography) {
     var vm = this,
         orderid = SelectedOrder.ID;
     vm.order = SelectedOrder;
@@ -134,7 +134,7 @@ function OrderEditController( $scope, $q, $exceptionHandler, $state, OrderCloud,
                 OrderCloud.Orders.Update(orderid, vm.order)
                     .then(function() {
                         toastr.success('Order Updated', 'Success');
-                        $state.go('orders', {}, {reload:true});
+                        $state.go('myOrders', {}, {reload:true});
                     })
                     .catch(function(ex) {
                         $exceptionHandler(ex)
@@ -150,7 +150,7 @@ function OrderEditController( $scope, $q, $exceptionHandler, $state, OrderCloud,
     vm.Delete = function() {
         OrderCloud.Orders.Delete(orderid)
             .then(function() {
-                $state.go('orders', {}, {reload:true});
+                $state.go('myOrders', {}, {reload:true});
                 toastr.success('Order Deleted', 'Success');
             })
             .catch(function(ex) {
@@ -168,12 +168,12 @@ function OrderEditController( $scope, $q, $exceptionHandler, $state, OrderCloud,
             )
         }
     }
-    vm.spendingAccountTypeAhead = OrdersTypeAheadSearchFactory.SpendingAccountList;
-    vm.shippingAddressTypeAhead = OrdersTypeAheadSearchFactory.ShippingAddressList;
-    vm.billingAddressTypeAhead = OrdersTypeAheadSearchFactory.BillingAddressList;
+    vm.spendingAccountTypeAhead = MyOrdersTypeAheadSearchFactory.SpendingAccountList;
+    vm.shippingAddressTypeAhead = MyOrdersTypeAheadSearchFactory.ShippingAddressList;
+    vm.billingAddressTypeAhead = MyOrdersTypeAheadSearchFactory.BillingAddressList;
 }
 
-function OrdersTypeAheadSearchFactory($q, OrderCloud, Underscore) {
+function MyOrdersTypeAheadSearchFactory($q, OrderCloud, Underscore) {
     return {
         SpendingAccountList: SpendingAccountList,
         ShippingAddressList: ShippingAddressList,

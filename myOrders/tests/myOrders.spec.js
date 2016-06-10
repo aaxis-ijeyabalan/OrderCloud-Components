@@ -1,4 +1,4 @@
-describe('Component: Orders', function() {
+describe('Component: MyOrders', function() {
     var scope,
         q,
         order,
@@ -24,10 +24,10 @@ describe('Component: Orders', function() {
         oc = OrderCloud;
     }));
 
-    describe('State: orders', function() {
+    describe('State: myOrders', function() {
         var state;
         beforeEach(inject(function($state) {
-            state = $state.get('orders');
+            state = $state.get('myOrders');
             spyOn(oc.Orders, 'List').and.returnValue(null);
         }));
         it('should resolve OrderList', inject(function ($injector) {
@@ -36,10 +36,10 @@ describe('Component: Orders', function() {
         }));
     });
 
-    describe('State: orders.edit', function() {
+    describe('State: myOrders.edit', function() {
         var state;
         beforeEach(inject(function($state) {
-            state = $state.get('orders.edit');
+            state = $state.get('myOrders.edit');
             spyOn(oc.Orders, 'Get').and.returnValue(null);
             spyOn(oc.LineItems, 'List').and.returnValue(null);
         }));
@@ -54,10 +54,10 @@ describe('Component: Orders', function() {
     });
     
 
-    describe('Controller: OrderEditCtrl', function() {
+    describe('Controller: MyOrderEditCtrl', function() {
         var orderEditCtrl, lineItem;
         beforeEach(inject(function($state, $controller) {
-            orderEditCtrl = $controller('OrderEditCtrl', {
+            orderEditCtrl = $controller('MyOrderEditCtrl', {
                 $scope: scope,
                 SelectedOrder: order,
                 LineItemList: []
@@ -95,7 +95,7 @@ describe('Component: Orders', function() {
                 expect(oc.Orders.Update).toHaveBeenCalledWith(orderEditCtrl.orderID, orderEditCtrl.order);
             });
             it ('should enter the orders state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('orders', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('myOrders', {}, {reload:true});
             }));
         });
 
@@ -111,7 +111,7 @@ describe('Component: Orders', function() {
                 expect(oc.Orders.Delete).toHaveBeenCalledWith(order.ID);
             });
             it ('should enter the orders state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('orders', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('myOrders', {}, {reload:true});
             }));
         });
 
@@ -137,10 +137,10 @@ describe('Component: Orders', function() {
         });
     });
 
-    describe('Factory: OrdersTypeAheadSearchFactory', function() {
+    describe('Factory: MyOrdersTypeAheadSearchFactory', function() {
         var ordersService, term;
-        beforeEach(inject(function(OrdersTypeAheadSearchFactory) {
-            ordersService = OrdersTypeAheadSearchFactory;
+        beforeEach(inject(function(MyOrdersTypeAheadSearchFactory) {
+            ordersService = MyOrdersTypeAheadSearchFactory;
             var defer = q.defer();
             defer.resolve(null);
             spyOn(oc.SpendingAccounts, 'List').and.returnValue(defer.promise);

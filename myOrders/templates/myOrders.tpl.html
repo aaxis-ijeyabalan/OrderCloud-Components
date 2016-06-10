@@ -1,16 +1,16 @@
 <ui-view>
     <article class="container-fluid">
         <h3 class="page-header">
-            Orders
+            My Orders
         </h3>
-        <ordercloud-search servicename="Orders" controlleras="orders"></ordercloud-search>
-        <div class="well well-lg text-center" ng-if="!orders.list.Items.length">
-            <b ng-if="!orders.searching()">The selected buyer does not have any orders.</b>
-            <b ng-if="orders.searching()"><i class="fa fa-search"></i> No orders match your search.</b>
+        <ordercloud-search servicename="MyOrders" controlleras="myOrders"></ordercloud-search>
+        <div class="well well-lg text-center" ng-if="!myOrders.list.Items.length">
+            <b ng-if="!myOrders.searching()">The selected buyer does not have any myOrders.</b>
+            <b ng-if="myOrders.searching()"><i class="fa fa-search"></i> No myOrders match your search.</b>
         </div>
-        <section class="table-fixed-header" ng-if="orders.list.Items.length">
+        <section class="table-fixed-header" ng-if="myOrders.list.Items.length">
             <div class="table-header-bg"></div>
-            <div class="table-container" ordercloud-infinite-scroll servicename="Orders" controlleras="orders">
+            <div class="table-container" ordercloud-infinite-scroll servicename="MyOrders" controlleras="myOrders">
                 <table class="table table-hover">
                     <colgroup>
                         <col class="action-column"/>
@@ -28,7 +28,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="order in orders.list.Items track by $index">
+                    <tr ng-repeat="order in myOrders.list.Items track by $index">
                         <td>
                             <div class="btn-group btn-block" uib-dropdown dropdown-append-to-body>
                                 <button type="button" class="btn btn-default btn-block" uib-dropdown-toggle><i class="fa fa-cog"></i> <span class="caret"></span></button>
