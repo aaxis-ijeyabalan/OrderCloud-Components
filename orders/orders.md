@@ -1,7 +1,7 @@
 ## Orders Component Overview
 
-This component allows you to list, edit, and delete orders. 
+This component allows buyer users to view a history of their submitted orders.
 
-You can also list, edit and delete Line Items associated with the order in this component.
+It uses the Orders, and LineItems resources to build up the data.
 
-Orders is a buyer specific admin component.
+Orders is a buyer perspective component.
