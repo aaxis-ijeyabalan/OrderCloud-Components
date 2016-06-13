@@ -1,6 +1,8 @@
 <div class="page-header">
-	<button class="btn btn-success pull-right" ui-sref="^.createAssignment({productid:productAssignments.productID})"><i class="fa fa-plus-circle"></i> New Assignment</button>
-	<button type="button" class="btn btn-default pull-right" ui-sref="^"><i class="fa fa-arrow-left"></i> Back</button>
+	<div class="btn-toolbar pull-right">
+		<button type="button" class="btn btn-default" ui-sref="^"><i class="fa fa-arrow-left"></i> Back</button>
+		<button class="btn btn-success" ui-sref="^.createAssignment({productid:productAssignments.productID})"><i class="fa fa-plus-circle"></i> New Assignment</button>
+	</div>
 	<h3>Assignments for {{productAssignments.productName}}</h3>
 </div>
 <div class="well well-lg text-center" ng-if="!productAssignments.list.length">
