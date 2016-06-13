@@ -55,16 +55,26 @@ function ProductsConfig($stateProvider) {
             controllerAs: 'productCreate'
         })
         .state('products.assignments', {
+            views: {
+                '': {
+                    templateUrl: 'products/templates/productAssignments.tpl.html',
+                    controller: 'ProductAssignmentsCtrl',
+                    controllerAs: 'productAssignments'
+                },
+                'list@products.assignments': {
+                    templateUrl:'products/templates/productAssignments.list.tpl.html'
+                }
+            },
             url: '/:productid/assignments',
-            templateUrl: 'products/templates/productAssignments.tpl.html',
-            controller: 'ProductAssignmentsCtrl',
-            controllerAs: 'productAssignments',
             resolve: {
+                Parameters: function( $stateParams, OrderCloudParameters ) {
+                    return OrderCloudParameters.Get($stateParams);
+                },
                 SelectedProduct: function($stateParams, OrderCloud) {
                     return OrderCloud.Products.Get($stateParams.productid);
                 },
-                Assignments: function($stateParams, OrderCloud) {
-                    return OrderCloud.Products.ListAssignments($stateParams.productid);
+                Assignments: function($stateParams, OrderCloud, Parameters) {
+                    return OrderCloud.Products.ListAssignments($stateParams.productid, Parameters.productID, Parameters.userID, Parameters.userGroupID, Parameters.level, Parameters.priceScheduleID, Parameters.page, Parameters.pageSize);
                 }
             }
         })
