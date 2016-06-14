@@ -12,10 +12,23 @@ function SpecsConfig( $stateProvider ) {
     $stateProvider
         .state( 'specs', {
             parent: 'base',
+            views: {
+                '': {
+                    templateUrl:'specs/templates/specs.tpl.html',
+                    controller:'SpecsCtrl',
+                    controllerAs: 'specs'
+                },
+                'filters@specs': {
+                    templateUrl:'specs/templates/specs.filters.tpl.html'
+                },
+                'list@specs': {
+                    templateUrl:'specs/templates/specs.list.tpl.html'
+                }
+            },
+            url: '/orders?search&page&pageSize&searchOn&sortBy&filters',
+
+
             url: '/specs',
-            templateUrl:'specs/templates/specs.tpl.html',
-            controller:'SpecsCtrl',
-            controllerAs: 'specs',
             data: {componentName: 'Specs'},
             resolve: {
                 SpecList: function(OrderCloud) {
