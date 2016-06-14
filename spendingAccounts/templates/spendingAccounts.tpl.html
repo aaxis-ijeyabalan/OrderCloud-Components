@@ -1,4 +1,13 @@
 <article id="COMPONENT_SpendingAccounts" ui-view class="container-fluid">
+    <div class="page-header">
+        <button type="button" class="btn btn-success pull-right" ui-sref=".create"><i class="fa fa-plus-circle"></i> Create New</button>
+        <h3>Spending Accounts</h3>
+    </div>
+    <div ui-view="filters"></div>
+    <div ui-view="list"></div>
+</article>
+<!--
+<article id="COMPONENT_SpendingAccounts" ui-view class="container-fluid">
     <h3 class="page-header">
         Spending Accounts
     </h3>
@@ -46,4 +55,4 @@
         </div>
     </section>
     <button type="button" class="btn btn-success" ui-sref=".create"><i class="fa fa-plus-circle"></i> Create New</button>
-</article>
+</article>-->

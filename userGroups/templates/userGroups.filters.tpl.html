@@ -1,4 +1,4 @@
-<form name="OrdersSearchForm" class="form-inline" ng-submit="userGroups.search()">
+<form name="UserGroupsSearchForm" class="form-inline" ng-submit="userGroups.search()">
 	<fieldset class="form-group">
 		<input type="search" placeholder="Search userGroups..." ng-model="userGroups.parameters.search"
 			   class="form-control">
@@ -9,8 +9,8 @@
 			<button ng-if="userGroups.searchResults" ng-click="userGroups.clearSearch()" type="button"
 					class="btn btn-default"><i class="fa fa-times"></i></button>
 		</span>
-		<span ng-class="{'btn-group':userGroups.filtersApplied}">
-			<button type="button" class="btn btn-default" ng-if="application.$ocMedia('max-width:767px')"
+		<span ng-class="{'btn-group':userGroups.filtersApplied}" ng-if="application.$ocMedia('max-width:767px')">
+			<button type="button" class="btn btn-default"
 					ng-click="userGroups.showFilters = !userGroups.showFilters"><i class="fa fa-filter"></i> Filters
 			</button>
 			<button ng-if="userGroups.filtersApplied" ng-click="userGroups.clearFilters()" type="button"
