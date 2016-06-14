@@ -64,7 +64,7 @@ function UsersConfig( $stateProvider ) {
 
 function UsersController( $state, $ocMedia, OrderCloud, OrderCloudParameters, UserList, Parameters ) {
     var vm = this;
-    vm.list = UserList
+    vm.list = UserList;
     vm.parameters = Parameters;
     vm.sortSelection = Parameters.sortBy ? (Parameters.sortBy.indexOf('!') == 0 ? Parameters.sortBy.split('!')[1] : Parameters.sortBy) : null;
 

@@ -26,7 +26,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="group in userGroups.list.Items">
+    <tr ng-repeat="userGroup in userGroups.list.Items">
         <th scope="row">
             <div class="btn-group btn-block" uib-dropdown dropdown-append-to-body>
                 <button type="button" class="btn btn-default btn-block" uib-dropdown-toggle><i class="fa fa-cog"></i> <span class="caret"></span></button>
@@ -36,12 +36,12 @@
                 </ul>
             </div>
         </th>
-        <td data-title="Name">{{group.Name}}</td>
-        <td data-title="Description">{{group.Description}}</td>
+        <td data-title="Name">{{userGroup.Name}}</td>
+        <td data-title="Description">{{userGroup.Description}}</td>
     </tr>
     </tbody>
 </table>
-<div class="text-center" ng-if="application.$ocMedia('min-width:768px')">
+<div class="text-center" ng-if="application.$ocMedia('min-width:768px') && userGroups.list.Meta.TotalPages > 1">
     <uib-pagination boundary-links="userGroups.list.Meta.TotalPages > 8" max-size="5" total-items="userGroups.list.Meta.TotalCount" items-per-page="userGroups.list.Meta.PageSize" ng-model="userGroups.list.Meta.Page" ng-change="userGroups.pageChanged()"></uib-pagination>
 </div>
 <button type="button"
