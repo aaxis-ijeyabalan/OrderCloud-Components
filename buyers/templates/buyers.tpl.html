@@ -14,10 +14,13 @@
                     <button type="submit" class="btn btn-primary">Search</button>
                     <button ng-if="buyers.searchResults" ng-click="buyers.clearSearch()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
                 </span>
+                <!-- Commented out until API supports sorting for buyers -->
+                <!--
                 <span ng-class="{'btn-group':buyers.filtersApplied}" >
                     <button type="button" class="btn btn-default" ng-click="buyers.showFilters = !buyers.showFilters" ng-show="application.$ocMedia('max-width:767px')"><i class="fa fa-filter"></i> Filters</button>
                     <button ng-if="buyers.filtersApplied" ng-click="buyers.clearFilters()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
                 </span>
+                -->
             </fieldset>
         </form>
         <div class="row" style="margin-top:15px;" uib-collapse="!buyers.showFilters">
@@ -56,18 +59,20 @@
             <thead>
             <tr>
                 <th scope="col">
-                    <a href="#" role="button" ng-click="buyers.updateSort('ID')">
+                    <!-- Commented out until API supports sorting for buyers -->
+                    <!-- <a href="#" role="button" ng-click="buyers.updateSort('ID')"> -->
                         ID
                         <i class="fa fa-caret-down" ng-show="buyers.parameters.sortBy == 'ID'"></i>
                         <i class="fa fa-caret-up" ng-show="buyers.parameters.sortBy == '!ID'"></i>
-                    </a>
+                    <!-- </a> -->
                 </th>
                 <th scope="col">
-                    <a href="#" role="button" ng-click="buyers.updateSort('Name')">
+                    <!-- Commented out until API supports sorting for buyers -->
+                    <!-- <a href="#" role="button" ng-click="buyers.updateSort('Name')"> -->
                         Name
                         <i class="fa fa-caret-down" ng-show="buyers.parameters.sortBy == 'Name'"></i>
                         <i class="fa fa-caret-up" ng-show="buyers.parameters.sortBy == '!Name'"></i>
-                    </a>
+                    <!-- </a> -->
                 </th>
                 
             </tr>
