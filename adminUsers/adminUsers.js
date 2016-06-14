@@ -30,8 +30,15 @@ function AdminUsersConfig( $stateProvider ) {
                 Parameters: function( $stateParams, OrderCloudParameters ) {
                     return OrderCloudParameters.Get($stateParams);
                 },
-                AdminUsersList: function( OrderCloud, Parameters ) {
-                    return OrderCloud.AdminUsers.List(Parameters.search, Parameters.page, Parameters.pageSize || 12, Parameters.searchOn, Parameters.sortBy, Parameters.filters);
+                AdminUsersList: function( OrderCloud, Parameters, $state ) {
+                    return OrderCloud.AdminUsers.List(Parameters.search, Parameters.page, Parameters.pageSize || 12, Parameters.searchOn, Parameters.sortBy, Parameters.filters)
+                        .then(function(data) {
+                            if (data.Items.length == 1 && Parameters.search) {
+                                $state.go('adminUsers.edit', {adminuserid:data.Items[0].ID});
+                            } else {
+                                return data;
+                            }
+                        });
                 }
             }
         })
