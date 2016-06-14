@@ -26,11 +26,8 @@
 				<select placeholder="Sort" class="form-control" ng-model="userGroups.sortSelection"
 						ng-change="userGroups.updateSort()">
 					<option value="ID">ID</option>
-					<option value="Username">Username</option>
-					<option value="FirstName">First Name</option>
-					<option value="LastName">Last Name</option>
-					<option value="Email">Email</option>
-
+					<option value="Name">Name</option>
+					<option value="FirstName">Description</option>
 				</select>
 				<div ng-if="userGroups.sortSelection" class="input-group-btn">
 					<button class="btn btn-default" ng-click="userGroups.reverseSort()">
