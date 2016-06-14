@@ -190,7 +190,6 @@ function GiftCardsController ( $state, $ocMedia, OrderCloud, GiftCardList, Track
         var parameters = angular.copy(Parameters);
         parameters.filters ? parameters.filters.RedemptionCode = '*': parameters.filters = {RedemptionCode :'*'};
         return OrderCloud.SpendingAccounts.List(parameters.search, vm.list.Meta.Page + 1, parameters.pageSize ||  vm.list.Meta.PageSize, parameters.searchOn, parameters.sortBy, parameters.filters)
-        // return OrderCloud.Orders[UserType == 'admin' ? 'ListIncoming' : 'ListOutgoing'](Parameters.from, Parameters.to, Parameters.search, vm.list.Meta.Page + 1, Parameters.pageSize || vm.list.Meta.PageSize, Parameters.searchOn, Parameters.sortBy, Parameters.filters)
             .then(function(data) {
                 vm.list.Items = vm.list.Items.concat(data.Items);
                 vm.list.Meta = data.Meta;
