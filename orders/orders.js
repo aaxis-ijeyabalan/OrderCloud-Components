@@ -329,16 +329,24 @@ function OrderCloudParametersService() {
         Create: _create //create params obj ready for use in OrderCloud $state.go()
     };
 
-    function _get(stateParams) {
-        var params = angular.copy(stateParams);
-        params.filters = params.filters ? JSON.parse(params.filters) : null;
-        params.from ? params.from = new Date(params.from) : angular.noop(); //Translate date string to date obj
-        params.to ? params.to = new Date(params.to) : angular.noop(); //Translate date string to date obj
-        return params;
+    function _get(stateParams, suffix) {
+        var parameters = angular.copy(stateParams);
+        var suffixParams;
+        parameters.filters = parameters.filters ? JSON.parse(parameters.filters) : null;
+        parameters.from ? parameters.from = new Date(parameters.from) : angular.noop(); //Translate date string to date obj
+        parameters.to ? parameters.to = new Date(parameters.to) : angular.noop(); //Translate date string to date obj
+        if (suffix) {
+            suffixParams = {};
+            angular.forEach(parameters, function(val, key) {
+                suffixParams[key.split(suffix)[0]] = val;
+            })
+        }
+        return suffixParams || parameters;
     }
 
-    function _create(params, resetPage) {
+    function _create(params, resetPage, suffix) {
         var parameters = angular.copy(params);
+        var suffixParams;
         resetPage ? parameters.page = null : angular.noop(); //Reset page when filters are applied
         if (parameters.filters) {
             parameters.filters.orderType == "" ? delete parameters.filters.orderType : angular.noop();
@@ -349,7 +357,13 @@ function OrderCloudParametersService() {
         }
         parameters.from ? parameters.from = parameters.from.toISOString() : angular.noop();
         parameters.to ? parameters.to = parameters.to.toISOString() : angular.noop();
-        return parameters;
+        if (suffix) {
+            suffixParams = {};
+            angular.forEach(parameters, function(val, key) {
+                suffixParams[key + suffix] = val;
+            });
+        }
+        return suffixParams || parameters;
     }
 
     return service;

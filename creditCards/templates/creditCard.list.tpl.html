@@ -57,7 +57,7 @@
             <td data-title="ID">{{card.ID}}</td>
             <td data-title="CardholderName">{{card.CardholderName}}</td>
             <td data-title="PartialAccountNumber">{{card.CardType}}</td>
-            <td data-title="ExpirationDate">{{card.ExpirationDate}}</td>
+            <td data-title="ExpirationDate">{{card.ExpirationDate | date:'shortDate'}}</td>
         </tr>
         </tbody>
     </table>
