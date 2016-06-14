@@ -1,0 +1,33 @@
+<form name="ProductsSearchForm" class="form-inline" ng-submit="products.search()">
+    <fieldset class="form-group">
+        <input type="search" placeholder="Search Products..." ng-model="products.parameters.search" class="form-control">
+    </fieldset>
+    <fieldset class="form-group" ng-class="{'text-center':application.$ocMedia('max-width:767px')}">
+		<span ng-class="{'btn-group':products.searchResults}">
+			<button type="submit" class="btn btn-primary">Search</button>
+			<button ng-if="products.searchResults" ng-click="products.clearSearch()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
+		</span>
+		<span ng-class="{'btn-group':products.filtersApplied}">
+			<button type="button" class="btn btn-default" ng-if="application.$ocMedia('max-width:767px')" ng-click="products.showFilters = !products.showFilters"><i class="fa fa-filter"></i> Filters</button>
+			<button ng-if="products.filtersApplied" ng-click="products.clearFilters()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
+		</span>
+    </fieldset>
+</form>
+<div class="row" style="margin-top:15px;" uib-collapse="!products.showFilters">
+    <div class="col-md-6 col-lg-4">
+        <div class="form-group" ng-if="application.$ocMedia('max-width:767px')">
+            <label>Sorty By:</label>
+            <div ng-class="{'input-group':products.sortSelection}">
+                <select placeholder="Sort" class="form-control" ng-model="products.sortSelection" ng-change="products.updateSort()">
+                    <option value="ID">ID</option>
+                    <option value="Name">Name</option>
+                </select>
+                <div ng-if="products.sortSelection" class="input-group-btn">
+                    <button class="btn btn-default" ng-click="products.reverseSort()">
+                        <i class="fa fa-sort"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

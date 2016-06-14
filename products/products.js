@@ -13,14 +13,27 @@ function ProductsConfig($stateProvider) {
     $stateProvider
         .state('products', {
             parent: 'base',
-            url: '/products',
-            templateUrl: 'products/templates/products.tpl.html',
-            controller: 'ProductsCtrl',
-            controllerAs: 'products',
+            views: {
+                '': {
+                    templateUrl:'products/templates/products.tpl.html',
+                    controller:'ProductsCtrl',
+                    controllerAs: 'products'
+                },
+                'filters@products': {
+                    templateUrl:'products/templates/products.filters.tpl.html'
+                },
+                'list@products': {
+                    templateUrl:'products/templates/products.list.tpl.html'
+                }
+            },
+            url: '/products?from&to&search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'Products'},
             resolve: {
-                ProductList: function (OrderCloud) {
-                    return OrderCloud.Products.List();
+                Parameters: function( $stateParams, OrderCloudParameters ) {
+                    return OrderCloudParameters.Get($stateParams);
+                },
+                ProductList: function (OrderCloud, Parameters) {
+                    return OrderCloud.Products.List(Parameters.search, Parameters.page, Parameters.pageSize || 12, Parameters.searchOn, Parameters.sortBy, Parameters.filters);
                 }
             }
         })
@@ -42,16 +55,26 @@ function ProductsConfig($stateProvider) {
             controllerAs: 'productCreate'
         })
         .state('products.assignments', {
+            views: {
+                '': {
+                    templateUrl: 'products/templates/productAssignments.tpl.html',
+                    controller: 'ProductAssignmentsCtrl',
+                    controllerAs: 'productAssignments'
+                },
+                'list@products.assignments': {
+                    templateUrl:'products/templates/productAssignments.list.tpl.html'
+                }
+            },
             url: '/:productid/assignments',
-            templateUrl: 'products/templates/productAssignments.tpl.html',
-            controller: 'ProductAssignmentsCtrl',
-            controllerAs: 'productAssignments',
             resolve: {
+                Parameters: function( $stateParams, OrderCloudParameters ) {
+                    return OrderCloudParameters.Get($stateParams);
+                },
                 SelectedProduct: function($stateParams, OrderCloud) {
                     return OrderCloud.Products.Get($stateParams.productid);
                 },
-                Assignments: function($stateParams, OrderCloud) {
-                    return OrderCloud.Products.ListAssignments($stateParams.productid);
+                Assignments: function($stateParams, OrderCloud, Parameters) {
+                    return OrderCloud.Products.ListAssignments($stateParams.productid, Parameters.productID, Parameters.userID, Parameters.userGroupID, Parameters.level, Parameters.priceScheduleID, Parameters.page, Parameters.pageSize);
                 }
             }
         })
@@ -71,11 +94,78 @@ function ProductsConfig($stateProvider) {
         });
 }
 
-function ProductsController(ProductList, TrackSearch) {
+function ProductsController( $state, $ocMedia, OrderCloud, OrderCloudParameters,  ProductList, Parameters ) {
     var vm = this;
     vm.list = ProductList;
-    vm.searching = function() {
-        return TrackSearch.GetTerm() ? true : false;
+    vm.parameters = Parameters;
+    vm.sortSelection = Parameters.sortBy ? (Parameters.sortBy.indexOf('!') == 0 ? Parameters.sortBy.split('!')[1] : Parameters.sortBy) : null;
+
+    //Check if filters are applied
+    vm.filtersApplied = vm.parameters.filters || vm.parameters.from || vm.parameters.to || ($ocMedia('max-width:767px') && vm.sortSelection); //Sort by is a filter on mobile devices
+    vm.showFilters = vm.filtersApplied;
+
+    //Check if search was used
+    vm.searchResults = Parameters.search && Parameters.search.length > 0;
+
+    //Reload the state with new parameters
+    vm.filter = function(resetPage) {
+        $state.go('.', OrderCloudParameters.Create(vm.parameters, resetPage));
+    };
+
+    //Reload the state with new search parameter & reset the page
+    vm.search = function() {
+        vm.filter(true);
+    };
+
+    //Clear the search parameter, reload the state & reset the page
+    vm.clearSearch = function() {
+        vm.parameters.search = null;
+        vm.filter(true);
+    };
+
+    //Clear relevant filters, reload the state & reset the page
+    vm.clearFilters = function() {
+        vm.parameters.filters = null;
+        vm.parameters.from = null;
+        vm.parameters.to = null;
+        $ocMedia('max-width:767px') ? vm.parameters.sortBy = null : angular.noop(); //Clear out sort by on mobile devices
+        vm.filter(true);
+    };
+
+    //Conditionally set, reverse, remove the sortBy parameter & reload the state
+    vm.updateSort = function(value) {
+        value ? angular.noop() : value = vm.sortSelection;
+        switch(vm.parameters.sortBy) {
+            case value:
+                vm.parameters.sortBy = '!' + value;
+                break;
+            case '!' + value:
+                vm.parameters.sortBy = null;
+                break;
+            default:
+                vm.parameters.sortBy = value;
+        }
+        vm.filter(false);
+    };
+
+    //Used on mobile devices
+    vm.reverseSort = function() {
+        Parameters.sortBy.indexOf('!') == 0 ? vm.parameters.sortBy = Parameters.sortBy.split('!')[1] : vm.parameters.sortBy = '!' + Parameters.sortBy;
+        vm.filter(false);
+    };
+
+    //Reload the state with the incremented page parameter
+    vm.pageChanged = function() {
+        $state.go('.', {page:vm.list.Meta.Page});
+    };
+
+    //Load the next page of results with all of the same parameters
+    vm.loadMore = function() {
+        return OrderCloud.Products.List( Parameters.search, vm.list.Meta.Page + 1, Parameters.pageSize || vm.list.Meta.PageSize, Parameters.searchOn, Parameters.sortBy, Parameters.filters)
+            .then(function(data) {
+                vm.list.Items = vm.list.Items.concat(data.Items);
+                vm.list.Meta = data.Meta;
+            });
     };
 }
 
