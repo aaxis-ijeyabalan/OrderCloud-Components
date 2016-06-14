@@ -10,13 +10,22 @@ function AdminUsersConfig( $stateProvider ) {
     $stateProvider
         .state( 'adminUsers', {
             parent: 'base',
-            url: '/adminUsers?search&page&pageSize&searchOn&sortBy&filters',
-            templateUrl:'adminUsers/templates/adminUsers.tpl.html',
-            controller:'AdminUsersCtrl',
-            controllerAs: 'adminUsers',
-            data: {
-                componentName: 'Admin Users'
+            views: {
+                '': {
+                    templateUrl:'adminUsers/templates/adminUsers.tpl.html',
+                    controller:'AdminUsersCtrl',
+                    controllerAs: 'adminUsers'
+                },
+                'filters@adminUsers': {
+                    templateUrl:'adminUsers/templates/adminUsers.filters.tpl.html'
+                },
+                'list@adminUsers': {
+                    templateUrl:'adminUsers/templates/adminUsers.list.tpl.html'
+                }
             },
+            url: '/adminUsers?search&page&pageSize&searchOn&sortBy&filters',
+            controllerAs: 'adminUsers',
+            data: {componentName: 'Admin Users'},
             resolve : {
                 Parameters: function( $stateParams, OrderCloudParameters ) {
                     return OrderCloudParameters.Get($stateParams);
