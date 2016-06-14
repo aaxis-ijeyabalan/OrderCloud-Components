@@ -7,12 +7,11 @@
 			<button type="submit" class="btn btn-primary">Search</button>
 			<button ng-if="users.searchResults" ng-click="users.clearSearch()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
 		</span>
-		<span ng-class="{'btn-group':users.filtersApplied}">
-			<button type="button" class="btn btn-default" ng-if="application.$ocMedia('max-width:767px')" ng-click="users.showFilters = !users.showFilters"><i class="fa fa-filter"></i> Filters</button>
+		<span ng-class="{'btn-group':users.filtersApplied}" ng-if="application.$ocMedia('max-width:767px')">
+			<button type="button" class="btn btn-default" ng-click="users.showFilters = !users.showFilters"><i class="fa fa-filter"></i> Filters</button>
 			<button ng-if="users.filtersApplied" ng-click="users.clearFilters()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
 		</span>
     </fieldset>
-
 </form>
 <div class="row" style="margin-top:15px;" uib-collapse="!users.showFilters">
     <div class="col-md-6 col-lg-4">
@@ -21,11 +20,10 @@
             <div ng-class="{'input-group':users.sortSelection}">
                 <select placeholder="Sort" class="form-control" ng-model="users.sortSelection" ng-change="users.updateSort()">
                     <option value="ID">ID</option>
-                    <option value="Username">Username</option>
-                    <option value="FirstName">First Name</option>
-                    <option value="LastName">Last Name</option>
-                    <option value="Email">Email</option>
-
+                    <option value="Name">Name</option>
+                    <option value="Balance">Balance</option>
+                    <option value="StartDate">Start Date</option>
+                    <option value="EndDate">End Date</option>
                 </select>
                 <div ng-if="users.sortSelection" class="input-group-btn">
                     <button class="btn btn-default" ng-click="users.reverseSort()">
@@ -36,6 +34,4 @@
             </div>
         </div>
     </div>
-
-
 </div>
