@@ -1,0 +1,34 @@
+<form name="SpecsSearchForm" class="form-inline" ng-submit="specs.search()">
+    <fieldset class="form-group">
+        <input type="search" placeholder="Search specs..." ng-model="specs.parameters.search" class="form-control">
+    </fieldset>
+    <fieldset class="form-group" ng-class="{'text-center':application.$ocMedia('max-width:767px')}">
+		<span ng-class="{'btn-group':specs.searchResults}">
+			<button type="submit" class="btn btn-primary">Search</button>
+			<button ng-if="specs.searchResults" ng-click="specs.clearSearch()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
+		</span>
+		<span ng-class="{'btn-group':specs.filtersApplied}" ng-if="application.$ocMedia('max-width:767px')">
+			<button type="button" class="btn btn-default" ng-click="specs.showFilters = !specs.showFilters"><i class="fa fa-filter"></i> Filters</button>
+			<button ng-if="specs.filtersApplied" ng-click="specs.clearFilters()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
+		</span>
+    </fieldset>
+</form>
+<div class="row" style="margin-top:15px;" uib-collapse="!specs.showFilters">
+    <div class="col-md-6 col-lg-4">
+        <div class="form-group" ng-if="application.$ocMedia('max-width:767px')">
+            <label>Sorty By:</label>
+            <div ng-class="{'input-group':specs.sortSelection}">
+                <select placeholder="Sort" class="form-control" ng-model="specs.sortSelection" ng-change="specs.updateSort()">
+                    <option value="ID">ID</option>
+                    <option value="Name">Name</option>
+                </select>
+                <div ng-if="specs.sortSelection" class="input-group-btn">
+                    <button class="btn btn-default" ng-click="specs.reverseSort()">
+                        <i class="fa fa-sort"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
