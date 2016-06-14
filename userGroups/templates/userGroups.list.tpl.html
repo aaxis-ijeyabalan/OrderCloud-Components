@@ -27,13 +27,20 @@
     </thead>
     <tbody>
     <tr ng-repeat="group in userGroups.list.Items">
-        <th ui-sref="userGroups.edit({userGroupid:group.ID})" scope="row">{{group.ID}}</th>
+        <th scope="row">
+            <div class="btn-group btn-block" uib-dropdown dropdown-append-to-body>
+                <button type="button" class="btn btn-default btn-block" uib-dropdown-toggle><i class="fa fa-cog"></i> <span class="caret"></span></button>
+                <ul uib-dropdown-menu role="menu">
+                    <li role="menuitem"><a ui-sref=".edit({userGroupid:userGroup.ID})">Edit User Group</a></li>
+                    <li role="menuitem"><a ui-sref=".assign({userGroupid:userGroup.ID})">Party Assignments</a></li>
+                </ul>
+            </div>
+        </th>
         <td data-title="Name">{{group.Name}}</td>
         <td data-title="Description">{{group.Description}}</td>
     </tr>
     </tbody>
 </table>
-
 <div class="text-center" ng-if="application.$ocMedia('min-width:768px')">
     <uib-pagination boundary-links="userGroups.list.Meta.TotalPages > 8" max-size="5" total-items="userGroups.list.Meta.TotalCount" items-per-page="userGroups.list.Meta.PageSize" ng-model="userGroups.list.Meta.Page" ng-change="userGroups.pageChanged()"></uib-pagination>
 </div>
