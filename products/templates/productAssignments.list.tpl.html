@@ -1,11 +1,9 @@
-<table class="table table-hover table-bordered oc-table-responsive" controlleras="productAssignments">
+<table class="table table-hover oc-table-responsive" controlleras="productAssignments">
     <colgroup>
         <col class="action-column"/>
     </colgroup>
     <thead>
     <tr>
-        <th>
-        </th>
         <th>
             <div>Party ID</div>
         </th>
@@ -15,16 +13,17 @@
         <th>
             <div>Replenishment Price Schedule</div>
         </th>
+        <th></th>
     </tr>
     </thead>
     <tbody>
     <tr ng-repeat="assignment in productAssignments.list">
-        <td>
-            <button type="button" class="btn btn-default btn-block" uib-tooltip="Delete Assignment" tooltip-placement="right" ng-click="productAssignments.Delete(this)"><span class="text-danger"><i class="fa fa-trash text-danger"></i></span></button>
-        </td>
         <td data-title="Party ID">{{assignment.UserID || assignment.UserGroupID || assignment.BuyerID}} <small class="text-muted" ng-if="!assignment.UserID && !assignment.UserGroupID">(Buyer)</small></td>
         <td data-title="Standard Price Schedule">{{assignment.StandardPriceScheduleID}}  <span class="text-muted" ng-if="!assignment.StandardPriceScheduleID">None</span></td>
         <td data-title="Replenishment Price Schedule">{{assignment.ReplenishmentPriceScheduleID}} <span class="text-muted" ng-if="!assignment.ReplenishmentPriceScheduleID">None</span></td>
+        <td class="text-right" data-title="Delete Assignment">
+            <button type="button" class="btn btn-danger" uib-tooltip="Delete Assignment" tooltip-placement="left" ng-click="productAssignments.Delete(this)"><i class="fa fa-trash"></i></button>
+        </td>
     </tr>
     </tbody>
 </table>
