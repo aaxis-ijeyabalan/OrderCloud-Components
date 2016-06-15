@@ -18,14 +18,14 @@
         <th scope="row">{{assignment.UserID || assignment.UserGroupID || assignment.BuyerID}} <small class="text-muted" ng-if="!assignment.UserID && !assignment.UserGroupID">(Buyer)</small></th>
         <td data-title="Standard Price Schedule">{{assignment.StandardPriceScheduleID}}  <span class="text-muted" ng-if="!assignment.StandardPriceScheduleID">None</span></td>
         <td data-title="Replenishment Price Schedule">{{assignment.ReplenishmentPriceScheduleID}} <span class="text-muted" ng-if="!assignment.ReplenishmentPriceScheduleID">None</span></td>
-        <td class="text-right">
+        <td class="actions-cell">
             <button type="button" class="btn btn-danger btn-sm" uib-tooltip="Delete Assignment" tooltip-placement="left" ng-click="productAssignments.Delete(this)"><i class="fa fa-trash"></i></button>
         </td>
     </tr>
     </tbody>
 </table>
 <div class="text-center" ng-if="application.$ocMedia('min-width:768px') && productAssignments.list.Meta.TotalPages > 1"">
-    <uib-pagination boundary-links="productAssignments.list.Meta.TotalPages > 8"
+    <uib-pagination boundary-links="productAssignments.list.Meta.TotalPages > 5"
                     max-size="5" total-items="productAssignments.list.Meta.TotalCount"
                     items-per-page="productAssignments.list.Meta.PageSize"
                     ng-model="productAssignments.list.Meta.Page"
