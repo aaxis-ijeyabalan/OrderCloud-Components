@@ -5,37 +5,37 @@
     <b class="pull-right">{{(application.$ocMedia('min-width:768px') ? products.list.Meta.ItemRange[0] : '1') + ' - ' +  products.list.Meta.ItemRange[1] + ' of ' + products.list.Meta.TotalCount + ' results'}}</b>
     <table class="table table-hover oc-table-responsive table-condensed" servicename="Products" controlleras="products">
         <thead>
-        <tr>
-            <th scope="col">
-                <a href="#" role="button" ng-click="products.updateSort('ID')">
-                    ID
-                    <i class="fa fa-caret-down" ng-show="products.parameters.sortBy == 'ID'"></i>
-                    <i class="fa fa-caret-up" ng-show="products.parameters.sortBy == '!ID'"></i>
-                </a>
-            </th>
-            <th>
-                <a href="#" role="button" ng-click="products.updateSort('Name')">
-                    Name
-                    <i class="fa fa-caret-down" ng-show="products.parameters.sortBy == 'Name'"></i>
-                    <i class="fa fa-caret-up" ng-show="products.parameters.sortBy == '!Name'"></i>
-                </a>
-            </th>
-            <th class="text-center">Active</th>
-            <th></th>
-        </tr>
+            <tr>
+                <th scope="col">
+                    <a href="#" role="button" ng-click="products.updateSort('ID')">
+                        ID
+                        <i class="fa fa-caret-down" ng-show="products.parameters.sortBy == 'ID'"></i>
+                        <i class="fa fa-caret-up" ng-show="products.parameters.sortBy == '!ID'"></i>
+                    </a>
+                </th>
+                <th>
+                    <a href="#" role="button" ng-click="products.updateSort('Name')">
+                        Name
+                        <i class="fa fa-caret-down" ng-show="products.parameters.sortBy == 'Name'"></i>
+                        <i class="fa fa-caret-up" ng-show="products.parameters.sortBy == '!Name'"></i>
+                    </a>
+                </th>
+                <th class="text-center">Active</th>
+                <th></th>
+            </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="product in products.list.Items">
-            <th scope="row">{{product.ID}}</th>
-            <td data-title="Name">{{product.Name}}</td>
-            <td class="text-center" data-title="Active">
-                <i class="fa fa-circle" aria-hidden="true" ng-class="{'active':buyer.Active}"></i>
-            </td>
-            <td class="actions-cell">
-                <button ui-sref=".edit({productid:product.ID})" class="btn btn-default btn-sm">Edit</button>
-                <button ui-sref=".assignments({productid:product.ID})" class="btn btn-default btn-sm">Assign</button>
-            </td>
-        </tr>
+            <tr ng-repeat="product in products.list.Items">
+                <th scope="row">{{product.ID}}</th>
+                <td data-title="Name">{{product.Name}}</td>
+                <td class="text-center" data-title="Active">
+                    <i class="fa fa-circle" aria-hidden="true" ng-class="{'active':buyer.Active}"></i>
+                </td>
+                <td class="actions-cell">
+                    <button ui-sref=".edit({productid:product.ID})" class="btn btn-default btn-sm">Edit</button>
+                    <button ui-sref=".assignments({productid:product.ID})" class="btn btn-default btn-sm">Assign</button>
+                </td>
+            </tr>
         </tbody>
     </table>
     <div class="text-center" ng-if="application.$ocMedia('min-width:768px') && products.list.Meta.TotalPages > 1"">
