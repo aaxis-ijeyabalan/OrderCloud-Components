@@ -25,7 +25,7 @@
         <th scope="row">{{product.ID}}</th>
         <td data-title="Name">{{product.Name}}</td>
         <td class="text-center" data-title="Active">
-            <i class="fa fa-circle" aria-hidden="true" ng-class="product.Active == true ? 'icon-active' : 'icon-inactive'"></i>
+            <i class="fa fa-circle" aria-hidden="true" ng-class="{'active':buyer.Active}"></i>
         </td>
         <td class="actions-cell">
             <button ui-sref=".edit({productid:product.ID})" class="btn btn-default btn-sm">Edit</button>
