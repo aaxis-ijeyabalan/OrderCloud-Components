@@ -10,19 +10,35 @@ function AdminUsersConfig( $stateProvider ) {
     $stateProvider
         .state( 'adminUsers', {
             parent: 'base',
-            url: '/adminUsers?search&page&pageSize&searchOn&sortBy&filters',
-            templateUrl:'adminUsers/templates/adminUsers.tpl.html',
-            controller:'AdminUsersCtrl',
-            controllerAs: 'adminUsers',
-            data: {
-                componentName: 'Admin Users'
+            views: {
+                '': {
+                    templateUrl:'adminUsers/templates/adminUsers.tpl.html',
+                    controller:'AdminUsersCtrl',
+                    controllerAs: 'adminUsers'
+                },
+                'filters@adminUsers': {
+                    templateUrl:'adminUsers/templates/adminUsers.filters.tpl.html'
+                },
+                'list@adminUsers': {
+                    templateUrl:'adminUsers/templates/adminUsers.list.tpl.html'
+                }
             },
+            url: '/adminUsers?search&page&pageSize&searchOn&sortBy&filters',
+            controllerAs: 'adminUsers',
+            data: {componentName: 'Admin Users'},
             resolve : {
                 Parameters: function( $stateParams, OrderCloudParameters ) {
                     return OrderCloudParameters.Get($stateParams);
                 },
-                AdminUsersList: function( OrderCloud, Parameters ) {
-                    return OrderCloud.AdminUsers.List(Parameters.search, Parameters.page, Parameters.pageSize || 12, Parameters.searchOn, Parameters.sortBy, Parameters.filters);
+                AdminUsersList: function( OrderCloud, Parameters, $state ) {
+                    return OrderCloud.AdminUsers.List(Parameters.search, Parameters.page, Parameters.pageSize || 12, Parameters.searchOn, Parameters.sortBy, Parameters.filters)
+                        .then(function(data) {
+                            if (data.Items.length == 1 && Parameters.search) {
+                                $state.go('adminUsers.edit', {adminuserid:data.Items[0].ID});
+                            } else {
+                                return data;
+                            }
+                        });
                 }
             }
         })

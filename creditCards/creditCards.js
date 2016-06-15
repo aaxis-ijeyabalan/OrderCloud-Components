@@ -31,7 +31,6 @@ function CreditCardsConfig( $stateProvider ) {
             data: {componentName: 'Credit Cards'},
             resolve: {
                 Parameters: function( $stateParams, OrderCloudParameters ) {
-                    console.log("this is state Param on cc", $stateParams);
                     return OrderCloudParameters.Get($stateParams);
                 },
                 CreditCardList: function( OrderCloud, Parameters ) {

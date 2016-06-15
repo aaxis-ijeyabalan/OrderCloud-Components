@@ -1,0 +1,37 @@
+<form name="OrdersSearchForm" class="form-inline" ng-submit="adminUsers.search()">
+	<fieldset class="form-group">
+		<input type="search" placeholder="Search users..." ng-model="adminUsers.parameters.search" class="form-control">
+	</fieldset>
+	<fieldset class="form-group" ng-class="{'text-center':application.$ocMedia('max-width:767px')}">
+                <span ng-class="{'btn-group':adminUsers.searchResults}">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <button ng-if="adminUsers.searchResults" ng-click="adminUsers.clearSearch()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
+                </span>
+                <span ng-class="{'btn-group':adminUsers.filtersApplied}" >
+                    <button type="button" class="btn btn-default" ng-click="adminUsers.showFilters = !adminUsers.showFilters" ng-show="application.$ocMedia('max-width:767px')"><i class="fa fa-filter"></i> Filters</button>
+                    <button ng-if="adminUsers.filtersApplied" ng-click="adminUsers.clearFilters()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
+                </span>
+	</fieldset>
+</form>
+<div class="row" style="margin-top:15px;" uib-collapse="!adminUsers.showFilters">
+	<div class="col-md-6 col-lg-4">
+		<div class="form-group" ng-if="application.$ocMedia('max-width:767px')">
+			<label>Sorty By:</label>
+			<div ng-class="{'input-group':adminUsers.sortSelection}">
+				<select placeholder="Sort" class="form-control" ng-model="adminUsers.sortSelection" ng-change="adminUsers.updateSort()">
+					<option value="">None</option>
+					<option value="ID">ID</option>
+					<option value="FirstName">First Name</option>
+					<option value="LastName">Last Name</option>
+					<option value="Username">Username</option>
+					<option value="Email">Email</option>
+				</select>
+				<div ng-if="adminUsers.sortSelection" class="input-group-btn">
+					<button class="btn btn-default" ng-click="adminUsers.reverseSort()">
+						<i class="fa fa-sort"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
