@@ -20,7 +20,7 @@ function MyOrdersConfig( $stateProvider ) {
                     return OrderCloudParameters.Get($stateParams);
                 },
                 OrderList: function(OrderCloud,Parameters) {
-                    return OrderCloud.Me.ListIncomingOrders(Parameters.search, Parameters.page, Parameters.pageSize || 12, Parameters.searchOn, Parameters.sortBy, Parameters.filters,Parameters.from, Parameters.to);
+                    return OrderCloud.Me.ListOutgoingOrders(Parameters.search, Parameters.page, Parameters.pageSize || 12, Parameters.searchOn, Parameters.sortBy, Parameters.filters,Parameters.from, Parameters.to);
                 }
             }
         })
