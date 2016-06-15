@@ -11,17 +11,28 @@ function BuyerConfig( $stateProvider ) {
     $stateProvider
         .state( 'buyers', {
             parent: 'base',
+            views: {
+                '': {
+                    templateUrl:'buyers/templates/buyers.tpl.html',
+                    controller:'BuyerCtrl',
+                    controllerAs: 'buyers'
+                },
+                'filters@buyers': {
+                    templateUrl:'buyers/templates/buyers.filters.tpl.html'
+                },
+                'list@buyers': {
+                    templateUrl:'buyers/templates/buyers.list.tpl.html'
+                }
+            },
             url: '/buyers?search&page&pageSize&searchOn&sortBy',
-            templateUrl: 'buyers/templates/buyers.tpl.html',
-            controller: 'BuyerCtrl',
-            controllerAs: 'buyers',
             data: { componentName: 'Buyers' },
             resolve : {
                 Parameters: function( $stateParams, OrderCloudParameters ) {
                     return OrderCloudParameters.Get($stateParams);
                 },
                 BuyerList: function( OrderCloud, Parameters ) {
-                    return OrderCloud.Buyers.List(Parameters.search, Parameters.page, Parameters.pageSize || 25, Parameters.searchOn, Parameters.sortBy);
+                    return OrderCloud.Buyers.List(Parameters.search, Parameters.page, Parameters.pageSize || 12/*, Parameters.searchOn, Parameters.sortBy, Parameters.filters*/);
+                    //Commenting out params that don't exist yet in the API
                 }
             }
         })
@@ -123,7 +134,7 @@ function BuyerEditController($exceptionHandler, $state, SelectedBuyer, OrderClou
     vm.buyerName = SelectedBuyer.Name;
 
     vm.Submit = function() {
-        OrderCloud.Buyers.Update(vm.buyer)
+        OrderCloud.Buyers.Update(vm.buyer, SelectedBuyer.ID)
             .then(function() {
                 $state.go('buyers', {}, {reload:true});
                 toastr.success('Buyer Updated', 'Success');
