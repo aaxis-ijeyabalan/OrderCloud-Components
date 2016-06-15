@@ -1,4 +1,4 @@
-<div class="well text-center" ng-if="!buyers.list.Items.length">
+<div class="no-matches" ng-if="!buyers.list.Items.length">
 	<b>No matches found.</b>
 </div>
 <div ng-if="buyers.list.Items.length">
@@ -33,15 +33,17 @@
 		<tr ng-repeat="buyer in buyers.list.Items">
 			<th scope="row">{{buyer.ID}}</th>
 			<td data-title="Name">{{buyer.Name}}</td>
-			<td class="text-center" data-title="Active"><i class="fa fa-circle" aria-hidden="true" ng-class="{'active':buyer.Active}"></i></td>
+			<td class="text-center" data-title="Active"><i class="fa fa-circle" aria-hidden="true"
+														   ng-class="{'active':buyer.Active}"></i></td>
 			<td class="actions-cell">
-				<button type="button" ui-sref="buyers.edit({buyerid: buyer.ID})" class="btn btn-default btn-sm">Edit</button>
+				<button type="button" ui-sref="buyers.edit({buyerid: buyer.ID})" class="btn btn-default btn-sm">Edit
+				</button>
 			</td>
 		</tr>
 		</tbody>
 	</table>
 	<div class="text-center" ng-if="application.$ocMedia('min-width:768px') && buyers.list.Meta.TotalPages > 1">
-		<uib-pagination boundary-links="buyers.list.Meta.TotalPages > 8" max-size="5"
+		<uib-pagination boundary-links="buyers.list.Meta.TotalPages > 5" max-size="5"
 						total-items="buyers.list.Meta.TotalCount" items-per-page="buyers.list.Meta.PageSize"
 						ng-model="buyers.list.Meta.Page" ng-change="buyers.pageChanged()"></uib-pagination>
 	</div>
