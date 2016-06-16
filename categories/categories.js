@@ -17,19 +17,9 @@ function CategoriesConfig( $stateProvider ) {
     $stateProvider
         .state( 'categories', {
             parent: 'base',
-            views: {
-                '': {
-                    templateUrl:'categories/templates/categories.tpl.html',
-                    controller:'CategoriesCtrl',
-                    controllerAs: 'categories'
-                },
-                'filters@categories': {
-                    templateUrl:'categories/templates/categories.filters.tpl.html'
-                },
-                'list@categories': {
-                    templateUrl:'categories/templates/categories.list.tpl.html'
-                }
-            },
+            templateUrl:'categories/templates/categories.tpl.html',
+            controller:'CategoriesCtrl',
+            controllerAs: 'categories',
             url: '/categories?from&to&search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'Categories'},
             resolve: {

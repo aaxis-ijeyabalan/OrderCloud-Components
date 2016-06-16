@@ -14,19 +14,9 @@ function CreditCardsConfig( $stateProvider ) {
     $stateProvider
         .state( 'creditCards', {
             parent: 'base',
-            views: {
-                '': {
-                    templateUrl:'creditCards/templates/creditCards.tpl.html',
-                    controller:'CreditCardsCtrl',
-                    controllerAs: 'creditCards'
-                },
-                'filters@creditCards': {
-                    templateUrl:'creditCards/templates/creditCard.filters.tpl.html'
-                },
-                'list@creditCards': {
-                    templateUrl:'creditCards/templates/creditCard.list.tpl.html'
-                }
-            },
+            templateUrl:'creditCards/templates/creditCards.tpl.html',
+            controller:'CreditCardsCtrl',
+            controllerAs: 'creditCards',
             url: '/credit-cards?from&to&search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'Credit Cards'},
             resolve: {
@@ -56,19 +46,9 @@ function CreditCardsConfig( $stateProvider ) {
             controllerAs: 'creditCardCreate'
         })
         .state( 'creditCards.assign', {
-            views: {
-                '': {
-                    templateUrl:'creditCards/templates/creditCardAssign.tpl.html',
-                    controller:'CreditCardAssignCtrl',
-                    controllerAs: 'creditCardAssign'
-                },
-                'filters@creditCards.assign': {
-                    templateUrl:'creditCards/templates/creditCardAssign.filters.tpl.html'
-                },
-                'list@creditCards.assign': {
-                    templateUrl:'creditCards/templates/creditCardAssign.list.tpl.html'
-                }
-            },
+            templateUrl:'creditCards/templates/creditCardAssign.tpl.html',
+            controller:'CreditCardAssignCtrl',
+            controllerAs: 'creditCardAssign',
             //Adding 1 to query parameters to differentiate between query parameters of the parent state
             url: '/:creditCardid/assign?search1&page1&pageSize1&searchOn1&sortBy1&filters1',
             resolve: {

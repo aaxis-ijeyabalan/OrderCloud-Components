@@ -13,19 +13,9 @@ function UserGroupsConfig( $stateProvider ) {
     $stateProvider
         .state( 'userGroups', {
             parent: 'base',
-            views: {
-                '': {
-                    templateUrl:'userGroups/templates/userGroups.tpl.html',
-                    controller:'UserGroupsCtrl',
-                    controllerAs: 'userGroups'
-                },
-                'filters@userGroups': {
-                    templateUrl:'userGroups/templates/userGroups.filters.tpl.html'
-                },
-                'list@userGroups': {
-                    templateUrl:'userGroups/templates/userGroups.list.tpl.html'
-                }
-            },
+            templateUrl:'userGroups/templates/userGroups.tpl.html',
+            controller:'UserGroupsCtrl',
+            controllerAs: 'userGroups',
             url: '/userGroups?search&page&pageSize&sortBy&searchOn&filters',
             data: {componentName: 'User Groups'},
             resolve: {

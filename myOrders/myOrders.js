@@ -10,19 +10,9 @@ function MyOrdersConfig( $stateProvider ) {
     $stateProvider
         .state( 'myOrders', {
             parent: 'base',
-            views: {
-                '': {
-                    templateUrl:'myOrders/templates/myOrders.tpl.html',
-                    controller:'MyOrdersCtrl',
-                    controllerAs: 'myOrders'
-                },
-                'filters@myOrders': {
-                    templateUrl:'myOrders/templates/myOrders.filters.tpl.html'
-                },
-                'list@myOrders': {
-                    templateUrl:'myOrders/templates/myOrders.list.tpl.html'
-                }
-            },
+            templateUrl:'myOrders/templates/myOrders.tpl.html',
+            controller:'MyOrdersCtrl',
+            controllerAs: 'myOrders',
             url: '/myorders?from&to&search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'My Orders'},
             resolve: {

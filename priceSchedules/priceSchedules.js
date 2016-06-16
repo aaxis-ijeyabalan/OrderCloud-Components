@@ -12,19 +12,9 @@ function PriceSchedulesConfig( $stateProvider ) {
         .state( 'priceSchedules', {
             parent: 'base',
             url: '/priceSchedules?search&page&pageSize&sortBy&searchOn&filters',
-            views: {
-                '': {
-                    templateUrl:'priceSchedules/templates/priceSchedules.tpl.html',
-                    controller:'PriceSchedulesCtrl',
-                    controllerAs: 'priceSchedules'
-                },
-                'list@priceSchedules': {
-                    templateUrl:'priceSchedules/templates/priceSchedules.list.tpl.html'
-                },
-                'filters@priceSchedules': {
-                    templateUrl:'priceSchedules/templates/priceSchedules.filters.tpl.html'
-                }
-            },
+            templateUrl:'priceSchedules/templates/priceSchedules.tpl.html',
+            controller:'PriceSchedulesCtrl',
+            controllerAs: 'priceSchedules',
             data: {componentName: 'Price Schedules'},
             resolve: {
                 Parameters: function( $stateParams, OrderCloudParameters ) {

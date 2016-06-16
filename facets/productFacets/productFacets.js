@@ -10,19 +10,9 @@ function ProductFacetsConfig( $stateProvider ) {
     $stateProvider
         .state ('productFacets', {
             parent: 'base',
-            views: {
-                '': {
-                    templateUrl:'facets/productFacets/templates/productFacets.tpl.html',
-                    controller:'ProductFacetsCtrl',
-                    controllerAs: 'facetedProd'
-                },
-                'filters@productFacets': {
-                    templateUrl:'facets/productFacets/templates/productFacets.filters.tpl.html'
-                },
-                'list@productFacets': {
-                    templateUrl:'facets/productFacets/templates/productFacets.list.tpl.html'
-                }
-            },
+            templateUrl:'facets/productFacets/templates/productFacets.tpl.html',
+            controller:'ProductFacetsCtrl',
+            controllerAs: 'facetedProd',
             url: '/productFacets?from&to&search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'Product Facets'},
             resolve: {

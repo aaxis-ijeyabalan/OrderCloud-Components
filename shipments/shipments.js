@@ -11,19 +11,9 @@ function ShipmentsConfig( $stateProvider ) {
     $stateProvider
         .state('shipments', {
             parent: 'base',
-            views: {
-                '': {
-                    templateUrl:'shipments/templates/shipments.tpl.html',
-                    controller: 'ShipmentsCtrl',
-                    controllerAs: 'shipments'
-                },
-                'filters@shipments': {
-                    templateUrl: 'shipments/templates/shipments.filters.tpl.html'
-                },
-                'list@shipments': {
-                    templateUrl: 'shipments/templates/shipments.list.tpl.html'
-                }
-            },
+            templateUrl:'shipments/templates/shipments.tpl.html',
+            controller: 'ShipmentsCtrl',
+            controllerAs: 'shipments',
             url: '/shipments?search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'Shipments'},
             resolve: {

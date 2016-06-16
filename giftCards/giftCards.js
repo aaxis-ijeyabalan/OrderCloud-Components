@@ -14,19 +14,9 @@ function GiftCardsConfig( $stateProvider ) {
     $stateProvider
         .state( 'giftCards', {
             parent: 'base',
-            views: {
-                '': {
-                    templateUrl:'giftCards/templates/giftCards.tpl.html',
-                    controller:'GiftCardsCtrl',
-                    controllerAs: 'giftCards'
-                },
-                'filters@giftCards': {
-                    templateUrl:'giftCards/templates/giftCards.filters.tpl.html'
-                },
-                'list@giftCards': {
-                    templateUrl:'giftCards/templates/giftCards.list.tpl.html'
-                }
-            },
+            templateUrl:'giftCards/templates/giftCards.tpl.html',
+            controller:'GiftCardsCtrl',
+            controllerAs: 'giftCards',
             url: '/giftCards?search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'Gift Cards'},
             resolve: {

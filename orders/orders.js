@@ -12,19 +12,9 @@ function OrdersConfig( $stateProvider ) {
     $stateProvider
         .state( 'orders', {
             parent: 'base',
-            views: {
-                '': {
-                    templateUrl:'orders/templates/orders.tpl.html',
-                    controller:'OrdersCtrl',
-                    controllerAs: 'orders'
-                },
-                'filters@orders': {
-                    templateUrl:'orders/templates/orders.filters.tpl.html'
-                },
-                'list@orders': {
-                    templateUrl:'orders/templates/orders.list.tpl.html'
-                }
-            },
+            templateUrl:'orders/templates/orders.tpl.html',
+            controller:'OrdersCtrl',
+            controllerAs: 'orders',
             url: '/orders?from&to&search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'Orders'},
             resolve: {

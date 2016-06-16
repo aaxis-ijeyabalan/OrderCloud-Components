@@ -11,19 +11,9 @@ function UsersConfig( $stateProvider ) {
     $stateProvider
         .state( 'users', {
             parent: 'base',
-            views: {
-                '': {
-                    templateUrl:'users/templates/users.tpl.html',
-                    controller:'UsersCtrl',
-                    controllerAs: 'users'
-                },
-                'filters@users': {
-                    templateUrl:'users/templates/users.filters.tpl.html'
-                },
-                'list@users': {
-                    templateUrl:'users/templates/users.list.tpl.html'
-                }
-            },
+            templateUrl:'users/templates/users.tpl.html',
+            controller:'UsersCtrl',
+            controllerAs: 'users',
             url: '/users?from&to&search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'Users'},
             resolve: {

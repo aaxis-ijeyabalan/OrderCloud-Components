@@ -14,19 +14,9 @@ function SpendingAccountsConfig($stateProvider) {
 	$stateProvider
 		.state('spendingAccounts', {
 			parent: 'base',
-			views: {
-				'': {
-					templateUrl: 'spendingAccounts/templates/spendingAccounts.tpl.html',
-					controller: 'SpendingAccountsCtrl',
-					controllerAs: 'spendingAccounts'
-				},
-				'filters@spendingAccounts': {
-					templateUrl: 'spendingAccounts/templates/spendingAccounts.filters.tpl.html'
-				},
-				'list@spendingAccounts': {
-					templateUrl: 'spendingAccounts/templates/spendingAccounts.list.tpl.html'
-				}
-			},
+			templateUrl: 'spendingAccounts/templates/spendingAccounts.tpl.html',
+			controller: 'SpendingAccountsCtrl',
+			controllerAs: 'spendingAccounts',
 			url: '/spendingAccounts?search&page&pageSize&searchOn&sortBy&filters',
 			data: {componentName: 'Spending Accounts'},
 			resolve: {

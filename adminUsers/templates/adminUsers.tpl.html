@@ -14,8 +14,8 @@
                     <button type="submit" class="btn btn-primary">Search</button>
                     <button ng-if="adminUsers.searchResults" ng-click="adminUsers.clearSearch()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
                 </span>
-                <span ng-class="{'btn-group':adminUsers.filtersApplied}" >
-                    <button type="button" class="btn btn-default" ng-click="adminUsers.showFilters = !adminUsers.showFilters" ng-show="application.$ocMedia('max-width:767px')"><i class="fa fa-filter"></i> Filters</button>
+                <span ng-class="{'btn-group':adminUsers.filtersApplied}" ng-show="application.$ocMedia('max-width:767px')">
+                    <button type="button" class="btn btn-default" ng-click="adminUsers.showFilters = !adminUsers.showFilters"><i class="fa fa-filter"></i> Filters</button>
                     <button ng-if="adminUsers.filtersApplied" ng-click="adminUsers.clearFilters()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
                 </span>
         </fieldset>

@@ -11,19 +11,9 @@ function CategoryFacetsConfig( $stateProvider ) {
     $stateProvider
         .state ('categoryFacets', {
             parent: 'base',
-            views: {
-                '': {
-                    templateUrl:'facets/categoryFacets/templates/categoryFacets.tpl.html',
-                    controller:'CategoryFacetsCtrl',
-                    controllerAs: 'facetedCat'
-                },
-                'filters@categoryFacets': {
-                    templateUrl:'facets/categoryFacets/templates/categoryFacets.filters.tpl.html'
-                },
-                'list@categoryFacets': {
-                    templateUrl:'facets/categoryFacets/templates/categoryFacets.list.tpl.html'
-                }
-            },
+            templateUrl:'facets/categoryFacets/templates/categoryFacets.tpl.html',
+            controller:'CategoryFacetsCtrl',
+            controllerAs: 'facetedCat',
             url: '/categoryFacets?from&to&search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'Category Facets'},
             resolve: {

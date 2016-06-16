@@ -13,19 +13,9 @@ function ProductsConfig($stateProvider) {
     $stateProvider
         .state('products', {
             parent: 'base',
-            views: {
-                '': {
-                    templateUrl:'products/templates/products.tpl.html',
-                    controller:'ProductsCtrl',
-                    controllerAs: 'products'
-                },
-                'filters@products': {
-                    templateUrl:'products/templates/products.filters.tpl.html'
-                },
-                'list@products': {
-                    templateUrl:'products/templates/products.list.tpl.html'
-                }
-            },
+            templateUrl:'products/templates/products.tpl.html',
+            controller:'ProductsCtrl',
+            controllerAs: 'products',
             url: '/products?from&to&search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'Products'},
             resolve: {
@@ -55,16 +45,9 @@ function ProductsConfig($stateProvider) {
             controllerAs: 'productCreate'
         })
         .state('products.assignments', {
-            views: {
-                '': {
-                    templateUrl: 'products/templates/productAssignments.tpl.html',
-                    controller: 'ProductAssignmentsCtrl',
-                    controllerAs: 'productAssignments'
-                },
-                'list@products.assignments': {
-                    templateUrl:'products/templates/productAssignments.list.tpl.html'
-                }
-            },
+            templateUrl: 'products/templates/productAssignments.tpl.html',
+            controller: 'ProductAssignmentsCtrl',
+            controllerAs: 'productAssignments',
             url: '/:productid/assignments',
             resolve: {
                 Parameters: function( $stateParams, OrderCloudParameters ) {

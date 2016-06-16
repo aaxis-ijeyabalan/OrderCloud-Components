@@ -12,19 +12,9 @@ function AddressesConfig( $stateProvider ) {
 	$stateProvider
 		.state( 'addresses', {
 			parent: 'base',
-			views: {
-				'': {
-					templateUrl:'addresses/templates/addresses.tpl.html',
-					controller:'AddressesCtrl',
-					controllerAs: 'addresses'
-				},
-				'filters@addresses': {
-					templateUrl:'addresses/templates/addresses.filters.tpl.html'
-				},
-				'list@addresses': {
-					templateUrl:'addresses/templates/addresses.list.tpl.html'
-				}
-			},
+			templateUrl:'addresses/templates/addresses.tpl.html',
+			controller:'AddressesCtrl',
+			controllerAs: 'addresses',
 			url: '/addresses?search&page&pageSize&searchOn&sortBy&filters',
 			data: {componentName: 'Addresses'},
 			resolve: {

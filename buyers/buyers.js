@@ -11,19 +11,9 @@ function BuyerConfig( $stateProvider ) {
     $stateProvider
         .state( 'buyers', {
             parent: 'base',
-            views: {
-                '': {
-                    templateUrl:'buyers/templates/buyers.tpl.html',
-                    controller:'BuyerCtrl',
-                    controllerAs: 'buyers'
-                },
-                'filters@buyers': {
-                    templateUrl:'buyers/templates/buyers.filters.tpl.html'
-                },
-                'list@buyers': {
-                    templateUrl:'buyers/templates/buyers.list.tpl.html'
-                }
-            },
+            templateUrl:'buyers/templates/buyers.tpl.html',
+            controller:'BuyerCtrl',
+            controllerAs: 'buyers',
             url: '/buyers?search&page&pageSize&searchOn&sortBy',
             data: { componentName: 'Buyers' },
             resolve : {
