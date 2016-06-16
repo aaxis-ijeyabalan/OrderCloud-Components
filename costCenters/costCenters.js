@@ -12,19 +12,9 @@ function CostCentersConfig( $stateProvider ) {
     $stateProvider
         .state( 'costCenters', {
             parent: 'base',
-            views: {
-                '': {
-                    templateUrl:'costCenters/templates/costCenters.tpl.html',
-                    controller:'CostCentersCtrl',
-                    controllerAs: 'costCenters'
-                },
-                'filters@costCenters': {
-                    templateUrl:'costCenters/templates/costCenters.filters.tpl.html'
-                },
-                'list@costCenters': {
-                    templateUrl:'costCenters/templates/costCenters.list.tpl.html'
-                }
-            },
+            templateUrl:'costCenters/templates/costCenters.tpl.html',
+            controller:'CostCentersCtrl',
+            controllerAs: 'costCenters',
             url: '/costCenters?search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'Cost Centers'},
             resolve: {
@@ -79,7 +69,7 @@ function CostCentersConfig( $stateProvider ) {
         })
 }
 
-function CostCentersController( CostCentersList, TrackSearch, Parameters, $ocMedia, $state, OrderCloudParameters ) {
+function CostCentersController( CostCentersList, TrackSearch, Parameters, $ocMedia, $state, OrderCloud, OrderCloudParameters ) {
 
     var vm = this;
     vm.list = CostCentersList;
@@ -145,13 +135,12 @@ function CostCentersController( CostCentersList, TrackSearch, Parameters, $ocMed
 
     //Load the next page of results with all of the same parameters
     vm.loadMore = function() {
-        return OrderCloud.Orders[UserType == 'admin' ? 'ListIncoming' : 'ListOutgoing'](Parameters.search, vm.list.Meta.Page + 1, Parameters.pageSize || vm.list.Meta.PageSize, Parameters.searchOn, Parameters.sortBy, Parameters.filters)
+        return OrderCloud.CreditCards.List(Parameters.search, vm.list.Meta.Page + 1, Parameters.pageSize ||  vm.list.Meta.PageSize, Parameters.searchOn, Parameters.sortBy, Parameters.filters)
             .then(function(data) {
                 vm.list.Items = vm.list.Items.concat(data.Items);
                 vm.list.Meta = data.Meta;
             });
     };
-
 }
 
 function CostCenterEditController( $exceptionHandler, $state, SelectedCostCenter, OrderCloud, toastr ) {
