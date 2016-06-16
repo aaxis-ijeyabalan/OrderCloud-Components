@@ -10,17 +10,27 @@ function MyOrdersConfig( $stateProvider ) {
     $stateProvider
         .state( 'myOrders', {
             parent: 'base',
+            views: {
+                '': {
+                    templateUrl:'myOrders/templates/myOrders.tpl.html',
+                    controller:'MyOrdersCtrl',
+                    controllerAs: 'myOrders'
+                },
+                'filters@myOrders': {
+                    templateUrl:'myOrders/templates/myOrders.filters.tpl.html'
+                },
+                'list@myOrders': {
+                    templateUrl:'myOrders/templates/myOrders.list.tpl.html'
+                }
+            },
             url: '/myorders?from&to&search&page&pageSize&searchOn&sortBy&filters',
-            templateUrl:'myOrders/templates/myOrders.tpl.html',
-            controller:'MyOrdersCtrl',
-            controllerAs: 'myOrders',
             data: {componentName: 'My Orders'},
             resolve: {
                 Parameters: function( $stateParams, OrderCloudParameters ) {
                     return OrderCloudParameters.Get($stateParams);
                 },
                 OrderList: function(OrderCloud,Parameters) {
-                    return OrderCloud.Me.ListIncomingOrders(Parameters.search, Parameters.page, Parameters.pageSize || 12, Parameters.searchOn, Parameters.sortBy, Parameters.filters,Parameters.from, Parameters.to);
+                    return OrderCloud.Me.ListOutgoingOrders(Parameters.search, Parameters.page, Parameters.pageSize || 12, Parameters.searchOn, Parameters.sortBy, Parameters.filters,Parameters.from, Parameters.to);
                 }
             }
         })

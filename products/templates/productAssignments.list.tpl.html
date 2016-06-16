@@ -1,11 +1,6 @@
-<table class="table table-hover table-bordered oc-table-responsive" controlleras="productAssignments">
-    <colgroup>
-        <col class="action-column"/>
-    </colgroup>
+<table class="table table-hover table-condensed oc-table-responsive" controlleras="productAssignments">
     <thead>
     <tr>
-        <th>
-        </th>
         <th>
             <div>Party ID</div>
         </th>
@@ -15,21 +10,22 @@
         <th>
             <div>Replenishment Price Schedule</div>
         </th>
+        <th></th>
     </tr>
     </thead>
     <tbody>
     <tr ng-repeat="assignment in productAssignments.list">
-        <td>
-            <button type="button" class="btn btn-default btn-block" uib-tooltip="Delete Assignment" tooltip-placement="right" ng-click="productAssignments.Delete(this)"><span class="text-danger"><i class="fa fa-trash text-danger"></i></span></button>
-        </td>
-        <td data-title="Party ID">{{assignment.UserID || assignment.UserGroupID || assignment.BuyerID}} <small class="text-muted" ng-if="!assignment.UserID && !assignment.UserGroupID">(Buyer)</small></td>
+        <th scope="row">{{assignment.UserID || assignment.UserGroupID || assignment.BuyerID}} <small class="text-muted" ng-if="!assignment.UserID && !assignment.UserGroupID">(Buyer)</small></th>
         <td data-title="Standard Price Schedule">{{assignment.StandardPriceScheduleID}}  <span class="text-muted" ng-if="!assignment.StandardPriceScheduleID">None</span></td>
         <td data-title="Replenishment Price Schedule">{{assignment.ReplenishmentPriceScheduleID}} <span class="text-muted" ng-if="!assignment.ReplenishmentPriceScheduleID">None</span></td>
+        <td class="actions-cell">
+            <button type="button" class="btn btn-danger btn-sm" uib-tooltip="Delete Assignment" tooltip-placement="left" ng-click="productAssignments.Delete(this)"><i class="fa fa-trash"></i></button>
+        </td>
     </tr>
     </tbody>
 </table>
 <div class="text-center" ng-if="application.$ocMedia('min-width:768px') && productAssignments.list.Meta.TotalPages > 1"">
-    <uib-pagination boundary-links="productAssignments.list.Meta.TotalPages > 8"
+    <uib-pagination boundary-links="productAssignments.list.Meta.TotalPages > 5"
                     max-size="5" total-items="productAssignments.list.Meta.TotalCount"
                     items-per-page="productAssignments.list.Meta.PageSize"
                     ng-model="productAssignments.list.Meta.Page"

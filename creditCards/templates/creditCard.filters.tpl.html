@@ -7,12 +7,11 @@
 			<button type="submit" class="btn btn-primary">Search</button>
 			<button ng-if="creditCards.searchResults" ng-click="creditCards.clearSearch()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
 		</span>
-		<span ng-class="{'btn-group':creditCards.filtersApplied}">
-			<button type="button" class="btn btn-default" ng-if="application.$ocMedia('max-width:767px')" ng-click="creditCards.showFilters = !creditCards.showFilters"><i class="fa fa-filter"></i> Filters</button>
+		<span ng-class="{'btn-group':creditCards.filtersApplied}" ng-if="application.$ocMedia('max-width:767px')">
+			<button type="button" class="btn btn-default" ng-click="creditCards.showFilters = !creditCards.showFilters"><i class="fa fa-filter"></i> Filters</button>
 			<button ng-if="creditCards.filtersApplied" ng-click="creditCards.clearFilters()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
 		</span>
     </fieldset>
-
 </form>
 <div class="row" style="margin-top:15px;" uib-collapse="!creditCards.showFilters">
     <div class="col-md-6 col-lg-4">
@@ -24,8 +23,6 @@
                     <option value="CardholderName">Card Holder Name</option>
                     <option value="CardType">Card Type</option>
                     <option value="ExpirationDate">Expiration Date</option>
-
-
                 </select>
                 <div ng-if="creditCards.sortSelection" class="input-group-btn">
                     <button class="btn btn-default" ng-click="creditCards.reverseSort()">
@@ -36,6 +33,4 @@
             </div>
         </div>
     </div>
-
-
 </div>

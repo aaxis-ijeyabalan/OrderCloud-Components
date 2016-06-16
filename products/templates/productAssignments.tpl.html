@@ -8,4 +8,4 @@
 <div class="well well-lg text-center" ng-if="!productAssignments.list.length">
 	<b>This product does not have any assignments for the active Buyer company.</b>
 </div>
-<div ui-view="list"></div>
+<div ui-view="list" ng-if="productAssignments.list.length"></div>

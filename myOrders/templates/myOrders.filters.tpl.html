@@ -1,0 +1,78 @@
+<form name="OrdersSearchForm" class="form-inline" ng-submit="myOrders.search()">
+    <fieldset class="form-group">
+        <input type="search" placeholder="Search order history..." ng-model="myOrders.parameters.search" class="form-control">
+    </fieldset>
+    <fieldset class="form-group" ng-class="{'text-center':application.$ocMedia('max-width:767px')}">
+            <span ng-class="{'btn-group':myOrders.searchResults}">
+                <button type="submit" class="btn btn-primary">Search</button>
+                <button ng-if="myOrders.searchResults" ng-click="myOrders.clearSearch()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
+            </span>
+            <span ng-class="{'btn-group':myOrders.filtersApplied}">
+                <button type="button" class="btn btn-default" ng-click="myOrders.showFilters = !myOrders.showFilters"><i class="fa fa-filter"></i> Filters</button>
+                <button ng-if="myOrders.filtersApplied" ng-click="myOrders.clearFilters()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
+            </span>
+    </fieldset>
+</form>
+<div class="row" style="margin-top:15px;" uib-collapse="!myOrders.showFilters">
+    <div class="col-md-6 col-lg-4">
+        <div class="form-group" ng-if="application.$ocMedia('max-width:767px')">
+            <label>Sort By:</label>
+            <div ng-class="{'input-group':myOrders.sortSelection}">
+                <select placeholder="Sort" class="form-control" ng-model="myOrders.sortSelection" ng-change="myOrders.updateSort()">
+                    <option value="">None</option>
+                    <option value="ID">ID</option>
+                    <option value="Status">Status</option>
+                    <option value="DateCreated">Date Created/Submitted</option>
+                </select>
+                <div ng-if="myOrders.sortSelection" class="input-group-btn">
+                    <button class="btn btn-default" ng-click="myOrders.reverseSort()">
+                        <i class="fa fa-sort"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>Order Type</label>
+                    <select ng-model="myOrders.parameters.filters.type" ng-change="myOrders.filter(true)" class="form-control">
+                        <option value="">All</option>
+                        <option value="Standard">Standard</option>
+                        <option value="Replenishment">Replenishment</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>Order Status</label>
+                    <select ng-model="myOrders.parameters.filters.status" ng-change="myOrders.filter(true)" class="form-control">
+                        <option value="">All</option>
+                        <option value="Open">Open</option>
+                        <option value="AwaitingApproval">Awaiting Approval</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Declined">Declined</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>From Date</label>
+                    <input ng-if="application.isTouchDevice" type="date" class="form-control" ng-blur="myOrders.filter(true)" ng-model="myOrders.parameters.from">
+                    <input ng-if="!application.isTouchDevice" uib-datepicker-popup datepicker-options="{maxDate:myOrders.parameters.to}" is-open="fromDate.open"  ng-change="myOrders.filter(true)" ng-click="fromDate.open = !fromDate.open" type="date" class="form-control" ng-model="myOrders.parameters.from">
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>To Date</label>
+                    <input ng-if="application.isTouchDevice" type="date" class="form-control" ng-blur="myOrders.filter(true)" ng-model="myOrders.parameters.to">
+                    <input ng-if="!application.isTouchDevice" uib-datepicker-popup datepicker-options="{minDate:myOrders.parameters.from}" is-open="toDate.open" ng-change="myOrders.filter(true)" ng-click="toDate.open = !toDate.open" type="date" class="form-control" ng-model="myOrders.parameters.to">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

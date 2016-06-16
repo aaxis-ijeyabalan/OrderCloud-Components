@@ -1,0 +1,33 @@
+<form name="ProductsSearchForm" class="form-inline" ng-submit="facetedProd.search()">
+	<fieldset class="form-group">
+		<input type="search" placeholder="Search products..." ng-model="facetedProd.parameters.search" class="form-control">
+	</fieldset>
+	<fieldset class="form-group" ng-class="{'text-center':application.$ocMedia('max-width:767px')}">
+		<span ng-class="{'btn-group':facetedProd.searchResults}">
+			<button type="submit" class="btn btn-primary">Search</button>
+			<button ng-if="facetedProd.searchResults" ng-click="facetedProd.clearSearch()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
+		</span>
+		<span ng-class="{'btn-group':facetedProd.filtersApplied}" ng-if="application.$ocMedia('max-width:767px')">
+			<button type="button" class="btn btn-default" ng-click="facetedProd.showFilters = !facetedProd.showFilters"><i class="fa fa-filter"></i> Filters</button>
+			<button ng-if="facetedProd.filtersApplied" ng-click="facetedProd.clearFilters()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
+		</span>
+	</fieldset>
+</form>
+<div class="row" style="margin-top:15px;" uib-collapse="!facetedProd.showFilters">
+	<div class="col-md-6 col-lg-4">
+		<div class="form-group" ng-if="application.$ocMedia('max-width:767px')">
+			<label>Sorty By:</label>
+			<div ng-class="{'input-group':facetedProd.sortSelection}">
+				<select placeholder="Sort" class="form-control" ng-model="facetedProd.sortSelection" ng-change="facetedProd.updateSort()">
+					<option value="ID">ID</option>
+					<option value="Name">Name</option>
+				</select>
+				<div ng-if="facetedProd.sortSelection" class="input-group-btn">
+					<button class="btn btn-default" ng-click="facetedProd.reverseSort()">
+						<i class="fa fa-sort"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

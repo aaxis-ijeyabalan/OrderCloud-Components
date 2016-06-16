@@ -7,8 +7,8 @@
 			<button type="submit" class="btn btn-primary">Search</button>
 			<button ng-if="products.searchResults" ng-click="products.clearSearch()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
 		</span>
-		<span ng-class="{'btn-group':products.filtersApplied}">
-			<button type="button" class="btn btn-default" ng-if="application.$ocMedia('max-width:767px')" ng-click="products.showFilters = !products.showFilters"><i class="fa fa-filter"></i> Filters</button>
+		<span ng-class="{'btn-group':products.filtersApplied}" ng-if="application.$ocMedia('max-width:767px')">
+			<button type="button" class="btn btn-default" ng-click="products.showFilters = !products.showFilters"><i class="fa fa-filter"></i> Filters</button>
 			<button ng-if="products.filtersApplied" ng-click="products.clearFilters()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
 		</span>
     </fieldset>
