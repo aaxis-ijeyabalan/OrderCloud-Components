@@ -26,6 +26,7 @@
                 <label>Sorty By:</label>
                 <div ng-class="{'input-group':creditCards.sortSelection}">
                     <select placeholder="Sort" class="form-control" ng-model="creditCards.sortSelection" ng-change="creditCards.updateSort()">
+                        <option value="">None</option>
                         <option value="ID">ID</option>
                         <option value="CardholderName">Card Holder Name</option>
                         <option value="CardType">Card Type</option>

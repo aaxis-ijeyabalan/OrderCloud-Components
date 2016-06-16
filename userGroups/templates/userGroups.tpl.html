@@ -32,9 +32,10 @@
                 <div ng-class="{'input-group':userGroups.sortSelection}">
                     <select placeholder="Sort" class="form-control" ng-model="userGroups.sortSelection"
                             ng-change="userGroups.updateSort()">
+                        <option value="">None</option>
                         <option value="ID">ID</option>
                         <option value="Name">Name</option>
-                        <option value="FirstName">Description</option>
+                        <option value="Description">Description</option>
                     </select>
                     <div ng-if="userGroups.sortSelection" class="input-group-btn">
                         <button class="btn btn-default" ng-click="userGroups.reverseSort()">

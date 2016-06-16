@@ -7,7 +7,7 @@
     <!--====== SEARCH/FILTERS ======-->
     <form name="PriceSchedulesSearchForm" class="form-inline" ng-submit="priceSchedules.search()">
         <fieldset class="form-group">
-            <input type="search" placeholder="Search price schedules..." ng-model="priceSchedules.parameters.search" class="form-control">
+            <input type="search" placeholder="Search Price Schedules..." ng-model="priceSchedules.parameters.search" class="form-control">
         </fieldset>
         <fieldset class="form-group" ng-class="{'text-center':application.$ocMedia('max-width:767px')}">
 		<span ng-class="{'btn-group':priceSchedules.searchResults}">
@@ -28,8 +28,8 @@
                     <select placeholder="Sort" class="form-control" ng-model="priceSchedules.sortSelection" ng-change="priceSchedules.updateSort()">
                         <option value="">None</option>
                         <option value="ID">ID</option>
-                        <option value="Status">Name</option>
-                        <option value="DateCreated">Type</option>
+                        <option value="Name">Name</option>
+                        <option value="OrderType">Order Type</option>
                     </select>
                     <div ng-if="priceSchedules.sortSelection" class="input-group-btn">
                         <button class="btn btn-default" ng-click="priceSchedules.reverseSort()">

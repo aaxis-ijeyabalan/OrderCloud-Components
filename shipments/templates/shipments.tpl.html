@@ -7,19 +7,19 @@
     <!--====== SEARCH/FILTERS ======-->
     <form name="ShipmentsSearchForm" class="form-inline" ng-submit="shipments.search()">
         <fieldset class="form-group">
-            <input type="search" placeholder="Search shipments..." ng-model="shipments.parameters.search" class="form-control">
+            <input type="search" placeholder="Search Shipments..." ng-model="shipments.parameters.search" class="form-control">
         </fieldset>
         <fieldset class="form-group" ng-class="{'text-center':application.$ocMedia('max-width:767px')}">
-		<span ng-class="{'btn-group':shipments.searchResults}">
-			<button type="submit" class="btn btn-primary">Search</button>
-			<button ng-if="shipments.searchResults" ng-click="shipments.clearSearch()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
-		</span>
-<!--
-        <span ng-class="{'btn-group':shipments.filtersApplied}" ng-show="application.$ocMedia('max-width:767px')">
-            <button type="button" class="btn btn-default" ng-click="shipments.showFilters = !shipments.showFilters"><i class="fa fa-filter"></i> Filters</button>
-            <button ng-if="shipments.filtersApplied" ng-click="shipments.clearFilters()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
-        </span>
--->
+            <span ng-class="{'btn-group':shipments.searchResults}">
+                <button type="submit" class="btn btn-primary">Search</button>
+                <button ng-if="shipments.searchResults" ng-click="shipments.clearSearch()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
+            </span>
+    <!--
+            <span ng-class="{'btn-group':shipments.filtersApplied}" ng-show="application.$ocMedia('max-width:767px')">
+                <button type="button" class="btn btn-default" ng-click="shipments.showFilters = !shipments.showFilters"><i class="fa fa-filter"></i> Filters</button>
+                <button ng-if="shipments.filtersApplied" ng-click="shipments.clearFilters()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
+            </span>
+    -->
         </fieldset>
     </form>
     <div class="row" style="margin-top:15px;" uib-collapse="!shipments.showFilters">
@@ -30,8 +30,7 @@
                     <select placeholder="Sort" class="form-control" ng-model="shipments.sortSelection" ng-change="shipments.updateSort()">
                         <option value="">None</option>
                         <option value="ID">ID</option>
-                        <option value="Status">Status</option>
-                        <option value="DateCreated">Date Created/Submitted</option>
+                        <option value="DateCreated">Date Shipped</option>
                     </select>
                     <div ng-if="shipments.sortSelection" class="input-group-btn">
                         <button class="btn btn-default" ng-click="shipments.reverseSort()">

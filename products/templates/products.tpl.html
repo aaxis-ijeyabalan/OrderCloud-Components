@@ -26,6 +26,7 @@
                 <label>Sorty By:</label>
                 <div ng-class="{'input-group':products.sortSelection}">
                     <select placeholder="Sort" class="form-control" ng-model="products.sortSelection" ng-change="products.updateSort()">
+                        <option value="">None</option>
                         <option value="ID">ID</option>
                         <option value="Name">Name</option>
                     </select>

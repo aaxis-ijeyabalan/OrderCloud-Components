@@ -24,11 +24,9 @@
             <label>Sorty By:</label>
             <div ng-class="{'input-group':creditCardAssign.sortSelection}">
                 <select placeholder="Sort" class="form-control" ng-model="creditCardAssign.sortSelection" ng-change="creditCardAssign.updateSort()">
+                    <option value="">None</option>
                     <option value="ID">ID</option>
                     <option value="Name">User Group Name</option>
-
-
-
                 </select>
                 <div ng-if="creditCardAssign.sortSelection" class="input-group-btn">
                     <button class="btn btn-default" ng-click="creditCardAssign.reverseSort()">
