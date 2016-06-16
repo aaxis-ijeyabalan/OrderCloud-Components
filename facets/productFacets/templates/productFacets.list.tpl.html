@@ -3,7 +3,7 @@
 </div>
 <div ng-if="facetedProd.list.Items.length">
 	<b class="pull-right">{{(application.$ocMedia('min-width:768px') ? facetedProd.list.Meta.ItemRange[0] : '1') + ' - ' +  facetedProd.list.Meta.ItemRange[1] + ' of ' + facetedProd.list.Meta.TotalCount + ' results'}}</b>
-	<table class="table table-hover oc-table-responsive table-condensed" servicename="Products" controlleras="products">
+	<table class="table table-hover oc-table-responsive" servicename="Products" controlleras="products">
 		<thead>
 		<tr>
 			<th scope="col">
@@ -32,7 +32,7 @@
 				<i class="fa fa-circle" aria-hidden="true" ng-class="{'active':product.Active}"></i>
 			</td>
 			<td class="actions-cell">
-				<button ui-sref=".manage({productid:product.ID})" class="btn btn-default btn-sm">Manage Facets</button>
+				<button class="btn btn-default btn-sm">Manage Facets</button>
 			</td>
 		</tr>
 		</tbody>

@@ -1,0 +1,33 @@
+<form name="CategoriesSearchForm" class="form-inline" ng-submit="facetedCat.search()">
+    <fieldset class="form-group">
+        <input type="search" placeholder="Search Categories..." ng-model="facetedCatCat.parameters.search" class="form-control">
+    </fieldset>
+    <fieldset class="form-group" ng-class="{'text-center':application.$ocMedia('max-width:767px')}">
+		<span ng-class="{'btn-group':facetedCat.searchResults}">
+			<button type="submit" class="btn btn-primary">Search</button>
+			<button ng-if="facetedCat.searchResults" ng-click="facetedCat.clearSearch()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
+		</span>
+		<span ng-class="{'btn-group':facetedCat.filtersApplied}" ng-if="application.$ocMedia('max-width:767px')">
+			<button type="button" class="btn btn-default" ng-click="facetedCat.showFilters = !facetedCat.showFilters"><i class="fa fa-filter"></i> Filters</button>
+			<button ng-if="facetedCat.filtersApplied" ng-click="facetedCat.clearFilters()" type="button" class="btn btn-default"><i class="fa fa-times"></i></button>
+		</span>
+    </fieldset>
+</form>
+<div class="row" style="margin-top:15px;" uib-collapse="!facetedCat.showFilters">
+    <div class="col-md-6 col-lg-4">
+        <div class="form-group" ng-if="application.$ocMedia('max-width:767px')">
+            <label>Sorty By:</label>
+            <div ng-class="{'input-group':facetedCat.sortSelection}">
+                <select placeholder="Sort" class="form-control" ng-model="facetedCat.sortSelection" ng-change="facetedCat.updateSort()">
+                    <option value="ID">ID</option>
+                    <option value="Name">Name</option>
+                </select>
+                <div ng-if="facetedCat.sortSelection" class="input-group-btn">
+                    <button class="btn btn-default" ng-click="facetedCat.reverseSort()">
+                        <i class="fa fa-sort"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
