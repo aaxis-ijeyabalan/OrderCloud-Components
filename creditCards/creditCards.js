@@ -14,14 +14,17 @@ function CreditCardsConfig( $stateProvider ) {
     $stateProvider
         .state( 'creditCards', {
             parent: 'base',
-            url: '/creditCards',
             templateUrl:'creditCards/templates/creditCards.tpl.html',
             controller:'CreditCardsCtrl',
             controllerAs: 'creditCards',
+            url: '/credit-cards?from&to&search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'Credit Cards'},
             resolve: {
-                CreditCardList: function(OrderCloud) {
-                    return OrderCloud.CreditCards.List();
+                Parameters: function( $stateParams, OrderCloudParameters ) {
+                    return OrderCloudParameters.Get($stateParams);
+                },
+                CreditCardList: function( OrderCloud, Parameters ) {
+                    return OrderCloud.CreditCards.List(Parameters.search, Parameters.page, Parameters.pageSize || 12, Parameters.searchOn, Parameters.sortBy);
                 }
             }
         })
@@ -43,30 +46,105 @@ function CreditCardsConfig( $stateProvider ) {
             controllerAs: 'creditCardCreate'
         })
         .state( 'creditCards.assign', {
-            url: '/:creditCardid/assign',
-            templateUrl: 'creditCards/templates/creditCardAssign.tpl.html',
-            controller: 'CreditCardAssignCtrl',
+            templateUrl:'creditCards/templates/creditCardAssign.tpl.html',
+            controller:'CreditCardAssignCtrl',
             controllerAs: 'creditCardAssign',
+            //Adding 1 to query parameters to differentiate between query parameters of the parent state
+            url: '/:creditCardid/assign?search1&page1&pageSize1&searchOn1&sortBy1&filters1',
             resolve: {
                 Buyer: function(OrderCloud) {
                     return OrderCloud.Buyers.Get();
                 },
-                UserGroupList: function(OrderCloud) {
-                    return OrderCloud.UserGroups.List(null, 1, 20);
-                },
                 AssignedUserGroups: function($stateParams, OrderCloud) {
                     return OrderCloud.CreditCards.ListAssignments($stateParams.creditCardid);
                 },
+                Parameters: function( $stateParams, OrderCloudParameters ) {
+                    console.log("this is state Params",$stateParams);
+                    return OrderCloudParameters.Get($stateParams, 1);
+                },
                 SelectedCreditCard: function($stateParams, OrderCloud) {
                     return OrderCloud.CreditCards.Get($stateParams.creditCardid);
+                },
+                UserGroupList: function(OrderCloud, Parameters) {
+                    return OrderCloud.UserGroups.List(Parameters.search, Parameters.page, Parameters.pageSize || 12, Parameters.searchOn, Parameters.sortBy, Parameters.filters);
                 }
             }
         })
 }
 
-function CreditCardsController( CreditCardList ) {
+function CreditCardsController( $state, $ocMedia, OrderCloud, CreditCardList, Parameters, OrderCloudParameters ) {
     var vm = this;
     vm.list = CreditCardList;
+    vm.parameters = Parameters;
+    vm.sortSelection = Parameters.sortBy ? (Parameters.sortBy.indexOf('!') == 0 ? Parameters.sortBy.split('!')[1] : Parameters.sortBy) : null;
+
+    //Check if filters are applied
+    vm.filtersApplied = vm.parameters.filters || vm.parameters.from || vm.parameters.to || ($ocMedia('max-width:767px') && vm.sortSelection); //Sort by is a filter on mobile devices
+    vm.showFilters = vm.filtersApplied;
+
+    //Check if search was used
+    vm.searchResults = Parameters.search && Parameters.search.length > 0;
+
+    //Reload the state with new parameters
+    vm.filter = function(resetPage) {
+        $state.go('.', OrderCloudParameters.Create(vm.parameters, resetPage));
+    };
+
+    //Reload the state with new search parameter & reset the page
+    vm.search = function() {
+        vm.filter(true);
+    };
+
+    //Clear the search parameter, reload the state & reset the page
+    vm.clearSearch = function() {
+        vm.parameters.search = null;
+        vm.filter(true);
+    };
+
+    //Clear relevant filters, reload the state & reset the page
+    vm.clearFilters = function() {
+        vm.parameters.filters = null;
+        vm.parameters.from = null;
+        vm.parameters.to = null;
+        $ocMedia('max-width:767px') ? vm.parameters.sortBy = null : angular.noop(); //Clear out sort by on mobile devices
+        vm.filter(true);
+    };
+
+    //Conditionally set, reverse, remove the sortBy parameter & reload the state
+    vm.updateSort = function(value) {
+        value ? angular.noop() : value = vm.sortSelection;
+        switch(vm.parameters.sortBy) {
+            case value:
+                vm.parameters.sortBy = '!' + value;
+                break;
+            case '!' + value:
+                vm.parameters.sortBy = null;
+                break;
+            default:
+                vm.parameters.sortBy = value;
+        }
+        vm.filter(false);
+    };
+
+    //Used on mobile devices
+    vm.reverseSort = function() {
+        Parameters.sortBy.indexOf('!') == 0 ? vm.parameters.sortBy = Parameters.sortBy.split('!')[1] : vm.parameters.sortBy = '!' + Parameters.sortBy;
+        vm.filter(false);
+    };
+
+    //Reload the state with the incremented page parameter
+    vm.pageChanged = function() {
+        $state.go('.', {page:vm.list.Meta.Page});
+    };
+
+    //Load the next page of results with all of the same parameters
+    vm.loadMore = function() {
+        return OrderCloud.CreditCards.List(Parameters.search, vm.list.Meta.Page + 1, Parameters.pageSize ||  vm.list.Meta.PageSize, Parameters.searchOn, Parameters.sortBy, Parameters.filters)
+            .then(function(data) {
+                vm.list.Items = vm.list.Items.concat(data.Items);
+                vm.list.Meta = data.Meta;
+            });
+    };
 }
 
 function creditCardExpirationDate(){
@@ -153,8 +231,8 @@ function CreditCardCreateController( $exceptionHandler, $state, OrderCloud, toas
     vm.Submit= function(){
         var expiration = new Date();
         //If the expiration date field is left blank, selectedExpireMonth will be undefined, so we don't want it to error 
-        if(vm.creditCard.selectedExpireMonth != undefined){
-            var monthNum = vm.creditCard.selectedExpireMonth.number;
+        if(vm.selectedExpireMonth != undefined){
+            var monthNum = vm.selectedExpireMonth.number;
             //Pushes the date back to the last day of the previous month
             //Special case for February, always set back one more day to avoid leap year problems
             monthNum == 2 ? expiration.setMonth(monthNum,-1): expiration.setMonth(monthNum,0);
@@ -176,13 +254,21 @@ function CreditCardCreateController( $exceptionHandler, $state, OrderCloud, toas
 
 }
 
-function CreditCardAssignController($scope, OrderCloud, Buyer, UserGroupList, AssignedUserGroups, SelectedCreditCard, Assignments, Paging, toastr) {
+function CreditCardAssignController($scope, $state, $ocMedia, OrderCloud,OrderCloudParameters, Buyer, UserGroupList, AssignedUserGroups, SelectedCreditCard, Assignments, Paging, toastr, Parameters) {
     var vm = this;
     vm.buyer = Buyer;
     vm.assignBuyer = false;
     vm.list = UserGroupList;
     vm.assignments = AssignedUserGroups;
     vm.creditCard = SelectedCreditCard;
+    vm.parameters = Parameters;
+    vm.sortSelection = Parameters.sortBy ? (Parameters.sortBy.indexOf('!') == 0 ? Parameters.sortBy.split('!')[1] : Parameters.sortBy) : null;
+    //Check if filters are applied
+    vm.filtersApplied = vm.parameters.filters || vm.parameters.from || vm.parameters.to || ($ocMedia('max-width:767px') && vm.sortSelection); //Sort by is a filter on mobile devices
+    vm.showFilters = vm.filtersApplied;
+
+    //Check if search was used
+    vm.searchResults = Parameters.search && Parameters.search.length > 0;
     vm.saveAssignments = SaveAssignments;
     vm.pagingfunction = PagingFunction;
 
@@ -216,4 +302,69 @@ function CreditCardAssignController($scope, OrderCloud, Buyer, UserGroupList, As
     function PagingFunction() {
         return Paging.paging(vm.list, 'UserGroups', vm.assignments, AssignFunc);
     }
+
+    //Reload the state with new parameters
+    vm.filter = function(resetPage) {
+        $state.go('.', OrderCloudParameters.Create(vm.parameters, resetPage, 1));
+    };
+
+    //Reload the state with new search parameter & reset the page
+    vm.search = function() {
+        vm.filter(true);
+    };
+
+    //Clear the search parameter, reload the state & reset the page
+    vm.clearSearch = function() {
+        vm.parameters.search = null;
+        vm.filter(true);
+    };
+
+    //Clear relevant filters, reload the state & reset the page
+    vm.clearFilters = function() {
+        vm.parameters.filters = null;
+        vm.parameters.from = null;
+        vm.parameters.to = null;
+        $ocMedia('max-width:767px') ? vm.parameters.sortBy = null : angular.noop(); //Clear out sort by on mobile devices
+        vm.filter(true);
+    };
+
+    //Conditionally set, reverse, remove the sortBy parameter & reload the state
+    vm.updateSort = function(value) {
+        value ? angular.noop() : value = vm.sortSelection;
+        switch(vm.parameters.sortBy) {
+            case value:
+                vm.parameters.sortBy = '!' + value;
+                break;
+            case '!' + value:
+                vm.parameters.sortBy = null;
+                break;
+            default:
+                vm.parameters.sortBy = value;
+        }
+        vm.filter(false);
+    };
+
+    //Used on mobile devices
+    vm.reverseSort = function() {
+        Parameters.sortBy.indexOf('!') == 0 ? vm.parameters.sortBy = Parameters.sortBy.split('!')[1] : vm.parameters.sortBy = '!' + Parameters.sortBy;
+        vm.filter(false);
+    };
+
+    //Reload the state with the incremented page parameter
+    vm.pageChanged = function() {
+        $state.go('.', {page1:vm.list.Meta.Page});
+    };
+
+    //Load the next page of results with all of the same parameters
+    vm.loadMore = function() {
+        return OrderCloud.UserGroups.List(Parameters.search, vm.list.Meta.Page + 1, Parameters.pageSize ||  vm.list.Meta.PageSize, Parameters.searchOn, Parameters.sortBy, Parameters.filters)
+            .then(function(data) {
+                vm.list.Items = vm.list.Items.concat(data.Items);
+                vm.list.Meta = data.Meta;
+            });
+    };
+
+
+
+
 }
