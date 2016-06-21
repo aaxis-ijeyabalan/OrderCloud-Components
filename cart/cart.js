@@ -110,11 +110,12 @@ function CartController($q, $rootScope, $timeout, OrderCloud, Order, LineItemsLi
     });
 }
 
-function MiniCartController($q, $state, $rootScope, OrderCloud, LineItemHelpers, CurrentOrder) {
+function MiniCartController($q, $state, $rootScope, $ocMedia, OrderCloud, LineItemHelpers, CurrentOrder) {
     var vm = this;
     vm.LineItems = {};
     vm.Order = null;
     vm.showLineItems = false;
+    vm.$ocMedia = $ocMedia;
 
 
     vm.getLI = function(){
@@ -191,6 +192,7 @@ function MiniCartController($q, $state, $rootScope, OrderCloud, LineItemHelpers,
         vm.Order = null;
         vm.LineItems = {};
     });
+    
 }
 
 function OrderCloudMiniCartDirective() {
