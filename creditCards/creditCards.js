@@ -59,7 +59,6 @@ function CreditCardsConfig( $stateProvider ) {
                     return OrderCloud.CreditCards.ListAssignments($stateParams.creditCardid);
                 },
                 Parameters: function( $stateParams, OrderCloudParameters ) {
-                    console.log("this is state Params",$stateParams);
                     return OrderCloudParameters.Get($stateParams, 1);
                 },
                 SelectedCreditCard: function($stateParams, OrderCloud) {
@@ -151,8 +150,13 @@ function creditCardExpirationDate(){
     //return the expirationMonth array and its function
     var expirationDate={
         expirationMonth : [{number:1,string:'01'}, {number:2,string:'02'},{number:3,string:'03'},{number:4,string:'04'},{number:5,string:'05'},{number:6,string:'06'},{number:7,string:'07'},{number:8,string:'08'},{number:9,string:'09'},{number:10,string:'10'},{number:11,string:'11'},{number:12,string:'12'}],
-        expirationYear : []
+        expirationYear : [],
+        isLeapYear : function leapYear(year){
+                return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+            }
     };
+
+
 
     function _ccExpireYears(){
         var today = new Date();
@@ -184,20 +188,24 @@ function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Unders
     vm.creditCard.Token = "token";
 
     vm.Submit = function() {
+
+
         var expiration = new Date();
         //If the expiration date field is left blank, selectedExpireMonth will be undefined, so we don't want it to error 
         if(vm.creditCard.selectedExpireMonth != undefined){
             var monthNum = vm.creditCard.selectedExpireMonth.number;
+            var leapYear = creditCardExpirationDate.isLeapYear(vm.creditCard.selectedExpireYear);
             //Pushes the date back to the last day of the previous month
             //Special case for February, always set back one more day to avoid leap year problems
             monthNum == 2 ? expiration.setMonth(monthNum,-1): expiration.setMonth(monthNum,0);
+            if(leapYear === true && monthNum === 2){
+                expiration.setDate(29);
+            }
         } else {
             expiration.setMonth(undefined);
         }
-
         expiration.setYear(vm.creditCard.selectedExpireYear);
         vm.creditCard.ExpirationDate = expiration;
-
         OrderCloud.CreditCards.Update(creditcardid, vm.creditCard)
             .then(function() {
                 $state.go('creditCards', {}, {reload:true});
@@ -233,9 +241,13 @@ function CreditCardCreateController( $exceptionHandler, $state, OrderCloud, toas
         //If the expiration date field is left blank, selectedExpireMonth will be undefined, so we don't want it to error 
         if(vm.selectedExpireMonth != undefined){
             var monthNum = vm.selectedExpireMonth.number;
+            var leapYear = creditCardExpirationDate.isLeapYear(vm.selectedExpireYear);
             //Pushes the date back to the last day of the previous month
             //Special case for February, always set back one more day to avoid leap year problems
             monthNum == 2 ? expiration.setMonth(monthNum,-1): expiration.setMonth(monthNum,0);
+            if(leapYear === true && monthNum === 2){
+                expiration.setDate(29);
+            }
         } else {
             expiration.setMonth(undefined);
         }
