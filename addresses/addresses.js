@@ -141,14 +141,18 @@ function AddressesController( $state, $ocMedia, OrderCloud, OrderCloudParameters
 	};
 }
 
-function AddressEditController( $exceptionHandler, $state, OrderCloud, SelectedAddress, toastr, OCGeography ) {
+function AddressEditController( $exceptionHandler, $state, OrderCloud, SelectedAddress, toastr, OCGeography, $scope ) {
 	var vm = this,
         addressID = SelectedAddress.ID;
 	vm.addressName = SelectedAddress.AddressName;
 	vm.address = SelectedAddress;
     vm.countries = OCGeography.countries;
     vm.states = OCGeography.states;
-
+    $scope.$watch(function() {
+        return vm.address.Country
+    }, function() {
+        vm.address.State = null;
+    });
 
 	vm.Submit = function() {
 		OrderCloud.Addresses.Update(addressID, vm.address)
@@ -173,12 +177,18 @@ function AddressEditController( $exceptionHandler, $state, OrderCloud, SelectedA
 	};
 }
 
-function AddressCreateController($exceptionHandler, $state, OrderCloud, toastr, OCGeography) {
+function AddressCreateController($exceptionHandler, $scope, $state, OrderCloud, toastr, OCGeography) {
 	var vm = this;
-	vm.address = {};
+	vm.address = {
+        Country: 'US' // this is to default 'create' addresses to the country US
+    };
     vm.countries = OCGeography.countries;
     vm.states = OCGeography.states;
-
+    $scope.$watch(function() {
+        return vm.address.Country
+    }, function() {
+        vm.address.State = null;
+    });
 	vm.Submit = function() {
 		OrderCloud.Addresses.Create(vm.address)
 			.then(function() {
