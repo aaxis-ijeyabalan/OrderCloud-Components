@@ -26,7 +26,6 @@
                     placeholder="Search"
                     ng-model="categoryCreate.category.ParentID"
                     uib-typeahead="category.ID as category.Name for category in categoryCreate.typeAhead($viewValue)"
-                    typeahead-editable="false"
                     typeahead-template-url="categories/templates/parentIDtypeAhead.tpl.html"
                     typeahead-on-select="catalogSearch.onSelect($item)"
                     typeahead-focus-first="false"
