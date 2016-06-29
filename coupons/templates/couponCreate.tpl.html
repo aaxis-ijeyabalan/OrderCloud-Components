@@ -74,15 +74,6 @@
     </div>
     <div class="row form-group">
         <div class="col-sm-6">
-            <label for="couponStatusInput">Status</label>
-            <select id="couponStatusInput" class="form-control" ng-model="couponCreate.coupon.Status" required>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-                <option value="Expired">Expired</option>
-                <option value="Disabled">Disabled</option>
-            </select>
-        </div>
-        <div class="col-sm-6">
             <div class="col-sm-6">
                 Apply Discount to:
                 <div>
@@ -105,9 +96,7 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-2 form-group">
+        <div class="col-sm-6 form-group">
             <label for="couponEnabledInput">
                 <input id="couponEnabledInput" type="checkbox" ng-model="couponCreate.coupon.Enabled"/>
                 Enabled

@@ -9,16 +9,19 @@ angular.module( 'orderCloud' )
 
 function ShipmentsConfig( $stateProvider ) {
     $stateProvider
-        .state( 'shipments', {
+        .state('shipments', {
             parent: 'base',
-            url: '/shipments',
             templateUrl:'shipments/templates/shipments.tpl.html',
-            controller:'ShipmentsCtrl',
+            controller: 'ShipmentsCtrl',
             controllerAs: 'shipments',
+            url: '/shipments?search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'Shipments'},
             resolve: {
-                ShipmentList: function(OrderCloud) {
-                    return OrderCloud.Shipments.List();
+                Parameters: function( $stateParams, OrderCloudParameters ) {
+                    return OrderCloudParameters.Get($stateParams);
+                },
+                ShipmentList: function(OrderCloud, Parameters) {
+                    return OrderCloud.Shipments.List(Parameters.orderID, Parameters.search, Parameters.page, Parameters.pageSize);
                 }
             }
         })
@@ -31,8 +34,9 @@ function ShipmentsConfig( $stateProvider ) {
                 SelectedShipment: function($stateParams, OrderCloud) {
                     return OrderCloud.Shipments.Get($stateParams.shipmentid);
                 },
-                OrderList: function(OrderCloud) {
-                    return OrderCloud.Orders.ListIncoming();
+                OrderList: function(OrderCloud,SelectedShipment) {
+                    return OrderCloud.Orders.ListIncoming(null,null,SelectedShipment.Items[0].OrderID);
+
                 }
             }
         })
@@ -49,20 +53,89 @@ function ShipmentsConfig( $stateProvider ) {
         })
 }
 
-function ShipmentsController( ShipmentList, TrackSearch ) {
+function ShipmentsController( ShipmentList, OrderCloudParameters, OrderCloud, Parameters, $ocMedia, $state ) {
     var vm = this;
     vm.list = ShipmentList;
-    vm.searching = function() {
-        return TrackSearch.GetTerm() ? true : false;
+    vm.parameters = Parameters;
+    vm.sortSelection = Parameters.sortBy ? (Parameters.sortBy.indexOf('!') == 0 ? Parameters.sortBy.split('!')[1] : Parameters.sortBy) : null;
+
+    //Check if filters are applied
+    vm.filtersApplied = vm.parameters.filters || vm.parameters.from || vm.parameters.to || ($ocMedia('max-width:767px') && vm.sortSelection); //Sort by is a filter on mobile devices
+    vm.showFilters = vm.filtersApplied;
+
+    //Check if search was used
+    vm.searchResults = Parameters.search && Parameters.search.length > 0;
+
+    //Reload the state with new parameters
+    vm.filter = function(resetPage) {
+        $state.go('.', OrderCloudParameters.Create(vm.parameters, resetPage));
     };
+
+    //Reload the state with new search parameter & reset the page
+    vm.search = function() {
+        vm.filter(true);
+    };
+
+    //Clear the search parameter, reload the state & reset the page
+    vm.clearSearch = function() {
+        vm.parameters.search = null;
+        vm.filter(true);
+    };
+
+    //Clear relevant filters, reload the state & reset the page
+    vm.clearFilters = function() {
+        vm.parameters.filters = null;
+        vm.parameters.from = null;
+        vm.parameters.to = null;
+        $ocMedia('max-width:767px') ? vm.parameters.sortBy = null : angular.noop(); //Clear out sort by on mobile devices
+        vm.filter(true);
+    };
+
+    //Conditionally set, reverse, remove the sortBy parameter & reload the state
+    vm.updateSort = function(value) {
+        value ? angular.noop() : value = vm.sortSelection;
+        switch(vm.parameters.sortBy) {
+            case value:
+                vm.parameters.sortBy = '!' + value;
+                break;
+            case '!' + value:
+                vm.parameters.sortBy = null;
+                break
+            default:
+                vm.parameters.sortBy = value;
+        }
+        vm.filter(false);
+    };
+
+    //Used on mobile devices
+    vm.reverseSort = function() {
+        Parameters.sortBy.indexOf('!') == 0 ? vm.parameters.sortBy = Parameters.sortBy.split('!')[1] : vm.parameters.sortBy = '!' + Parameters.sortBy;
+        vm.filter(false);
+    };
+
+    //Reload the state with the incremented page parameter
+    vm.pageChanged = function() {
+        $state.go('.', {page:vm.list.Meta.Page});
+    };
+
+    //Load the next page of results with all of the same parameters
+    vm.loadMore = function() {
+        return OrderCloud.Shipments(Parameters.from, Parameters.to, Parameters.search, vm.list.Meta.Page + 1, Parameters.pageSize || vm.list.Meta.PageSize, Parameters.searchOn, Parameters.sortBy, Parameters.filters)
+            .then(function(data) {
+                vm.list.Items = vm.list.Items.concat(data.Items);
+                vm.list.Meta = data.Meta;
+            });
+    };
+
 }
 
-function ShipmentEditController( $exceptionHandler, $state, OrderCloud, SelectedShipment, OrderList, toastr) {
+function ShipmentEditController( $exceptionHandler, $state, OrderCloud, SelectedShipment, OrderList, toastr, Parameters) {
     var vm = this,
         shipmentid = SelectedShipment.ID;
     vm.ShipmentID = SelectedShipment.ID;
     vm.shipment = SelectedShipment;
     vm.list = OrderList;
+    vm.parameters = Parameters;
     vm.OrderSelected = false;
     vm.lineitems = {
         pagingfunction: PagingFunction,
@@ -74,7 +147,7 @@ function ShipmentEditController( $exceptionHandler, $state, OrderCloud, Selected
 
     vm.goToLineItems = function(order) {
         vm.OrderSelected = order.ID;
-        OrderCloud.LineItems.List(vm.OrderSelected, 1, 20)
+        OrderCloud.LineItems.List(vm.OrderSelected,null, 1, 20)
             .then(function(data){
                 vm.lineitems.list = data;
                 angular.forEach(vm.lineitems.list.Items, function(li) {
@@ -106,9 +179,10 @@ function ShipmentEditController( $exceptionHandler, $state, OrderCloud, Selected
     vm.Submit = function() {
         angular.forEach(vm.lineitems.list.Items, function(li) {
             if (li.addToShipment && !li.disabled) {
-                vm.shipment.Items.push({OrderID: li.OrderID, LineItemId: li.ID, QuantityShipped: li.QuantityShipped});
+                vm.shipment.Items.push({OrderID: vm.OrderSelected , LineItemId: li.ID, QuantityShipped: li.QuantityShipped});
             }
         });
+
         OrderCloud.Shipments.Update(shipmentid, vm.shipment)
             .then(function() {
                 $state.go('shipments', {}, {reload:true});
@@ -143,9 +217,11 @@ function ShipmentCreateController( $exceptionHandler, $state, OrderCloud, OrderL
     vm.shipment.Items = [];
     vm.lineitems = {};
     vm.lineitems.list = [];
+    vm.orderID;
 
     vm.goToLineItems = function(order) {
-        OrderCloud.LineItems.List(order.ID, 1, 20)
+        vm.orderID=order.ID;
+        OrderCloud.LineItems.List(order.ID,null, 1, 20)
             .then(function(data){
                 vm.lineitems.list = data;
                 vm.OrderSelected = true;
@@ -163,7 +239,7 @@ function ShipmentCreateController( $exceptionHandler, $state, OrderCloud, OrderL
     vm.Submit = function() {
         angular.forEach(vm.lineitems.list.Items, function(li) {
             if(li.addToShipment){
-                vm.shipment.Items.push({OrderID: li.OrderID, LineItemId: li.ID, QuantityShipped: li.QuantityShipped});
+                vm.shipment.Items.push({OrderID: vm.orderID, LineItemId: li.ID, QuantityShipped: li.QuantityShipped});
             }
         });
         OrderCloud.Shipments.Create(vm.shipment)
