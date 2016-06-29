@@ -34,8 +34,9 @@ function ShipmentsConfig( $stateProvider ) {
                 SelectedShipment: function($stateParams, OrderCloud) {
                     return OrderCloud.Shipments.Get($stateParams.shipmentid);
                 },
-                OrderList: function(OrderCloud) {
-                    return OrderCloud.Orders.ListIncoming();
+                OrderList: function(OrderCloud,SelectedShipment) {
+                    return OrderCloud.Orders.ListIncoming(null,null,SelectedShipment.Items[0].OrderID);
+
                 }
             }
         })
@@ -146,7 +147,7 @@ function ShipmentEditController( $exceptionHandler, $state, OrderCloud, Selected
 
     vm.goToLineItems = function(order) {
         vm.OrderSelected = order.ID;
-        OrderCloud.LineItems.List(vm.OrderSelected, 1, 20)
+        OrderCloud.LineItems.List(vm.OrderSelected,null, 1, 20)
             .then(function(data){
                 vm.lineitems.list = data;
                 angular.forEach(vm.lineitems.list.Items, function(li) {
@@ -178,9 +179,10 @@ function ShipmentEditController( $exceptionHandler, $state, OrderCloud, Selected
     vm.Submit = function() {
         angular.forEach(vm.lineitems.list.Items, function(li) {
             if (li.addToShipment && !li.disabled) {
-                vm.shipment.Items.push({OrderID: li.OrderID, LineItemId: li.ID, QuantityShipped: li.QuantityShipped});
+                vm.shipment.Items.push({OrderID: vm.OrderSelected , LineItemId: li.ID, QuantityShipped: li.QuantityShipped});
             }
         });
+
         OrderCloud.Shipments.Update(shipmentid, vm.shipment)
             .then(function() {
                 $state.go('shipments', {}, {reload:true});
