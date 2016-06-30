@@ -6,7 +6,7 @@
     <!--====== SEARCH/FILTERS ======-->
     <form name="CategoriesSearchForm" class="form-inline" ng-submit="facetedCat.search()">
         <fieldset class="form-group">
-            <input type="search" placeholder="Search Categories..." ng-model="facetedCatCat.parameters.search" class="form-control">
+            <input type="search" placeholder="Search Categories..." ng-model="facetedCat.parameters.search" class="form-control">
         </fieldset>
         <fieldset class="form-group" ng-class="{'text-center':application.$ocMedia('max-width:767px')}">
 		<span ng-class="{'btn-group':facetedCat.searchResults}">

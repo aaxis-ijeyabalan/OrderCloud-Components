@@ -71,7 +71,7 @@ function ProductsConfig($stateProvider) {
                     return OrderCloud.UserGroups.List(null, 1, 20);
                 },
                 PriceScheduleList: function (OrderCloud) {
-                    return OrderCloud.PriceSchedules.List(1, 20);
+                    return OrderCloud.PriceSchedules.List(null,1, 20);
                 }
             }
         });
