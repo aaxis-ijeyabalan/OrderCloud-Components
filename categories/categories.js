@@ -27,7 +27,9 @@ function CategoriesConfig( $stateProvider ) {
                     return OrderCloudParameters.Get($stateParams);
                 },
                 CategoryList: function(OrderCloud, Parameters) {
-                    return OrderCloud.Categories.List(Parameters.search, Parameters.page, Parameters.pageSize || 12, Parameters.searchOn, Parameters.sortBy, Parameters.filters, Parameters.parentID, Parameters.depth);
+                    var parameters = angular.copy(Parameters);
+                    parameters.depth ='all';
+                    return OrderCloud.Categories.List(parameters.search, parameters.page, parameters.pageSize || 12, parameters.searchOn, parameters.sortBy, parameters.filters, parameters.parentID, parameters.depth);
                 }
             }
         })
