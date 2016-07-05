@@ -178,7 +178,7 @@ function CategoriesController( $state, $ocMedia, OrderCloud, OrderCloudParameter
     };
 }
 
-function CategoryEditController( $exceptionHandler, $state, OrderCloud, SelectedCategory, toastr ) {
+function CategoryEditController( $exceptionHandler, $state, $q, OrderCloud, SelectedCategory, toastr ) {
     var vm = this,
         categoryID = SelectedCategory.ID;
     vm.categoryName = SelectedCategory.Name;
@@ -195,6 +195,15 @@ function CategoryEditController( $exceptionHandler, $state, OrderCloud, Selected
             });
     };
 
+    vm.typeAhead = function (searchTerm) {
+        var defd = $q.defer();
+        OrderCloud.Categories.List(searchTerm, 1, 100, null, null, null, null, "all")
+            .then(function (data) {
+                defd.resolve(data.Items)
+            });
+        return defd.promise
+    };
+
     vm.Delete = function() {
         OrderCloud.Categories.Delete(SelectedCategory.ID)
             .then(function() {
@@ -207,23 +216,31 @@ function CategoryEditController( $exceptionHandler, $state, OrderCloud, Selected
     }
 }
 
-function CategoryCreateController($exceptionHandler,$state, OrderCloud, toastr) {
+function CategoryCreateController($exceptionHandler, $state, $q, OrderCloud, toastr) {
     var vm = this;
     vm.category = {};
 
-    vm.Submit = function() {
+    vm.Submit = function () {
         if (vm.category.ParentID === '') {
             vm.category.ParentID = null;
         }
         OrderCloud.Categories.Create(vm.category)
-            .then(function() {
-                $state.go('categories', {}, {reload:true});
+            .then(function () {
+                $state.go('categories', {}, {reload: true});
                 toastr.success('Category Created', 'Success');
             })
-            .catch(function(ex) {
+            .catch(function (ex) {
                 $exceptionHandler(ex);
             });
-    }
+    };
+    vm.typeAhead = function (searchTerm) {
+        var defd = $q.defer();
+        OrderCloud.Categories.List(searchTerm, 1, 100, null, null, null, null, "all")
+            .then(function (data) {
+                defd.resolve(data.Items)
+            });
+        return defd.promise
+    };
 }
 
 function CategoryTreeController(Tree, CategoryTreeService) {
