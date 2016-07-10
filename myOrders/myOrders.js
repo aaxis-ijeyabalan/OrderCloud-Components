@@ -147,7 +147,11 @@ function MyOrderEditController( $scope, $q, $exceptionHandler, $state, OrderClou
     vm.paymentList = SelectedPayments;
     vm.states = OCGeography.states;
     vm.countries = OCGeography.countries;
-
+    $scope.$watch(function() {
+        return vm.order.Country
+    }, function() {
+        vm.order.State = null;
+    });
 
     vm.pagingfunction = PagingFunction;
     $scope.isCollapsedPayment = true;
