@@ -4,7 +4,7 @@ angular.module('orderCloud')
     .controller('CartCtrl', CartController)
     .controller('MiniCartCtrl', MiniCartController)
     .directive('ordercloudMinicart', OrderCloudMiniCartDirective)
-
+    .controller('MinicartModalController',MinicartModalController)
 ;
 
 function CartConfig($stateProvider) {
@@ -110,12 +110,12 @@ function CartController($q, $rootScope, $timeout, OrderCloud, Order, LineItemsLi
     });
 }
 
-function MiniCartController($q, $state, $rootScope, OrderCloud, LineItemHelpers, CurrentOrder) {
+function MiniCartController($q, $state, $rootScope,$uibModal, $ocMedia, OrderCloud, LineItemHelpers, CurrentOrder) {
     var vm = this;
     vm.LineItems = {};
     vm.Order = null;
     vm.showLineItems = false;
-
+    vm.$ocMedia = $ocMedia;
 
     vm.getLI = function(){
         CurrentOrder.Get()
@@ -160,11 +160,7 @@ function MiniCartController($q, $state, $rootScope, OrderCloud, LineItemHelpers,
             .then(function(li) {
                 vm.LineItems = li;
                 if (li.Meta.TotalPages > li.Meta.Page) {
-                    var page = li.Meta.Page;
-                    while (page < li.Meta.TotalPages) {
-                        page += 1;
-                        queue.push(OrderCloud.LineItems.List(order.ID, page));
-                    }
+                        queue.push(OrderCloud.LineItems.List(order.ID, null ,li.Meta.Page + 1));
                 }
                 $q.all(queue)
                     .then(function(results) {
@@ -177,12 +173,16 @@ function MiniCartController($q, $state, $rootScope, OrderCloud, LineItemHelpers,
             });
         return dfd.promise;
     };
-
     $rootScope.$on('LineItemAddedToCart', function() {
         CurrentOrder.Get()
             .then(function(order) {
-                vm.lineItemCall(order);
-                vm.showLineItems = true;
+                if(vm.$ocMedia('max-width:767px')){
+                    vm.openModal(order);
+                }else{
+                    vm.lineItemCall(order);
+                    vm.showLineItems = true;
+                }
+
             });
     });
 
@@ -191,6 +191,31 @@ function MiniCartController($q, $state, $rootScope, OrderCloud, LineItemHelpers,
         vm.Order = null;
         vm.LineItems = {};
     });
+
+    vm.toggleDropdown = function($event) {
+        // $event.preventDefault();
+        // $event.stopPropagation();
+        // $scope.status.isopen = !$scope.status.isopen;
+        vm.showLineItems = true;
+        if(vm.$ocMedia('max-width:767px')){
+            vm.goToCart();
+        }
+    };
+
+    vm.openModal = function(order){
+
+        $uibModal.open({
+            animation:true,
+            size :'lg',
+            templateUrl: 'cart/templates/modalMinicart.tpl.html',
+            controller : 'MinicartModalController',
+            controllerAs : 'minicartModal',
+            resolve : {
+                LineItems: vm.lineItemCall(order)
+            }
+        });
+};
+
 }
 
 function OrderCloudMiniCartDirective() {
@@ -202,3 +227,29 @@ function OrderCloudMiniCartDirective() {
         controllerAs: 'minicart'
     };
 }
+
+
+function MinicartModalController($state, $uibModalInstance, LineItems){
+    var vm = this;
+    vm.lineItems = LineItems;
+    vm.lineItemsLength = vm.lineItems.length;
+
+    vm.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+
+    vm.goToCart = function() {
+        $state.go('cart');
+        $uibModalInstance.close();
+    };
+    vm.goToExpressCheckout = function() {
+        $state.go('expressCheckout');
+        $uibModalInstance.close();
+    };
+    vm.goToCheckout = function() {
+        $state.go('checkout');
+        $uibModalInstance.close();
+    };
+
+};
+
