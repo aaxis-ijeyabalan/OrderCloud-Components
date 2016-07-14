@@ -51,7 +51,7 @@ function UserGroupsConfig( $stateProvider ) {
             controllerAs: 'userGroupAssign',
             resolve: {
                 UserList: function (OrderCloud) {
-                    return OrderCloud.Users.List(null, 1, 20);
+                    return OrderCloud.Users.List(null, null, 1, 20);
                 },
                 AssignedUsers: function ($stateParams, OrderCloud) {
                     return OrderCloud.UserGroups.ListUserAssignments($stateParams.userGroupid);
