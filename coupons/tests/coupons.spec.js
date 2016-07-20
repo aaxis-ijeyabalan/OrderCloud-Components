@@ -150,7 +150,7 @@ describe('Component: Coupons', function() {
                 expect(oc.Coupons.Update).toHaveBeenCalledWith(couponEditCtrl.couponID, couponEditCtrl.coupon);
             });
             it ('should enter the coupons state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('coupons', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('coupons', {}, {reload: true});
             }));
         });
 
@@ -166,7 +166,7 @@ describe('Component: Coupons', function() {
                 expect(oc.Coupons.Delete).toHaveBeenCalledWith(coupon.ID);
             });
             it ('should enter the coupons state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('coupons', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('coupons', {}, {reload: true});
             }));
         });
     });
@@ -203,7 +203,7 @@ describe('Component: Coupons', function() {
                 expect(oc.Coupons.Create).toHaveBeenCalledWith(coupon);
             });
             it ('should enter the coupons state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('coupons', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('coupons', {}, {reload: true});
             }));
         });
     });
@@ -223,21 +223,21 @@ describe('Component: Coupons', function() {
 
         describe('SaveAssignment', function() {
             beforeEach(inject(function(Assignments) {
-                spyOn(Assignments, 'saveAssignments').and.returnValue(null);
+                spyOn(Assignments, 'SaveAssignments').and.returnValue(null);
                 couponAssignCtrl.saveAssignments();
             }));
             it ('should call the Assignments saveAssignments method', inject(function(Assignments) {
-                expect(Assignments.saveAssignments).toHaveBeenCalled();
+                expect(Assignments.SaveAssignments).toHaveBeenCalled();
             }));
         });
 
         describe('PagingFunction', function() {
             beforeEach(inject(function(Paging) {
-                spyOn(Paging, 'paging').and.returnValue(null);
+                spyOn(Paging, 'Paging').and.returnValue(null);
                 couponAssignCtrl.pagingfunction();
             }));
             it ('should call the Paging paging method', inject(function(Paging) {
-                expect(Paging.paging).toHaveBeenCalled();
+                expect(Paging.Paging).toHaveBeenCalled();
             }));
         });
     });
@@ -256,21 +256,21 @@ describe('Component: Coupons', function() {
 
         describe('SaveAssignment', function() {
             beforeEach(inject(function(Assignments) {
-                spyOn(Assignments, 'saveAssignments').and.returnValue(null);
+                spyOn(Assignments, 'SaveAssignments').and.returnValue(null);
                 couponAssignProductCtrl.saveAssignments();
             }));
             it ('should call the Assignments saveAssignments method', inject(function(Assignments) {
-                expect(Assignments.saveAssignments).toHaveBeenCalled();
+                expect(Assignments.SaveAssignments).toHaveBeenCalled();
             }));
         });
 
         describe('PagingFunction', function() {
             beforeEach(inject(function(Paging) {
-                spyOn(Paging, 'paging').and.returnValue(null);
+                spyOn(Paging, 'Paging').and.returnValue(null);
                 couponAssignProductCtrl.pagingfunction();
             }));
             it ('should call the Paging paging method', inject(function(Paging) {
-                expect(Paging.paging).toHaveBeenCalled();
+                expect(Paging.Paging).toHaveBeenCalled();
             }));
         });
     });
@@ -289,21 +289,21 @@ describe('Component: Coupons', function() {
 
         describe('SaveAssignment', function() {
             beforeEach(inject(function(Assignments) {
-                spyOn(Assignments, 'saveAssignments').and.returnValue(null);
+                spyOn(Assignments, 'SaveAssignments').and.returnValue(null);
                 couponAssignCategoryCtrl.saveAssignments();
             }));
             it ('should call the Assignments saveAssignments method', inject(function(Assignments) {
-                expect(Assignments.saveAssignments).toHaveBeenCalled();
+                expect(Assignments.SaveAssignments).toHaveBeenCalled();
             }));
         });
 
         describe('PagingFunction', function() {
             beforeEach(inject(function(Paging) {
-                spyOn(Paging, 'paging').and.returnValue(null);
+                spyOn(Paging, 'Paging').and.returnValue(null);
                 couponAssignCategoryCtrl.pagingfunction();
             }));
             it ('should call the Paging paging method', inject(function(Paging) {
-                expect(Paging.paging).toHaveBeenCalled();
+                expect(Paging.Paging).toHaveBeenCalled();
             }));
         });
     });

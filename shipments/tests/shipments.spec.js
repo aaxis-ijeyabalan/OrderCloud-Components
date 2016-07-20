@@ -159,7 +159,7 @@ describe('Component: Shipments', function() {
                 expect(oc.Shipments.Update).toHaveBeenCalledWith(shipmentEditCtrl.shipmentID, shipmentEditCtrl.shipment);
             });
             it ('should enter the shipments state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('shipments', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('shipments', {}, {reload: true});
             }));
         });
 
@@ -175,7 +175,7 @@ describe('Component: Shipments', function() {
                 expect(oc.Shipments.Delete).toHaveBeenCalledWith(shipment.ID, false);
             });
             it ('should enter the shipments state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('shipments', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('shipments', {}, {reload: true});
             }));
         });
 
@@ -250,7 +250,7 @@ describe('Component: Shipments', function() {
                 expect(oc.Shipments.Create).toHaveBeenCalledWith(shipment);
             });
             it ('should enter the shipments state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('shipments', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('shipments', {}, {reload: true});
             }));
         });
     });

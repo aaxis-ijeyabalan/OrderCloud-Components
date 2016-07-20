@@ -1,65 +1,61 @@
-angular.module( 'orderCloud' )
-
-    .config ( GiftCardsConfig )
-    .controller( 'GiftCardsCtrl', GiftCardsController )
-    .controller( 'GiftCardCreateCtrl', GiftCardCreateController )
-    .controller( 'GiftCardEditCtrl', GiftCardEditController )
-    .controller( 'GiftCardAssignGroupCtrl', GiftCardAssignGroupController )
-    .controller( 'GiftCardAssignUserCtrl', GiftCardAssignUserController )
-    .factory( 'GiftCardFactory', GiftCardFactory )
-
+angular.module('orderCloud')
+    .config (GiftCardsConfig)
+    .controller('GiftCardsCtrl', GiftCardsController)
+    .controller('GiftCardCreateCtrl', GiftCardCreateController)
+    .controller('GiftCardEditCtrl', GiftCardEditController)
+    .controller('GiftCardAssignGroupCtrl', GiftCardAssignGroupController)
+    .controller('GiftCardAssignUserCtrl', GiftCardAssignUserController)
+    .factory('GiftCardFactory', GiftCardFactory)
 ;
 
-function GiftCardsConfig( $stateProvider ) {
+function GiftCardsConfig($stateProvider) {
     $stateProvider
-        .state( 'giftCards', {
+        .state('giftCards', {
             parent: 'base',
-            templateUrl:'giftCards/templates/giftCards.tpl.html',
-            controller:'GiftCardsCtrl',
+            templateUrl: 'giftCards/templates/giftCards.tpl.html',
+            controller: 'GiftCardsCtrl',
             controllerAs: 'giftCards',
             url: '/giftcards?search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'Gift Cards'},
             resolve: {
-
-                Parameters: function( $stateParams, OrderCloudParameters ) {
+                Parameters: function($stateParams, OrderCloudParameters) {
                     return OrderCloudParameters.Get($stateParams);
                 },
-                GiftCardList: function(OrderCloud,Parameters) {
+                GiftCardList: function(OrderCloud, Parameters) {
                     var parameters = angular.copy(Parameters);
                     parameters.filters ? parameters.filters.RedemptionCode = '*': parameters.filters = {RedemptionCode :'*'};
                     return OrderCloud.SpendingAccounts.List(parameters.search, parameters.page, parameters.pageSize || 12, parameters.searchOn, parameters.sortBy, parameters.filters);
-                    }
+                }
             }
         })
-        .state( 'giftCards.edit', {
+        .state('giftCards.edit', {
             url: '/:giftCardid/edit',
             templateUrl: 'giftCards/templates/giftCardEdit.tpl.html',
             controller: 'GiftCardEditCtrl',
             controllerAs: 'giftCardEdit',
             resolve: {
-                SelectedGiftCard: function($q,$stateParams, OrderCloud) {
+                SelectedGiftCard: function($q, $stateParams, OrderCloud) {
                     var d = $q.defer();
-                     OrderCloud.SpendingAccounts.Get($stateParams.giftCardid)
-                        .then(function(giftcard){
+                    OrderCloud.SpendingAccounts.Get($stateParams.giftCardid)
+                        .then(function(giftcard) {
                             if(giftcard.StartDate != null)
                                 giftcard.StartDate = new Date(giftcard.StartDate);
                             if(giftcard.EndDate != null)
                                 giftcard.EndDate = new Date(giftcard.EndDate);
                             d.resolve(giftcard);
-                });
+                        });
                 
                     return d.promise;
                 }
             }
         })
-
-        .state( 'giftCards.create', {
+        .state('giftCards.create', {
             url: '/create',
             templateUrl: 'giftCards/templates/giftCardCreate.tpl.html',
             controller: 'GiftCardCreateCtrl',
             controllerAs: 'giftCardCreate'
         })
-        .state( 'giftCards.assignGroup', {
+        .state('giftCards.assignGroup', {
             url: '/:giftCardid/assign',
             templateUrl: 'giftCards/templates/giftCardAssignGroup.tpl.html',
             controller: 'GiftCardAssignGroupCtrl',
@@ -76,7 +72,7 @@ function GiftCardsConfig( $stateProvider ) {
                 }
             }
         })
-        .state( 'giftCards.assignUser', {
+        .state('giftCards.assignUser', {
             url: '/:giftCardid/assign/user',
             templateUrl: 'giftCards/templates/giftCardAssignUser.tpl.html',
             controller: 'GiftCardAssignUserCtrl',
@@ -92,10 +88,11 @@ function GiftCardsConfig( $stateProvider ) {
                     return OrderCloud.SpendingAccounts.Get($stateParams.giftCardid);
                 }
             }
-        });
+        })
+    ;
 }
 
-function GiftCardsController ( $state, $ocMedia, OrderCloud, GiftCardList, TrackSearch,OrderCloudParameters, Parameters ) {
+function GiftCardsController ($state, $ocMedia, OrderCloud, OrderCloudParameters, GiftCardList, TrackSearch, Parameters) {
     var vm = this;
     vm.list = GiftCardList;
     vm.parameters = Parameters;
@@ -185,10 +182,9 @@ function GiftCardsController ( $state, $ocMedia, OrderCloud, GiftCardList, Track
                 vm.list.Meta = data.Meta;
             });
     };
-
 }
 
-function GiftCardEditController($state, $exceptionHandler, OrderCloud, SelectedGiftCard, GiftCardFactory, toastr) {
+function GiftCardEditController($state, $exceptionHandler, toastr, OrderCloud, GiftCardFactory, SelectedGiftCard) {
     var vm = this,
         giftCardID = SelectedGiftCard.ID;
     vm.format = GiftCardFactory.dateFormat;
@@ -201,7 +197,7 @@ function GiftCardEditController($state, $exceptionHandler, OrderCloud, SelectedG
     function Submit() {
         OrderCloud.SpendingAccounts.Update(giftCardID, vm.giftCard)
             .then(function() {
-                $state.go('giftCards', {}, {reload:true});
+                $state.go('giftCards', {}, {reload: true});
                 toastr.success('Gift Card Updated', 'Success');
             })
             .catch(function(ex) {
@@ -212,17 +208,16 @@ function GiftCardEditController($state, $exceptionHandler, OrderCloud, SelectedG
     function Delete() {
         OrderCloud.SpendingAccounts.Delete(giftCardID)
             .then(function() {
-                $state.go('giftCards', {}, {reload:true});
+                $state.go('giftCards', {}, {reload: true});
                 toastr.success('Gift Card Deleted', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
             });
     }
-  
 }
 
-function GiftCardCreateController($state, $exceptionHandler, OrderCloud, GiftCardFactory, toastr) {
+function GiftCardCreateController($state, $exceptionHandler, toastr, OrderCloud, GiftCardFactory) {
     var vm = this;
     vm.format = GiftCardFactory.dateFormat;
     vm.open1 = vm.open2 = false;
@@ -235,18 +230,16 @@ function GiftCardCreateController($state, $exceptionHandler, OrderCloud, GiftCar
     function Submit() {
         OrderCloud.SpendingAccounts.Create(vm.giftCard)
             .then(function() {
-                $state.go('giftCards', {}, {reload:true});
+                $state.go('giftCards', {}, {reload: true});
                 toastr.success('Gift Card Created', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
             });
     }
-    
-
 }
 
-function GiftCardAssignGroupController($scope, $q, OrderCloud, UserGroupList, AssignedUserGroups, SelectedGiftCard, Paging, Assignments, toastr) {
+function GiftCardAssignGroupController($scope, $q, toastr, OrderCloud, Paging, Assignments, UserGroupList, AssignedUserGroups, SelectedGiftCard) {
     var vm = this;
     vm.list = UserGroupList;
     vm.assignments = AssignedUserGroups;
@@ -257,7 +250,7 @@ function GiftCardAssignGroupController($scope, $q, OrderCloud, UserGroupList, As
     $scope.$watchCollection(function(){
         return vm.list;
     }, function(){
-        Paging.setSelected(vm.list.Items, vm.assignments.Items, 'UserGroupID')
+        Paging.SetSelected(vm.list.Items, vm.assignments.Items, 'UserGroupID');
     });
 
     function SaveFunc(ItemID) {
@@ -275,7 +268,7 @@ function GiftCardAssignGroupController($scope, $q, OrderCloud, UserGroupList, As
 
     function SaveAssignments() {
         toastr.success('Assignment Updated', 'Success');
-        return Assignments.saveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc, 'UserGroupID');
+        return Assignments.SaveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc, 'UserGroupID');
     }
 
     function PagingFunction() {
@@ -299,7 +292,7 @@ function GiftCardAssignGroupController($scope, $q, OrderCloud, UserGroupList, As
     }
 }
 
-function GiftCardAssignUserController($scope, $q, OrderCloud, UserList, AssignedUsers, SelectedGiftCard, Assignments, Paging, toastr) {
+function GiftCardAssignUserController($scope, $q, toastr, OrderCloud, Assignments, Paging, UserList, AssignedUsers, SelectedGiftCard) {
     var vm = this;
     vm.list = UserList;
     vm.assignments = AssignedUsers;
@@ -310,7 +303,7 @@ function GiftCardAssignUserController($scope, $q, OrderCloud, UserList, Assigned
     $scope.$watchCollection(function(){
         return vm.list;
     }, function(){
-        Paging.setSelected(vm.list.Items, vm.assignments.Items, 'UserID')
+        Paging.SetSelected(vm.list.Items, vm.assignments.Items, 'UserID');
     });
 
     function SaveFunc(ItemID) {
@@ -328,7 +321,7 @@ function GiftCardAssignUserController($scope, $q, OrderCloud, UserList, Assigned
 
     function SaveAssignments() {
         toastr.success('Assignment Updated', 'Success');
-        return Assignments.saveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc, 'UserID');
+        return Assignments.SaveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc, 'UserID');
     }
 
     function PagingFunction() {
@@ -358,8 +351,8 @@ function GiftCardFactory() {
         autoGenDefault: true,
         makeCode: function(bits) {
             bits = typeof  bits !== 'undefined' ? bits : 16;
-            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            var code = "";
+            var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            var code = '';
             for (var i = 0; i < bits; i += 1) {
                 code += possible.charAt(Math.floor(Math.random() * possible.length));
             }

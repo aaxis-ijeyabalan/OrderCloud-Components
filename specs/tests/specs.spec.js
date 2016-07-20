@@ -156,7 +156,7 @@ describe('Component: Specs', function() {
                 expect(oc.Specs.Update).toHaveBeenCalledWith(specEditCtrl.specID, specEditCtrl.spec);
             });
             it ('should enter the specs state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('specs', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('specs', {}, {reload: true});
             }));
         });
 
@@ -172,7 +172,7 @@ describe('Component: Specs', function() {
                 expect(oc.Specs.Delete).toHaveBeenCalledWith(spec.ID);
             });
             it ('should enter the specs state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('specs', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('specs', {}, {reload: true});
             }));
         });
     });
@@ -257,7 +257,7 @@ describe('Component: Specs', function() {
                 expect(oc.Specs.CreateOption).toHaveBeenCalledWith(specCreateCtrl.specID, specCreateCtrl.Options[1]);
             });
             it ('should enter the specs state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('specs', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('specs', {}, {reload: true});
             }));
         });
     });
@@ -280,17 +280,17 @@ describe('Component: Specs', function() {
                 specAssignCtrl.saveAssignments();
             }));
             it ('should call the Assignments saveAssignments method', inject(function(Assignments) {
-                expect(Assignments.saveAssignments).toHaveBeenCalled();
+                expect(Assignments.SaveAssignments).toHaveBeenCalled();
             }));
         });
 
         describe('PagingFunction', function() {
             beforeEach(inject(function(Paging) {
-                spyOn(Paging, 'paging').and.returnValue(null);
+                spyOn(Paging, 'Paging').and.returnValue(null);
                 specAssignCtrl.pagingfunction();
             }));
             it ('should call the Paging paging method', inject(function(Paging) {
-                expect(Paging.paging).toHaveBeenCalled();
+                expect(Paging.Paging).toHaveBeenCalled();
             }));
         });
     });

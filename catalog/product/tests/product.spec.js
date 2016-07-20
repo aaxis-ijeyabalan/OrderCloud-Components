@@ -40,7 +40,7 @@ describe('Component: Catalog Product', function(){
             ;
         describe('State: catalog.product', function(){
             beforeEach(inject(function($stateParams, $state){
-                state = $state.get('catalog.product',{},{reload:true});
+                state = $state.get('catalog.product', {}, {reload: true});
                 stateParams = $stateParams;
                 stateParams.productid= mockProductID;
                 mockSpecProductAssignment = {

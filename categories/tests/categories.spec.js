@@ -116,7 +116,7 @@ describe('Component: Categories', function() {
                 expect(oc.Categories.Update).toHaveBeenCalledWith(categoryEditCtrl.categoryID, categoryEditCtrl.category);
             });
             it ('should enter the categories state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('categories', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('categories', {}, {reload: true});
             }));
         });
 
@@ -132,7 +132,7 @@ describe('Component: Categories', function() {
                 expect(oc.Categories.Delete).toHaveBeenCalledWith(category.ID);
             });
             it ('should enter the categories state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('categories', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('categories', {}, {reload: true});
             }));
         });
     });
@@ -217,11 +217,11 @@ describe('Component: Categories', function() {
 
         describe('SaveAssignment', function() {
             beforeEach(inject(function(Assignments) {
-                spyOn(Assignments, 'saveAssignments').and.returnValue(null);
+                spyOn(Assignments, 'SaveAssignments').and.returnValue(null);
                 categoryAssignCtrl.saveAssignments();
             }));
             it ('should call the Assignments saveAssignments method', inject(function(Assignments) {
-                expect(Assignments.saveAssignments).toHaveBeenCalled();
+                expect(Assignments.SaveAssignments).toHaveBeenCalled();
             }));
         });
 
@@ -231,7 +231,7 @@ describe('Component: Categories', function() {
                 categoryAssignCtrl.pagingfunction();
             }));
             it ('should call the Paging paging method', inject(function(Paging) {
-                expect(Paging.paging).toHaveBeenCalled();
+                expect(Paging.Paging).toHaveBeenCalled();
             }));
         });
     });
@@ -250,11 +250,11 @@ describe('Component: Categories', function() {
 
         describe('SaveAssignment', function() {
             beforeEach(inject(function(Assignments) {
-                spyOn(Assignments, 'saveAssignments').and.returnValue(null);
+                spyOn(Assignments, 'SaveAssignments').and.returnValue(null);
                 categoryAssignProductCtrl.saveAssignments();
             }));
             it ('should call the Assignments saveAssignments method', inject(function(Assignments) {
-                expect(Assignments.saveAssignments).toHaveBeenCalled();
+                expect(Assignments.SaveAssignments).toHaveBeenCalled();
             }));
         });
 
@@ -264,7 +264,7 @@ describe('Component: Categories', function() {
                 categoryAssignProductCtrl.pagingfunction();
             }));
             it ('should call the Paging paging method', inject(function(Paging) {
-                expect(Paging.paging).toHaveBeenCalled();
+                expect(Paging.Paging).toHaveBeenCalled();
             }));
         });
     });

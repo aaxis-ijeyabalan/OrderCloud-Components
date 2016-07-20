@@ -98,7 +98,7 @@ describe('Component: Addresses', function() {
                 expect(oc.Addresses.Update).toHaveBeenCalledWith(addressEditCtrl.addressID, addressEditCtrl.address);
             });
             it ('should enter the addresses state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('addresses', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('addresses', {}, {reload: true});
             }));
         });
 
@@ -114,7 +114,7 @@ describe('Component: Addresses', function() {
                 expect(oc.Addresses.Delete).toHaveBeenCalledWith(address.ID, false);
             });
             it ('should enter the addresses state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('addresses', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('addresses', {}, {reload: true});
             }));
         });
     });
@@ -141,7 +141,7 @@ describe('Component: Addresses', function() {
                 expect(oc.Addresses.Create).toHaveBeenCalledWith(address);
             });
             it ('should enter the addresses state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('addresses', {}, {reload:true} );
+                expect($state.go).toHaveBeenCalledWith('addresses', {}, {reload: true} );
             }));
         });
     });

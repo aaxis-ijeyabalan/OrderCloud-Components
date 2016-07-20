@@ -47,7 +47,7 @@ describe('Component: Catalog Search', function(){
     describe('State: catalogSearchResults', function(){
         var state;
         beforeEach(inject(function($state){
-            state = $state.get('catalogSearchResults', {}, {reload:true});
+            state = $state.get('catalogSearchResults', {}, {reload: true});
             spyOn(oc.Me, 'ListCategories');
             spyOn(oc.Me, 'ListProducts');
         }));
@@ -98,7 +98,7 @@ describe('Component: Catalog Search', function(){
         describe('onHardEnter', function(){
             it('should go to CatalogSearchResults page with search term as parameter', inject(function($state){
                 catalogSearchCtrl.onHardEnter(searchTerm);
-                expect($state.go).toHaveBeenCalledWith('catalogSearchResults', {searchterm: searchTerm}, {reload:true})
+                expect($state.go).toHaveBeenCalledWith('catalogSearchResults', {searchterm: searchTerm}, {reload: true})
             }))
         });
     });

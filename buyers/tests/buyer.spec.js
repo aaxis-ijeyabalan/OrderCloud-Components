@@ -65,7 +65,7 @@ describe('Component: Buyers', function() {
                 expect(oc.Buyers.Update).toHaveBeenCalledWith(buyerEditCtrl.buyer);
             });
             it ('should enter the buyers state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('buyers', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('buyers', {}, {reload: true});
             }));
         });
     });
@@ -92,7 +92,7 @@ describe('Component: Buyers', function() {
                 expect(oc.Buyers.Create).toHaveBeenCalledWith(buyer);
             });
             it ('should enter the buyers state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('buyers', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('buyers', {}, {reload: true});
             }));
         });
     });

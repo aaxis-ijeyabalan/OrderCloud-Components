@@ -14,7 +14,7 @@ describe('Component: Catalog Category', function(){
            stateParams
         ;
         beforeEach(inject(function($state, $injector, $stateParams){
-            state = $state.get('catalog.category', {}, {reload:true});
+            state = $state.get('catalog.category', {}, {reload: true});
             injector = $injector;
             stateParams = $stateParams;
             spyOn(oc.Me, 'ListSubcategories');

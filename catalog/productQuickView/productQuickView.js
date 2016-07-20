@@ -4,33 +4,33 @@ angular.module('orderCloud')
     .controller ('ProductQuickViewModalCtrl', ProductQuickViewModalController)
 ;
 
-function ordercloudProductQuickViewDirective(){
-    return{
+function ordercloudProductQuickViewDirective() {
+    return {
         scope:{
             product: '='
         },
-        restrict:'E',
-        templateUrl:'catalog/productQuickView/templates/catalogSearch.quickview.tpl.html',
-        controller:'ProductQuickViewCtrl',
-        controllerAs:'productQuickView'
+        restrict: 'E',
+        templateUrl: 'catalog/productQuickView/templates/catalogSearch.quickview.tpl.html',
+        controller: 'ProductQuickViewCtrl',
+        controllerAs: 'productQuickView'
     }
 }
 
-function ProductQuickViewController ($uibModal){
+function ProductQuickViewController($uibModal) {
     var vm = this;
-    vm.open = function (product){
+    vm.open = function(product){
         $uibModal.open({
-            animation:true,
-            size:'lg',
+            animation: true,
+            size: 'lg',
             templateUrl: 'catalog/productQuickView/templates/catalogSearch.quickviewModal.tpl.html',
             controller: 'ProductQuickViewModalCtrl',
             controllerAs: 'productQuickViewModal',
 
             resolve: {
-                SelectedProduct: function (OrderCloud) {
+                SelectedProduct: function(OrderCloud) {
                     return OrderCloud.Me.GetProduct(product.ID);
                 },
-                SpecList: function(OrderCloud, $q) {
+                SpecList: function($q, OrderCloud) {
                     var queue = [];
                     var dfd = $q.defer();
                     OrderCloud.Specs.ListProductAssignments(null, product.ID)
@@ -77,7 +77,7 @@ function ProductQuickViewModalController($uibModalInstance, SelectedProduct, Spe
     vm.selectedProduct = SelectedProduct;
     vm.selectedProduct.item = {Specs: SpecList};
 
-    vm.cancel = function () {
+    vm.cancel = function() {
         $uibModalInstance.dismiss('cancel');
     };
 
@@ -88,5 +88,4 @@ function ProductQuickViewModalController($uibModalInstance, SelectedProduct, Spe
             $uibModalInstance.close()
         });
     };
-
 }

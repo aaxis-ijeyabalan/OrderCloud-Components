@@ -142,7 +142,7 @@ describe('Component: GiftCards', function() {
                 expect(oc.SpendingAccounts.Update).toHaveBeenCalledWith(giftCardEditCtrl.giftCardID, giftCardEditCtrl.giftCard);
             });
             it ('should enter the giftCards state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('giftCards', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('giftCards', {}, {reload: true});
             }));
         });
 
@@ -158,7 +158,7 @@ describe('Component: GiftCards', function() {
                 expect(oc.SpendingAccounts.Delete).toHaveBeenCalledWith(giftCard.ID);
             });
             it ('should enter the giftCards state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('giftCards', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('giftCards', {}, {reload: true});
             }));
         });
     });
@@ -185,7 +185,7 @@ describe('Component: GiftCards', function() {
                 expect(oc.SpendingAccounts.Create).toHaveBeenCalledWith(giftCardCreateCtrl.giftCard);
             });
             it ('should enter the giftCards state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('giftCards', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('giftCards', {}, {reload: true});
             }));
         });
     });
@@ -205,11 +205,11 @@ describe('Component: GiftCards', function() {
 
         describe('SaveAssignments', function() {
             beforeEach(inject(function(Assignments) {
-                spyOn(Assignments, 'saveAssignments').and.returnValue(null);
+                spyOn(Assignments, 'SaveAssignments').and.returnValue(null);
                 giftCardAssignGroupCtrl.saveAssignments();
             }));
             it ('should call the Assignments saveAssignments method', inject(function(Assignments) {
-                expect(Assignments.saveAssignments).toHaveBeenCalled();
+                expect(Assignments.SaveAssignments).toHaveBeenCalled();
             }));
         });
 
@@ -252,11 +252,11 @@ describe('Component: GiftCards', function() {
 
         describe('SaveAssignments', function() {
             beforeEach(inject(function(Assignments) {
-                spyOn(Assignments, 'saveAssignments').and.returnValue(null);
+                spyOn(Assignments, 'SaveAssignments').and.returnValue(null);
                 giftCardAssignUserCtrl.saveAssignments();
             }));
             it ('should call the Assignments saveAssignments method', inject(function(Assignments) {
-                expect(Assignments.saveAssignments).toHaveBeenCalled();
+                expect(Assignments.SaveAssignments).toHaveBeenCalled();
             }));
         });
 

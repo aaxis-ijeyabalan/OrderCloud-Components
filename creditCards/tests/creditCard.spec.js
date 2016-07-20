@@ -94,7 +94,7 @@ describe('Component: CreditCards', function() {
                 expect(oc.CreditCards.Update).toHaveBeenCalledWith(creditCardEditCtrl.creditCardID, creditCardEditCtrl.creditCard);
             });
             it ('should enter the creditCards state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('creditCards', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('creditCards', {}, {reload: true});
             }));
         });
 
@@ -110,7 +110,7 @@ describe('Component: CreditCards', function() {
                 expect(oc.CreditCards.Delete).toHaveBeenCalledWith(creditCard.ID);
             });
             it ('should enter the creditCards state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('creditCards', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('creditCards', {}, {reload: true});
             }));
         });
     });
@@ -138,7 +138,7 @@ describe('Component: CreditCards', function() {
                 expect(oc.CreditCards.Create).toHaveBeenCalledWith(creditCard);
             });
             it ('should enter the creditCards state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('creditCards', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('creditCards', {}, {reload: true});
             }));
         });
     });
@@ -158,11 +158,11 @@ describe('Component: CreditCards', function() {
 
         describe('SaveAssignment', function() {
             beforeEach(inject(function(Assignments) {
-                spyOn(Assignments, 'saveAssignments').and.returnValue(null);
+                spyOn(Assignments, 'SaveAssignments').and.returnValue(null);
                 creditCardAssignCtrl.saveAssignments();
             }));
             it ('should call the Assignments saveAssignments method', inject(function(Assignments) {
-                expect(Assignments.saveAssignments).toHaveBeenCalled();
+                expect(Assignments.SaveAssignments).toHaveBeenCalled();
             }));
         });
 
@@ -172,7 +172,7 @@ describe('Component: CreditCards', function() {
                 creditCardAssignCtrl.pagingfunction();
             }));
             it ('should call the Paging paging method', inject(function(Paging) {
-                expect(Paging.paging).toHaveBeenCalled();
+                expect(Paging.Paging).toHaveBeenCalled();
             }));
         });
     });

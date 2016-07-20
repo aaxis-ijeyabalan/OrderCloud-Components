@@ -87,7 +87,7 @@ describe('Component: UserGroups', function() {
                 expect(oc.UserGroups.Update).toHaveBeenCalledWith(userGroupEditCtrl.groupID, userGroupEditCtrl.userGroup);
             });
             it ('should enter the userGroups state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('userGroups', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('userGroups', {}, {reload: true});
             }));
         });
     });
@@ -114,7 +114,7 @@ describe('Component: UserGroups', function() {
                 expect(oc.UserGroups.Create).toHaveBeenCalledWith(userGroup);
             });
             it ('should enter the userGroups state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('userGroups', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('userGroups', {}, {reload: true});
             }));
         });
     });
@@ -133,21 +133,21 @@ describe('Component: UserGroups', function() {
 
         describe('SaveAssignment', function() {
             beforeEach(inject(function(Assignments) {
-                spyOn(Assignments, 'saveAssignments').and.returnValue(null);
+                spyOn(Assignments, 'SaveAssignments').and.returnValue(null);
                 userGroupAssignCtrl.saveAssignments();
             }));
             it ('should call the Assignments saveAssignments method', inject(function(Assignments) {
-                expect(Assignments.saveAssignments).toHaveBeenCalled();
+                expect(Assignments.SaveAssignments).toHaveBeenCalled();
             }));
         });
 
         describe('PagingFunction', function() {
             beforeEach(inject(function(Paging) {
-                spyOn(Paging, 'paging').and.returnValue(null);
+                spyOn(Paging, 'Paging').and.returnValue(null);
                 userGroupAssignCtrl.pagingfunction();
             }));
             it ('should call the Paging paging method', inject(function(Paging) {
-                expect(Paging.paging).toHaveBeenCalled();
+                expect(Paging.Paging).toHaveBeenCalled();
             }));
         });
     });

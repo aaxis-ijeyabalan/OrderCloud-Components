@@ -67,7 +67,7 @@ describe('Component: Users', function() {
                 expect(oc.Users.Create).toHaveBeenCalledWith(user);
             });
             it ('should enter the users state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('users', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('users', {}, {reload: true});
             }));
         });
     });
@@ -96,7 +96,7 @@ describe('Component: Users', function() {
                 expect(oc.Users.Update).toHaveBeenCalledWith(userEditCtrl.userID, user);
             });
             it ('should enter the users state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('users', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('users', {}, {reload: true});
             }));
         });
 
@@ -112,7 +112,7 @@ describe('Component: Users', function() {
                 expect(oc.Users.Delete).toHaveBeenCalledWith(user.ID);
             });
             it ('should enter the users state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('users', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('users', {}, {reload: true});
             }));
         });
     });

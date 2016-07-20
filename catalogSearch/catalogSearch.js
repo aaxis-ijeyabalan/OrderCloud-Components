@@ -8,20 +8,21 @@ angular.module('orderCloud')
 function CatalogSearchConfig($stateProvider) {
     $stateProvider
         .state('catalogSearchResults', {
-            parent:'base',
+            parent: 'base',
             url: '/catalogsearchresults/:searchterm',
-            templateUrl:'catalogSearch/templates/catalogSearchResults.tpl.html',
+            templateUrl: 'catalogSearch/templates/catalogSearchResults.tpl.html',
             controller: 'CatalogSearchResultsCtrl',
             controllerAs: 'catalogSearchResults',
             resolve:{
                 CategoryList: function($stateParams, OrderCloud) {
                     return OrderCloud.Me.ListCategories($stateParams.searchterm, null, null, null, null, null, 'all');
                 },
-                ProductList: function ($stateParams, OrderCloud) {
+                ProductList: function($stateParams, OrderCloud) {
                     return OrderCloud.Me.ListProducts($stateParams.searchterm);
                 }
             }
-        });
+        })
+    ;
 }
 
 function CatalogSearchResultsController(CategoryList, ProductList) {
@@ -34,7 +35,7 @@ function CatalogSearchController($scope, $state, $q, OrderCloud) {
     var vm = this;
     vm.productData;
     vm.categoryData;
-    vm.popupResults = function (term) {
+    vm.popupResults = function(term) {
         var maxProducts = $scope.maxprods || 5;
         var maxCategories = $scope.maxcats || 5;
         var dfd = $q.defer();
@@ -42,14 +43,14 @@ function CatalogSearchController($scope, $state, $q, OrderCloud) {
         queue.push(OrderCloud.Me.ListProducts(term, 1, maxProducts));
         queue.push(OrderCloud.Me.ListCategories(term, 1, maxCategories, null, null, null, 'all'));
         $q.all(queue)
-            .then(function (responses) {
+            .then(function(responses) {
                 vm.productData = responses[0].Items;
                 vm.categoryData = responses[1].Items;
-                angular.forEach(vm.productData, function (product) {
-                    product.NameType = "Product";
+                angular.forEach(vm.productData, function(product) {
+                    product.NameType = 'Product';
                 });
-                angular.forEach(vm.categoryData, function (category) {
-                    category.NameType = "Category";
+                angular.forEach(vm.categoryData, function(category) {
+                    category.NameType = 'Category';
                 });
                 var collected = vm.productData.concat(vm.categoryData);
                 dfd.resolve(collected);
@@ -62,14 +63,14 @@ function CatalogSearchController($scope, $state, $q, OrderCloud) {
     };
 
     vm.onHardEnter = function(search){
-        $state.go('catalogSearchResults', {searchterm:search}, {reload:true} );
+        $state.go('catalogSearchResults', {searchterm: search}, {reload: true});
     };
 }
 
 function ordercloudCatalogSearchDirective () {
     return {
         scope: {
-            maxprods: "@",
+            maxprods: '@',
             maxcats: '@'
         },
         restrict: 'E',

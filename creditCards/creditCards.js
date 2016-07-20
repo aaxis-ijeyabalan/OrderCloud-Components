@@ -1,37 +1,34 @@
-angular.module( 'orderCloud' )
-
-
-    .config( CreditCardsConfig )
+angular.module('orderCloud')
+    .config(CreditCardsConfig)
     .factory('creditCardExpirationDate', creditCardExpirationDate)
-    .controller( 'CreditCardsCtrl', CreditCardsController )
-    .controller( 'CreditCardEditCtrl', CreditCardEditController )
-    .controller( 'CreditCardCreateCtrl', CreditCardCreateController )
-    .controller( 'CreditCardAssignCtrl', CreditCardAssignController )
-
+    .controller('CreditCardsCtrl', CreditCardsController)
+    .controller('CreditCardEditCtrl', CreditCardEditController)
+    .controller('CreditCardCreateCtrl', CreditCardCreateController)
+    .controller('CreditCardAssignCtrl', CreditCardAssignController)
 ;
 
-function CreditCardsConfig( $stateProvider ) {
+function CreditCardsConfig($stateProvider) {
     $stateProvider
-        .state( 'creditCards', {
+        .state('creditCards', {
             parent: 'base',
-            templateUrl:'creditCards/templates/creditCards.tpl.html',
-            controller:'CreditCardsCtrl',
+            templateUrl: 'creditCards/templates/creditCards.tpl.html',
+            controller: 'CreditCardsCtrl',
             controllerAs: 'creditCards',
             url: '/creditcards?from&to&search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'Credit Cards'},
             resolve: {
-                Parameters: function( $stateParams, OrderCloudParameters ) {
+                Parameters: function($stateParams, OrderCloudParameters) {
                     return OrderCloudParameters.Get($stateParams);
                 },
-                CreditCardList: function( OrderCloud, Parameters ) {
+                CreditCardList: function(OrderCloud, Parameters) {
                     return OrderCloud.CreditCards.List(Parameters.search, Parameters.page, Parameters.pageSize || 12, Parameters.searchOn, Parameters.sortBy);
                 }
             }
         })
-        .state( 'creditCards.edit', {
+        .state('creditCards.edit', {
             url: '/:creditCardid/edit',
-            templateUrl:'creditCards/templates/creditCardEdit.tpl.html',
-            controller:'CreditCardEditCtrl',
+            templateUrl: 'creditCards/templates/creditCardEdit.tpl.html',
+            controller: 'CreditCardEditCtrl',
             controllerAs: 'creditCardEdit',
             resolve: {
                 SelectedCreditCard: function($stateParams, OrderCloud) {
@@ -39,15 +36,15 @@ function CreditCardsConfig( $stateProvider ) {
                 }
             }
         })
-        .state( 'creditCards.create', {
+        .state('creditCards.create', {
             url: '/create',
-            templateUrl:'creditCards/templates/creditCardCreate.tpl.html',
-            controller:'CreditCardCreateCtrl',
+            templateUrl: 'creditCards/templates/creditCardCreate.tpl.html',
+            controller: 'CreditCardCreateCtrl',
             controllerAs: 'creditCardCreate'
         })
-        .state( 'creditCards.assign', {
-            templateUrl:'creditCards/templates/creditCardAssign.tpl.html',
-            controller:'CreditCardAssignCtrl',
+        .state('creditCards.assign', {
+            templateUrl: 'creditCards/templates/creditCardAssign.tpl.html',
+            controller: 'CreditCardAssignCtrl',
             controllerAs: 'creditCardAssign',
             //Adding 1 to query parameters to differentiate between query parameters of the parent state
             url: '/:creditCardid/assign?search1&page1&pageSize1&searchOn1&sortBy1&filters1',
@@ -58,7 +55,7 @@ function CreditCardsConfig( $stateProvider ) {
                 AssignedUserGroups: function($stateParams, OrderCloud) {
                     return OrderCloud.CreditCards.ListAssignments($stateParams.creditCardid);
                 },
-                Parameters: function( $stateParams, OrderCloudParameters ) {
+                Parameters: function($stateParams, OrderCloudParameters) {
                     return OrderCloudParameters.Get($stateParams, 1);
                 },
                 SelectedCreditCard: function($stateParams, OrderCloud) {
@@ -69,9 +66,10 @@ function CreditCardsConfig( $stateProvider ) {
                 }
             }
         })
+    ;
 }
 
-function CreditCardsController( $state, $ocMedia, OrderCloud, CreditCardList, Parameters, OrderCloudParameters ) {
+function CreditCardsController($state, $ocMedia, OrderCloud, OrderCloudParameters, CreditCardList, Parameters) {
     var vm = this;
     vm.list = CreditCardList;
     vm.parameters = Parameters;
@@ -156,8 +154,6 @@ function creditCardExpirationDate(){
             }
     };
 
-
-
     function _ccExpireYears(){
         var today = new Date();
         today = today.getFullYear();
@@ -171,7 +167,7 @@ function creditCardExpirationDate(){
     return expirationDate;
 }
 
-function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Underscore, SelectedCreditCard, toastr , creditCardExpirationDate) {
+function CreditCardEditController($exceptionHandler, $state, Underscore, toastr, OrderCloud, SelectedCreditCard, creditCardExpirationDate) {
     var vm = this,
         creditcardid = SelectedCreditCard.ID;
     vm.expireMonth = creditCardExpirationDate.expirationMonth;
@@ -179,17 +175,15 @@ function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Unders
     vm.creditCardName = SelectedCreditCard.ID;
     vm.creditCard = SelectedCreditCard;
 
-    if(vm.creditCard.ExpirationDate != null){
+    if (vm.creditCard.ExpirationDate != null) {
         vm.creditCard.ExpirationDate = new Date(vm.creditCard.ExpirationDate);
         vm.creditCard.selectedExpireMonth = Underscore.findWhere(vm.expireMonth,{number: vm.creditCard.ExpirationDate.getMonth() +1});
         vm.creditCard.selectedExpireYear = vm.expireYear[vm.expireYear.indexOf(vm.creditCard.ExpirationDate.getFullYear())];
     }
    
-    vm.creditCard.Token = "token";
+    vm.creditCard.Token = 'token';
 
     vm.Submit = function() {
-
-
         var expiration = new Date();
         //If the expiration date field is left blank, selectedExpireMonth will be undefined, so we don't want it to error 
         if(vm.creditCard.selectedExpireMonth != undefined){
@@ -198,7 +192,7 @@ function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Unders
             //Pushes the date back to the last day of the previous month
             //Special case for February, always set back one more day to avoid leap year problems
             monthNum == 2 ? expiration.setMonth(monthNum,-1): expiration.setMonth(monthNum,0);
-            if(leapYear === true && monthNum === 2){
+            if (leapYear === true && monthNum === 2) {
                 expiration.setDate(29);
             }
         } else {
@@ -208,7 +202,7 @@ function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Unders
         vm.creditCard.ExpirationDate = expiration;
         OrderCloud.CreditCards.Update(creditcardid, vm.creditCard)
             .then(function() {
-                $state.go('creditCards', {}, {reload:true});
+                $state.go('creditCards', {}, {reload: true});
                 toastr.success('Credit Card Updated', 'Success');
             })
             .catch(function(ex) {
@@ -219,27 +213,27 @@ function CreditCardEditController( $exceptionHandler, $state, OrderCloud, Unders
     vm.Delete = function() {
         OrderCloud.CreditCards.Delete(SelectedCreditCard.ID)
             .then(function() {
-                $state.go('creditCards', {}, {reload:true})
+                $state.go('creditCards', {}, {reload: true});
                 toastr.success('Credit Card Deleted', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
             });
-    }
+    };
 }
 
-function CreditCardCreateController( $exceptionHandler, $state, OrderCloud, toastr, creditCardExpirationDate) {
+function CreditCardCreateController($exceptionHandler, $state, toastr, OrderCloud, creditCardExpirationDate) {
     var vm = this;
     vm.expireMonth = creditCardExpirationDate.expirationMonth;
     vm.expireYear = creditCardExpirationDate.expirationYear;
     vm.creditCard = {};
     //TODO: stop faking the token
-    vm.creditCard.Token = "token";
+    vm.creditCard.Token = 'token';
 
     vm.Submit= function(){
         var expiration = new Date();
         //If the expiration date field is left blank, selectedExpireMonth will be undefined, so we don't want it to error 
-        if(vm.selectedExpireMonth != undefined){
+        if (vm.selectedExpireMonth != undefined) {
             var monthNum = vm.selectedExpireMonth.number;
             var leapYear = creditCardExpirationDate.isLeapYear(vm.selectedExpireYear);
             //Pushes the date back to the last day of the previous month
@@ -254,9 +248,8 @@ function CreditCardCreateController( $exceptionHandler, $state, OrderCloud, toas
         expiration.setYear(vm.selectedExpireYear);
         vm.creditCard.ExpirationDate = expiration;
         OrderCloud.CreditCards.Create(vm.creditCard)
-
             .then(function() {
-                $state.go('creditCards', {}, {reload:true});
+                $state.go('creditCards', {}, {reload: true});
                 toastr.success('Credit Card Created', 'Success');
             })
             .catch(function(ex) {
@@ -266,7 +259,7 @@ function CreditCardCreateController( $exceptionHandler, $state, OrderCloud, toas
 
 }
 
-function CreditCardAssignController($scope, $state, $ocMedia, OrderCloud,OrderCloudParameters, Buyer, UserGroupList, AssignedUserGroups, SelectedCreditCard, Assignments, Paging, toastr, Parameters) {
+function CreditCardAssignController($scope, $state, $ocMedia, toastr, OrderCloud, Assignments, Paging, OrderCloudParameters, Buyer, UserGroupList, AssignedUserGroups, SelectedCreditCard, Parameters) {
     var vm = this;
     vm.buyer = Buyer;
     vm.assignBuyer = false;
@@ -287,7 +280,7 @@ function CreditCardAssignController($scope, $state, $ocMedia, OrderCloud,OrderCl
     $scope.$watchCollection(function(){
         return vm.list;
     }, function(){
-        Paging.setSelected(vm.list.Items, vm.assignments.Items, 'UserGroupID')
+        Paging.SetSelected(vm.list.Items, vm.assignments.Items, 'UserGroupID');
     });
 
     function SaveFunc(ItemID) {
@@ -304,7 +297,7 @@ function CreditCardAssignController($scope, $state, $ocMedia, OrderCloud,OrderCl
 
     function SaveAssignments() {
         toastr.success('Assignment Updated', 'Success');
-        return Assignments.saveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc, 'UserGroupID');
+        return Assignments.SaveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc, 'UserGroupID');
     }
 
     function AssignFunc() {
@@ -312,7 +305,7 @@ function CreditCardAssignController($scope, $state, $ocMedia, OrderCloud,OrderCl
     }
 
     function PagingFunction() {
-        return Paging.paging(vm.list, 'UserGroups', vm.assignments, AssignFunc);
+        return Paging.Paging(vm.list, 'UserGroups', vm.assignments, AssignFunc);
     }
 
     //Reload the state with new parameters
@@ -375,8 +368,4 @@ function CreditCardAssignController($scope, $state, $ocMedia, OrderCloud,OrderCl
                 vm.list.Meta = data.Meta;
             });
     };
-
-
-
-
 }

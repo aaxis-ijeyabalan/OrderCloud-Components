@@ -1,5 +1,4 @@
 angular.module('orderCloud')
-
     .config(ProductConfig)
     .directive('ocSpecForm', OCSpecForm)
     .directive('specSelectField', SpecSelectionDirective)
@@ -24,7 +23,7 @@ function ProductConfig($stateProvider) {
                 Product: function($stateParams, OrderCloud) {
                     return OrderCloud.Me.GetProduct($stateParams.productid);
                 },
-                SpecList: function(OrderCloud, $q, $stateParams) {
+                SpecList: function($q, $stateParams, OrderCloud) {
                     var specQueue = [];
                     var dfd = $q.defer();
                     OrderCloud.Specs.ListProductAssignments(null, $stateParams.productid)
@@ -84,13 +83,13 @@ function ProductConfig($stateProvider) {
                 }
             },
             resolve: {
-                LineItem: function($stateParams, Order, OrderCloud) {
+                LineItem: function($stateParams, OrderCloud, Order) {
                     return OrderCloud.LineItems.Get(Order.ID, $stateParams.lineitemid);
                 },
                 LI_Product: function(LineItem, OrderCloud) {
                     return OrderCloud.Me.GetProduct(LineItem.ProductID);
                 },
-                LI_SpecList: function(OrderCloud, $q, LineItem) {
+                LI_SpecList: function($q, OrderCloud, LineItem) {
                     var queue = [];
                     var dfd = $q.defer();
                     OrderCloud.Specs.ListProductAssignments(null, LineItem.ProductID)
@@ -174,7 +173,7 @@ function ProductController(Product, SpecList, Order, AddToOrder) {
     };
 }
 
-function LineItemEditController($state, Underscore, LineItem, OrderCloud, LineItemHelpers, LI_Product, LI_SpecList) {
+function LineItemEditController($state, Underscore, OrderCloud, LineItemHelpers, LineItem, LI_Product, LI_SpecList) {
     var vm = this;
     vm.item = LI_Product;
     var originalQuantity = LineItem.Quantity;
@@ -215,5 +214,5 @@ function LineItemEditController($state, Underscore, LineItem, OrderCloud, LineIt
                 });
         }
         else $state.go('cart');
-    }
+    };
 }

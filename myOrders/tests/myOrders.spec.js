@@ -95,7 +95,7 @@ describe('Component: MyOrders', function() {
                 expect(oc.Orders.Update).toHaveBeenCalledWith(orderEditCtrl.orderID, orderEditCtrl.order);
             });
             it ('should enter the orders state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('myOrders', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('myOrders', {}, {reload: true});
             }));
         });
 
@@ -111,7 +111,7 @@ describe('Component: MyOrders', function() {
                 expect(oc.Orders.Delete).toHaveBeenCalledWith(order.ID);
             });
             it ('should enter the orders state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('myOrders', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('myOrders', {}, {reload: true});
             }));
         });
 
