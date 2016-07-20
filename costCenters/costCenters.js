@@ -15,7 +15,7 @@ function CostCentersConfig( $stateProvider ) {
             templateUrl:'costCenters/templates/costCenters.tpl.html',
             controller:'CostCentersCtrl',
             controllerAs: 'costCenters',
-            url: '/costCenters?search&page&pageSize&searchOn&sortBy&filters',
+            url: '/costcenters?search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'Cost Centers'},
             resolve: {
                 Parameters: function( $stateParams, OrderCloudParameters ) {

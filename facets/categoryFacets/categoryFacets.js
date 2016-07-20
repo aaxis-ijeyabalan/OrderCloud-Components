@@ -14,7 +14,7 @@ function CategoryFacetsConfig( $stateProvider ) {
             templateUrl:'facets/categoryFacets/templates/categoryFacets.tpl.html',
             controller:'CategoryFacetsCtrl',
             controllerAs: 'facetedCat',
-            url: '/categoryFacets?from&to&search&page&pageSize&searchOn&sortBy&filters',
+            url: '/categoryfacets?from&to&search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'Category Facets'},
             resolve: {
                 Parameters: function( $stateParams, OrderCloudParameters ) {

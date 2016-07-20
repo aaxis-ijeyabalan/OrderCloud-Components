@@ -16,7 +16,7 @@ function UserGroupsConfig( $stateProvider ) {
             templateUrl:'userGroups/templates/userGroups.tpl.html',
             controller:'UserGroupsCtrl',
             controllerAs: 'userGroups',
-            url: '/userGroups?search&page&pageSize&sortBy&searchOn&filters',
+            url: '/usergroups?search&page&pageSize&sortBy&searchOn&filters',
             data: {componentName: 'User Groups'},
             resolve: {
                 Parameters: function($stateParams, OrderCloudParameters) {

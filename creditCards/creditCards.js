@@ -17,7 +17,7 @@ function CreditCardsConfig( $stateProvider ) {
             templateUrl:'creditCards/templates/creditCards.tpl.html',
             controller:'CreditCardsCtrl',
             controllerAs: 'creditCards',
-            url: '/credit-cards?from&to&search&page&pageSize&searchOn&sortBy&filters',
+            url: '/creditcards?from&to&search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'Credit Cards'},
             resolve: {
                 Parameters: function( $stateParams, OrderCloudParameters ) {

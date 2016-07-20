@@ -17,7 +17,7 @@ function SpendingAccountsConfig($stateProvider) {
 			templateUrl: 'spendingAccounts/templates/spendingAccounts.tpl.html',
 			controller: 'SpendingAccountsCtrl',
 			controllerAs: 'spendingAccounts',
-			url: '/spendingAccounts?search&page&pageSize&searchOn&sortBy&filters',
+			url: '/spendingaccounts?search&page&pageSize&searchOn&sortBy&filters',
 			data: {componentName: 'Spending Accounts'},
 			resolve: {
 				Parameters: function ($stateParams, OrderCloudParameters) {

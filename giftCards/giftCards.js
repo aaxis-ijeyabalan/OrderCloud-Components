@@ -17,7 +17,7 @@ function GiftCardsConfig( $stateProvider ) {
             templateUrl:'giftCards/templates/giftCards.tpl.html',
             controller:'GiftCardsCtrl',
             controllerAs: 'giftCards',
-            url: '/giftCards?search&page&pageSize&searchOn&sortBy&filters',
+            url: '/giftcards?search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'Gift Cards'},
             resolve: {
 

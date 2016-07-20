@@ -11,7 +11,7 @@ function PriceSchedulesConfig( $stateProvider ) {
     $stateProvider
         .state( 'priceSchedules', {
             parent: 'base',
-            url: '/priceSchedules?search&page&pageSize&sortBy&searchOn&filters',
+            url: '/priceschedules?search&page&pageSize&sortBy&searchOn&filters',
             templateUrl:'priceSchedules/templates/priceSchedules.tpl.html',
             controller:'PriceSchedulesCtrl',
             controllerAs: 'priceSchedules',

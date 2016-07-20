@@ -9,7 +9,7 @@ function CatalogSearchConfig($stateProvider) {
     $stateProvider
         .state('catalogSearchResults', {
             parent:'base',
-            url: '/catalogSearchResults/:searchterm',
+            url: '/catalogsearchresults/:searchterm',
             templateUrl:'catalogSearch/templates/catalogSearchResults.tpl.html',
             controller: 'CatalogSearchResultsCtrl',
             controllerAs: 'catalogSearchResults',

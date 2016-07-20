@@ -13,7 +13,7 @@ function ProductFacetsConfig( $stateProvider ) {
             templateUrl:'facets/productFacets/templates/productFacets.tpl.html',
             controller:'ProductFacetsCtrl',
             controllerAs: 'facetedProd',
-            url: '/productFacets?from&to&search&page&pageSize&searchOn&sortBy&filters',
+            url: '/productfacets?from&to&search&page&pageSize&searchOn&sortBy&filters',
             data: {componentName: 'Product Facets'},
             resolve: {
                 Parameters: function( $stateParams, OrderCloudParameters ) {

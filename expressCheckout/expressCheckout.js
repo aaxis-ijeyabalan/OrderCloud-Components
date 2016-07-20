@@ -11,7 +11,7 @@ function ExpressCheckoutConfig($stateProvider) {
     $stateProvider
         .state('expressCheckout', {
             parent: 'base',
-            url: '/expressCheckout',
+            url: '/expresscheckout',
             templateUrl: 'expressCheckout/templates/expressCheckout.tpl.html',
             controller: 'ExpressCheckoutCtrl',
             controllerAs: 'expressCheckout',
