@@ -89,14 +89,15 @@
                 <td data-title="Enabled" class="text-center"><i class="fa fa-circle" ng-class="{'active': coupon.Enabled}"></i></td>
                 <td class="actions-cell">
                     <button ui-sref="coupons.edit({couponid: coupon.ID})" class="btn btn-default btn-sm">Edit</button>
-                    <div class="btn-group" uib-dropdown dropdown-append-to-body>
+                    <button ui-sref=".assignParty({couponid: coupon.ID})" class="btn btn-default btn-sm">Assign</button>
+                    <!--<div class="btn-group" uib-dropdown dropdown-append-to-body>
                         <button type="button" class="btn btn-default btn-sm" uib-dropdown-toggle>Assign <span class="caret"></span></button>
                         <ul class="dropdown-menu-right" uib-dropdown-menu role="menu">
                             <li role="menuitem"><a ui-sref=".assignParty({couponid: coupon.ID})">Party Assignments</a></li>
                             <li role="menuitem"><a ui-sref=".assignProduct({couponid: coupon.ID})">Product Assignments</a></li>
                             <li role="menuitem"><a ui-sref=".assignCategory({couponid: coupon.ID})">Category Assignments</a></li>
                         </ul>
-                    </div>
+                    </div>-->
                 </td>
             </tr>
             </tbody>
