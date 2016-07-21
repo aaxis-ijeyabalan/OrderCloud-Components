@@ -1,12 +1,12 @@
-angular.module('orderCloud')
+/*angular.module('orderCloud')
     .config(CouponsConfig)
     .controller('CouponsCtrl', CouponsController)
     .controller('CouponEditCtrl', CouponEditController)
     .controller('CouponCreateCtrl', CouponCreateController)
     .controller('CouponAssignCtrl', CouponAssignController)
-    /*.controller('CouponAssignProductCtrl', CouponAssignProductController)*/
-    /*.controller('CouponAssignCategoryCtrl', CouponAssignCategoryController)*/
-;
+    /!*.controller('CouponAssignProductCtrl', CouponAssignProductController)*!/
+    /!*.controller('CouponAssignCategoryCtrl', CouponAssignCategoryController)*!/
+;*/
 
 function CouponsConfig($stateProvider) {
     $stateProvider
@@ -16,7 +16,7 @@ function CouponsConfig($stateProvider) {
             controller: 'CouponsCtrl',
             controllerAs: 'coupons',
             url: '/coupons?search&page&pageSize',
-            data: {componentName : 'Coupons'},
+            data: {componentName: 'Coupons'},
             resolve: {
                 Parameters: function($stateParams, OrderCloudParameters) {
                     return OrderCloudParameters.Get($stateParams);
