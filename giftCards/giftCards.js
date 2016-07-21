@@ -328,7 +328,7 @@ function GiftCardAssignUserController($scope, $q, toastr, OrderCloud, Assignment
         if (vm.list.Meta.Page < vm.list.Meta.PageSize) {
             var queue = [];
             var dfd = $q.defer();
-            queue.push(OrderCloud.Users.List(null, vm.list.Meta.Page + 1, vm.list.Meta.PageSize, null, null, {'RedemptionCode': '*'}));
+            queue.push(OrderCloud.Users.List(null, null, vm.list.Meta.Page + 1, vm.list.Meta.PageSize, null, null, {'RedemptionCode': '*'}));
             if (vm.assignments.Meta.Page < vm.assignments.Meta.PageSize) {
                 OrderCloud.SpendingAccounts.ListAssignments(vm.giftCard.ID, null, null, 'User', vm.list.Meta.Page + 1, vm.list.Meta.PageSize);
             }
