@@ -1,18 +1,16 @@
-angular.module( 'orderCloud' )
-
-    .config( CouponsConfig )
-    .controller( 'CouponsCtrl', CouponsController )
-    .controller( 'CouponEditCtrl', CouponEditController )
-    .controller( 'CouponCreateCtrl', CouponCreateController )
-    .controller( 'CouponAssignCtrl', CouponAssignController )
-    .controller( 'CouponAssignProductCtrl', CouponAssignProductController )
-    .controller( 'CouponAssignCategoryCtrl', CouponAssignCategoryController )
-
+angular.module('orderCloud')
+    .config(CouponsConfig)
+    .controller('CouponsCtrl', CouponsController)
+    .controller('CouponEditCtrl', CouponEditController)
+    .controller('CouponCreateCtrl', CouponCreateController)
+    .controller('CouponAssignCtrl', CouponAssignController)
+    /*.controller('CouponAssignProductCtrl', CouponAssignProductController)*/
+    /*.controller('CouponAssignCategoryCtrl', CouponAssignCategoryController)*/
 ;
 
-function CouponsConfig( $stateProvider ) {
+function CouponsConfig($stateProvider) {
     $stateProvider
-        .state( 'coupons', {
+        .state('coupons', {
             parent: 'base',
             templateUrl: 'coupons/templates/coupons.tpl.html',
             controller: 'CouponsCtrl',
@@ -20,27 +18,27 @@ function CouponsConfig( $stateProvider ) {
             url: '/coupons?search&page&pageSize',
             data: {componentName : 'Coupons'},
             resolve: {
-                Parameters: function ( $stateParams, OrderCloudParameters){
+                Parameters: function($stateParams, OrderCloudParameters) {
                     return OrderCloudParameters.Get($stateParams);
                 },
-                CouponList: function(OrderCloud, Parameters){
+                CouponList: function(OrderCloud, Parameters) {
                     return OrderCloud.Coupons.List(Parameters.search, Parameters.page, Parameters.pageSize || 12);
                 }
             }
         })
-        .state( 'coupons.edit', {
+        .state('coupons.edit', {
             url: '/:couponid/edit',
-            templateUrl:'coupons/templates/couponEdit.tpl.html',
-            controller:'CouponEditCtrl',
+            templateUrl: 'coupons/templates/couponEdit.tpl.html',
+            controller: 'CouponEditCtrl',
             controllerAs: 'couponEdit',
             resolve: {
                 SelectedCoupon: function($q, $stateParams, OrderCloud) {
                     var d = $q.defer();
                     OrderCloud.Coupons.Get($stateParams.couponid)
                         .then(function(coupon) {
-                            if(coupon.StartDate != null)
+                            if (coupon.StartDate != null)
                                 coupon.StartDate = new Date(coupon.StartDate);
-                            if(coupon.ExpirationDate != null)
+                            if (coupon.ExpirationDate != null)
                                 coupon.ExpirationDate = new Date(coupon.ExpirationDate);
                             d.resolve(coupon);
                         });
@@ -48,13 +46,13 @@ function CouponsConfig( $stateProvider ) {
                 }
             }
         })
-        .state( 'coupons.create', {
+        .state('coupons.create', {
             url: '/create',
             templateUrl: 'coupons/templates/couponCreate.tpl.html',
             controller: 'CouponCreateCtrl',
             controllerAs: 'couponCreate'
         })
-        .state( 'coupons.assignParty', {
+        .state('coupons.assignParty', {
             url: '/:couponid/assign/party',
             templateUrl: 'coupons/templates/couponAssignParty.tpl.html',
             controller: 'CouponAssignCtrl',
@@ -74,7 +72,7 @@ function CouponsConfig( $stateProvider ) {
                 }
             }
         })
-        .state( 'coupons.assignProduct', {
+        /*.state('coupons.assignProduct', {
             url: '/:couponid/assign/product',
             templateUrl: 'coupons/templates/couponAssignProduct.tpl.html',
             controller: 'CouponAssignProductCtrl',
@@ -90,8 +88,8 @@ function CouponsConfig( $stateProvider ) {
                     return OrderCloud.Coupons.Get($stateParams.couponid);
                 }
             }
-        })
-        .state( 'coupons.assignCategory', {
+        })*/
+        /*.state('coupons.assignCategory', {
             url: '/:couponid/assign/category',
             templateUrl: 'coupons/templates/couponAssignCategory.tpl.html',
             controller: 'CouponAssignCategoryCtrl',
@@ -107,10 +105,11 @@ function CouponsConfig( $stateProvider ) {
                     return OrderCloud.Coupons.Get($stateParams.couponid);
                 }
             }
-        });
+        })*/
+    ;
 }
 
-function CouponsController( CouponList, OrderCloud, Parameters, OrderCloudParameters, $ocMedia, $state) {
+function CouponsController($ocMedia, $state, OrderCloud, OrderCloudParameters, CouponList, Parameters) {
     var vm = this;
     vm.list = CouponList;
     vm.parameters = Parameters;
@@ -175,7 +174,7 @@ function CouponsController( CouponList, OrderCloud, Parameters, OrderCloudParame
 
     //Load the next page of results with all of the same parameters
     vm.loadMore = function() {
-        return OrderCloud.Coupons.List( Parameters.search, vm.list.Meta.Page + 1, Parameters.pageSize || vm.list.Meta.PageSize, Parameters.searchOn, Parameters.sortBy, Parameters.filters)
+        return OrderCloud.Coupons.List(Parameters.search, vm.list.Meta.Page + 1, Parameters.pageSize || vm.list.Meta.PageSize, Parameters.searchOn, Parameters.sortBy, Parameters.filters)
             .then(function(data) {
                 vm.list.Items = vm.list.Items.concat(data.Items);
                 vm.list.Meta = data.Meta;
@@ -183,7 +182,7 @@ function CouponsController( CouponList, OrderCloud, Parameters, OrderCloudParame
     };
 }
 
-function CouponEditController( $exceptionHandler, $state, SelectedCoupon, OrderCloud, toastr ) {
+function CouponEditController($exceptionHandler, $state, toastr, OrderCloud, SelectedCoupon) {
     var vm = this,
         couponid = SelectedCoupon.ID;
     vm.couponName = SelectedCoupon.Label;
@@ -192,7 +191,7 @@ function CouponEditController( $exceptionHandler, $state, SelectedCoupon, OrderC
     vm.Submit = function() {
         OrderCloud.Coupons.Update(couponid, vm.coupon)
             .then(function() {
-                $state.go('coupons', {}, {reload:true});
+                $state.go('coupons', {}, {reload: true});
                 toastr.success('Coupon Updated', 'Success');
             })
             .catch(function(ex) {
@@ -203,24 +202,24 @@ function CouponEditController( $exceptionHandler, $state, SelectedCoupon, OrderC
     vm.Delete = function() {
         OrderCloud.Coupons.Delete(SelectedCoupon.ID)
             .then(function() {
-                $state.go('coupons', {}, {reload:true});
+                $state.go('coupons', {}, {reload: true});
                 toastr.success('Coupon Deleted', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
             });
-    }
+    };
 }
 
-function CouponCreateController( $exceptionHandler, $state, OrderCloud, toastr) {
+function CouponCreateController($exceptionHandler, $state, toastr, OrderCloud) {
     var vm = this;
     vm.coupon = {};
     vm.coupon.MinimumPurchase = 0;
 
     vm.GenerateCode = function(bits) {
         bits = typeof  bits !== 'undefined' ? bits : 16;
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        var code = "";
+        var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        var code = '';
         for (var i = 0; i < bits; i += 1) {
             code += possible.charAt(Math.floor(Math.random() * possible.length));
         }
@@ -230,16 +229,16 @@ function CouponCreateController( $exceptionHandler, $state, OrderCloud, toastr) 
     vm.Submit = function() {
         OrderCloud.Coupons.Create(vm.coupon)
             .then(function() {
-                $state.go('coupons', {}, {reload:true});
+                $state.go('coupons', {}, {reload: true});
                 toastr.success('Coupon Created', 'Success');
             })
             .catch(function(ex) {
                 $exceptionHandler(ex);
             });
-    }
+    };
 }
 
-function CouponAssignController($scope, OrderCloud, Buyer, UserGroupList, AssignedUserGroups, SelectedCoupon, Assignments, Paging, toastr) {
+function CouponAssignController($scope, toastr, OrderCloud, Assignments, Paging, Buyer, UserGroupList, AssignedUserGroups, SelectedCoupon) {
     var vm = this;
     vm.coupon = SelectedCoupon;
     vm.buyer = Buyer;
@@ -248,10 +247,10 @@ function CouponAssignController($scope, OrderCloud, Buyer, UserGroupList, Assign
     vm.saveAssignments = saveAssignments;
     vm.pagingfunction = PagingFunction;
 
-    $scope.$watchCollection(function(){
+    $scope.$watchCollection(function() {
         return vm.list;
-    }, function(){
-        Paging.setSelected(vm.list.Items, vm.assignments.Items, 'UserGroupID')
+    }, function() {
+        Paging.SetSelected(vm.list.Items, vm.assignments.Items, 'UserGroupID')
     });
 
     function SaveFunc(ItemID) {
@@ -268,7 +267,7 @@ function CouponAssignController($scope, OrderCloud, Buyer, UserGroupList, Assign
 
     function saveAssignments() {
         toastr.success('Assignment Updated', 'Success');
-        return Assignments.saveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc, 'UserGroupID');
+        return Assignments.SaveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc, 'UserGroupID');
     }
 
     function AssignmentFunc() {
@@ -276,11 +275,11 @@ function CouponAssignController($scope, OrderCloud, Buyer, UserGroupList, Assign
     }
 
     function PagingFunction() {
-        return Paging.paging(vm.list, 'UserGroups', vm.assignments, AssignmentFunc);
+        return Paging.Paging(vm.list, 'UserGroups', vm.assignments, AssignmentFunc);
     }
 }
 
-function CouponAssignProductController($scope, OrderCloud, ProductList, ProductAssignments, SelectedCoupon, Assignments, Paging, toastr) {
+/*function CouponAssignProductController($scope, toastr, OrderCloud, Assignments, Paging, ProductList, ProductAssignments, SelectedCoupon) {
     var vm = this;
     vm.list = ProductList;
     vm.assignments = ProductAssignments;
@@ -288,10 +287,10 @@ function CouponAssignProductController($scope, OrderCloud, ProductList, ProductA
     vm.saveAssignments = SaveAssignment;
     vm.pagingfunction = PagingFunction;
 
-    $scope.$watchCollection(function(){
+    $scope.$watchCollection(function() {
         return vm.list;
-    }, function(){
-        Paging.setSelected(vm.list.Items, vm.assignments.Items, 'ProductID')
+    }, function() {
+        Paging.SetSelected(vm.list.Items, vm.assignments.Items, 'ProductID');
     });
 
     function SaveFunc(ItemID) {
@@ -307,7 +306,7 @@ function CouponAssignProductController($scope, OrderCloud, ProductList, ProductA
 
     function SaveAssignment() {
         toastr.success('Assignment Updated', 'Success');
-        return Assignments.saveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc, 'ProductID');
+        return Assignments.SaveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc, 'ProductID');
     }
 
     function AssignmentFunc() {
@@ -315,11 +314,11 @@ function CouponAssignProductController($scope, OrderCloud, ProductList, ProductA
     }
 
     function PagingFunction() {
-        return Paging.paging(vm.list, 'Products', vm.assignments, AssignmentFunc);
+        return Paging.Paging(vm.list, 'Products', vm.assignments, AssignmentFunc);
     }
-}
+}*/
 
-function CouponAssignCategoryController($scope, OrderCloud, CategoryList, CategoryAssignments, SelectedCoupon, Assignments, Paging, toastr) {
+/*function CouponAssignCategoryController($scope, toastr, OrderCloud, Assignments, Paging, CategoryList, CategoryAssignments, SelectedCoupon) {
     var vm = this;
     vm.list = CategoryList;
     vm.assignments = CategoryAssignments;
@@ -327,10 +326,10 @@ function CouponAssignCategoryController($scope, OrderCloud, CategoryList, Catego
     vm.saveAssignments = SaveAssignment;
     vm.pagingfunction = PagingFunction;
 
-    $scope.$watchCollection(function(){
+    $scope.$watchCollection(function() {
         return vm.list;
-    }, function(){
-        Paging.setSelected(vm.list.Items, vm.assignments.Items, 'CategoryID')
+    }, function() {
+        Paging.SetSelected(vm.list.Items, vm.assignments.Items, 'CategoryID');
     });
 
     function SaveFunc(ItemID) {
@@ -346,7 +345,7 @@ function CouponAssignCategoryController($scope, OrderCloud, CategoryList, Catego
 
     function SaveAssignment() {
         toastr.success('Assignment Updated', 'Success');
-        return Assignments.saveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc, 'CategoryID');
+        return Assignments.SaveAssignments(vm.list.Items, vm.assignments.Items, SaveFunc, DeleteFunc, 'CategoryID');
     }
 
     function AssignmentFunc() {
@@ -354,6 +353,6 @@ function CouponAssignCategoryController($scope, OrderCloud, CategoryList, Catego
     }
 
     function PagingFunction() {
-        return Paging.paging(vm.list, 'Categories', vm.assignments, AssignmentFunc);
+        return Paging.Paging(vm.list, 'Categories', vm.assignments, AssignmentFunc);
     }
-}
+}*/

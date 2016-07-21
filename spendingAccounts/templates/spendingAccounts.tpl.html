@@ -76,7 +76,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="spendingAccount in spendingAccounts.list.Items" ui-sref="spendingAccounts.edit({spendingAccountid:spendingAccount.ID})">
+            <tr ng-repeat="spendingAccount in spendingAccounts.list.Items" ui-sref="spendingAccounts.edit({spendingaccountid:spendingAccount.ID})">
                 <th scope="row">{{spendingAccount.ID}}</th>
                 <td data-title="Name">{{spendingAccount.Name}}</td>
                 <td data-title="Balance">{{spendingAccount.Balance | currency}}</td>

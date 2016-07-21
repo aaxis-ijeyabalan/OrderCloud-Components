@@ -1,17 +1,16 @@
 angular.module('orderCloud')
-
     .config(CartConfig)
     .controller('CartCtrl', CartController)
     .controller('MiniCartCtrl', MiniCartController)
     .directive('ordercloudMinicart', OrderCloudMiniCartDirective)
-    .controller('MinicartModalController',MinicartModalController)
+    .controller('MinicartModalController', MinicartModalController)
 ;
 
 function CartConfig($stateProvider) {
     $stateProvider
         .state('cart', {
             parent: 'base',
-            //data: {componentName: 'Cart'},
+            data: {componentName: 'Cart'},
             url: '/cart',
             templateUrl: 'cart/templates/cart.tpl.html',
             controller: 'CartCtrl',
@@ -28,17 +27,17 @@ function CartConfig($stateProvider) {
                         });
                     return dfd.promise;
                 },
-                CurrentOrderResolve: function(Order, $state) {
+                CurrentOrderResolve: function($state, Order) {
                     if (!Order) {
                         $state.go('home');
                     }
                 },
-                LineItemsList: function($q, $state, Order, Underscore, OrderCloud, toastr, LineItemHelpers) {
+                LineItemsList: function($q, $state, toastr, Underscore, OrderCloud, LineItemHelpers, Order) {
                     var dfd = $q.defer();
                     OrderCloud.LineItems.List(Order.ID)
                         .then(function(data) {
                             if (!data.Items.length) {
-                                toastr.error("Your order does not contain any line items.", 'Error');
+                                toastr.error('Your order does not contain any line items.', 'Error');
                                 if ($state.current.name === 'cart') {
                                     $state.go('home');
                                 }
@@ -52,7 +51,7 @@ function CartConfig($stateProvider) {
                             }
                         })
                         .catch(function() {
-                            toastr.error("Your order does not contain any line items.", 'Error');
+                            toastr.error('Your order does not contain any line items.', 'Error');
                             dfd.reject();
                         });
                     return dfd.promise;
@@ -68,9 +67,9 @@ function CartController($q, $rootScope, $timeout, OrderCloud, Order, LineItemsLi
     vm.removeItem = LineItemHelpers.RemoveItem;
     vm.pagingfunction = PagingFunction;
 
-    vm.updateQuantity = function(cartOrder,lineItem){
+    vm.updateQuantity = function(cartOrder,lineItem) {
         $timeout.cancel();
-        $timeout(function(){
+        $timeout(function() {
             LineItemHelpers.UpdateQuantity(cartOrder,lineItem);
         },800);
     };
@@ -101,9 +100,9 @@ function CartController($q, $rootScope, $timeout, OrderCloud, Order, LineItemsLi
 
     $rootScope.$on('OC:UpdateLineItem', function(event,Order) {
             OrderCloud.LineItems.List(Order.ID)
-                .then(function (data) {
+                .then(function(data) {
                     LineItemHelpers.GetProductInfo(data.Items)
-                        .then(function () {
+                        .then(function() {
                             vm.lineItems = data;
                         });
                 });
@@ -117,7 +116,7 @@ function MiniCartController($q, $state, $rootScope,$uibModal, $ocMedia, OrderClo
     vm.showLineItems = false;
     vm.$ocMedia = $ocMedia;
 
-    vm.getLI = function(){
+    vm.getLI = function() {
         CurrentOrder.Get()
         .then(function(data) {
             vm.Order = data;
@@ -173,21 +172,20 @@ function MiniCartController($q, $state, $rootScope,$uibModal, $ocMedia, OrderClo
             });
         return dfd.promise;
     };
+
     $rootScope.$on('LineItemAddedToCart', function() {
         CurrentOrder.Get()
             .then(function(order) {
-                if(vm.$ocMedia('max-width:767px')){
+                if (vm.$ocMedia('max-width:767px')) {
                     vm.openModal(order);
-                }else{
+                } else {
                     vm.lineItemCall(order);
                     vm.showLineItems = true;
                 }
-
             });
     });
 
-
-    $rootScope.$on('OC:RemoveOrder', function(){ //broadcast is in build > src > app > common > line items
+    $rootScope.$on('OC:RemoveOrder', function() {//broadcast is in build > src > app > common > line items
         vm.Order = null;
         vm.LineItems = {};
     });
@@ -197,25 +195,23 @@ function MiniCartController($q, $state, $rootScope,$uibModal, $ocMedia, OrderClo
         // $event.stopPropagation();
         // $scope.status.isopen = !$scope.status.isopen;
         vm.showLineItems = true;
-        if(vm.$ocMedia('max-width:767px')){
+        if (vm.$ocMedia('max-width:767px')) {
             vm.goToCart();
         }
     };
 
-    vm.openModal = function(order){
-
+    vm.openModal = function(order) {
         $uibModal.open({
-            animation:true,
-            size :'lg',
+            animation: true,
+            size: 'lg',
             templateUrl: 'cart/templates/modalMinicart.tpl.html',
-            controller : 'MinicartModalController',
-            controllerAs : 'minicartModal',
-            resolve : {
+            controller: 'MinicartModalController',
+            controllerAs: 'minicartModal',
+            resolve: {
                 LineItems: vm.lineItemCall(order)
             }
         });
-};
-
+    };
 }
 
 function OrderCloudMiniCartDirective() {
@@ -228,13 +224,12 @@ function OrderCloudMiniCartDirective() {
     };
 }
 
-
-function MinicartModalController($state, $uibModalInstance, LineItems){
+function MinicartModalController($state, $uibModalInstance, LineItems) {
     var vm = this;
     vm.lineItems = LineItems;
     vm.lineItemsLength = vm.lineItems.length;
 
-    vm.cancel = function () {
+    vm.cancel = function() {
         $uibModalInstance.dismiss('cancel');
     };
 
@@ -242,14 +237,15 @@ function MinicartModalController($state, $uibModalInstance, LineItems){
         $state.go('cart');
         $uibModalInstance.close();
     };
+
     vm.goToExpressCheckout = function() {
         $state.go('expressCheckout');
         $uibModalInstance.close();
     };
+
     vm.goToCheckout = function() {
         $state.go('checkout');
         $uibModalInstance.close();
     };
-
-};
+}
 
