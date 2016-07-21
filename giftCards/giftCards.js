@@ -29,18 +29,18 @@ function GiftCardsConfig($stateProvider) {
             }
         })
         .state('giftCards.edit', {
-            url: '/:giftCardid/edit',
+            url: '/:giftcardid/edit',
             templateUrl: 'giftCards/templates/giftCardEdit.tpl.html',
             controller: 'GiftCardEditCtrl',
             controllerAs: 'giftCardEdit',
             resolve: {
                 SelectedGiftCard: function($q, $stateParams, OrderCloud) {
                     var d = $q.defer();
-                    OrderCloud.SpendingAccounts.Get($stateParams.giftCardid)
+                    OrderCloud.SpendingAccounts.Get($stateParams.giftcardid)
                         .then(function(giftcard) {
-                            if(giftcard.StartDate != null)
+                            if (giftcard.StartDate != null)
                                 giftcard.StartDate = new Date(giftcard.StartDate);
-                            if(giftcard.EndDate != null)
+                            if (giftcard.EndDate != null)
                                 giftcard.EndDate = new Date(giftcard.EndDate);
                             d.resolve(giftcard);
                         });
@@ -56,7 +56,7 @@ function GiftCardsConfig($stateProvider) {
             controllerAs: 'giftCardCreate'
         })
         .state('giftCards.assignGroup', {
-            url: '/:giftCardid/assign',
+            url: '/:giftcardid/assign',
             templateUrl: 'giftCards/templates/giftCardAssignGroup.tpl.html',
             controller: 'GiftCardAssignGroupCtrl',
             controllerAs: 'giftCardAssign',
@@ -65,15 +65,15 @@ function GiftCardsConfig($stateProvider) {
                     return OrderCloud.UserGroups.List();
                 },
                 AssignedUserGroups: function($stateParams, OrderCloud) {
-                    return OrderCloud.SpendingAccounts.ListAssignments($stateParams.giftCardid, null, null, 'Group');
+                    return OrderCloud.SpendingAccounts.ListAssignments($stateParams.giftcardid, null, null, 'Group');
                 },
                 SelectedGiftCard: function($stateParams, OrderCloud) {
-                    return OrderCloud.SpendingAccounts.Get($stateParams.giftCardid);
+                    return OrderCloud.SpendingAccounts.Get($stateParams.giftcardid);
                 }
             }
         })
         .state('giftCards.assignUser', {
-            url: '/:giftCardid/assign/user',
+            url: '/:giftcardid/assign/user',
             templateUrl: 'giftCards/templates/giftCardAssignUser.tpl.html',
             controller: 'GiftCardAssignUserCtrl',
             controllerAs: 'giftCardAssignUser',
@@ -82,10 +82,10 @@ function GiftCardsConfig($stateProvider) {
                     return OrderCloud.Users.List();
                 },
                 AssignedUsers: function($stateParams, OrderCloud) {
-                    return OrderCloud.SpendingAccounts.ListAssignments($stateParams.giftCardid, null, null, 'User');
+                    return OrderCloud.SpendingAccounts.ListAssignments($stateParams.giftcardid, null, null, 'User');
                 },
                 SelectedGiftCard: function($stateParams, OrderCloud) {
-                    return OrderCloud.SpendingAccounts.Get($stateParams.giftCardid);
+                    return OrderCloud.SpendingAccounts.Get($stateParams.giftcardid);
                 }
             }
         })
@@ -247,9 +247,9 @@ function GiftCardAssignGroupController($scope, $q, toastr, OrderCloud, Paging, A
     vm.saveAssignments = SaveAssignments;
     vm.pagingfunction = PagingFunction;
 
-    $scope.$watchCollection(function(){
+    $scope.$watchCollection(function() {
         return vm.list;
-    }, function(){
+    }, function() {
         Paging.SetSelected(vm.list.Items, vm.assignments.Items, 'UserGroupID');
     });
 
@@ -300,9 +300,9 @@ function GiftCardAssignUserController($scope, $q, toastr, OrderCloud, Assignment
     vm.saveAssignments = SaveAssignments;
     vm.pagingfunction = PagingFunction;
 
-    $scope.$watchCollection(function(){
+    $scope.$watchCollection(function() {
         return vm.list;
-    }, function(){
+    }, function() {
         Paging.SetSelected(vm.list.Items, vm.assignments.Items, 'UserID');
     });
 

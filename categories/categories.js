@@ -261,9 +261,9 @@ function CategoryAssignPartyController($scope, toastr, OrderCloud, Assignments, 
     vm.saveAssignments = SaveAssignment;
     vm.pagingfunction = PagingFunction;
 
-    $scope.$watchCollection(function(){
+    $scope.$watchCollection(function() {
         return vm.list;
-    }, function(){
+    }, function() {
         Paging.SetSelected(vm.list.Items, vm.assignments.Items, 'UserGroupID');
     });
 
@@ -301,9 +301,9 @@ function CategoryAssignProductController($scope, toastr, OrderCloud, Assignments
     vm.saveAssignments = SaveAssignment;
     vm.pagingfunction = PagingFunction;
 
-    $scope.$watchCollection(function(){
+    $scope.$watchCollection(function() {
         return vm.list;
-    }, function(){
+    }, function() {
         Paging.SetSelected(vm.list.Items, vm.assignments.Items, 'ProductID');
     });
 
@@ -371,12 +371,12 @@ function CategoryTreeService($q, Underscore, OrderCloud) {
         var deferred = $q.defer();
         OrderCloud.Categories.List(null, 1, 100, null, null, null, null, 'all')
             .then(function(list) {
-            angular.forEach(Underscore.where(list.Items, { ParentID: null}), function(node) {
+            angular.forEach(Underscore.where(list.Items, {ParentID: null}), function(node) {
                 tree.push(getnode(node));
             });
 
             function getnode(node) {
-                var children = Underscore.where(list.Items, { ParentID: node.ID});
+                var children = Underscore.where(list.Items, {ParentID: node.ID});
                 if (children.length > 0) {
                     node.children = children;
                     angular.forEach(children, function(child) {

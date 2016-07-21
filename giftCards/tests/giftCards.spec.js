@@ -27,7 +27,7 @@ describe('Component: GiftCards', function() {
             state = $state.get('giftCards');
             spyOn(oc.SpendingAccounts, 'List').and.returnValue(null);
         }));
-        it('should resolve GiftCardList', inject(function ($injector) {
+        it('should resolve GiftCardList', inject(function($injector) {
             $injector.invoke(state.resolve.GiftCardList);
             expect(oc.SpendingAccounts.List).toHaveBeenCalledWith(null, null, null, null, null, {'RedemptionCode': '*'});
         }));
@@ -39,9 +39,9 @@ describe('Component: GiftCards', function() {
             state = $state.get('giftCards.edit');
             spyOn(oc.SpendingAccounts, 'Get').and.returnValue(null);
         }));
-        it('should resolve SelectedGiftCard', inject(function ($injector, $stateParams) {
+        it('should resolve SelectedGiftCard', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedGiftCard);
-            expect(oc.SpendingAccounts.Get).toHaveBeenCalledWith($stateParams.giftCardid);
+            expect(oc.SpendingAccounts.Get).toHaveBeenCalledWith($stateParams.giftcardid);
         }));
     });
 
@@ -53,17 +53,17 @@ describe('Component: GiftCards', function() {
             spyOn(oc.SpendingAccounts, 'ListAssignments').and.returnValue(null);
             spyOn(oc.SpendingAccounts, 'Get').and.returnValue(null);
         }));
-        it('should resolve UserGroupList', inject(function ($injector) {
+        it('should resolve UserGroupList', inject(function($injector) {
             $injector.invoke(state.resolve.UserGroupList);
             expect(oc.UserGroups.List).toHaveBeenCalled();
         }));
-        it('should resolve AssignedUserGroups', inject(function ($injector, $stateParams) {
+        it('should resolve AssignedUserGroups', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.AssignedUserGroups);
-            expect(oc.SpendingAccounts.ListAssignments).toHaveBeenCalledWith($stateParams.giftCardid, null, null, 'Group');
+            expect(oc.SpendingAccounts.ListAssignments).toHaveBeenCalledWith($stateParams.giftcardid, null, null, 'Group');
         }));
-        it('should resolve SelectedGiftCard', inject(function ($injector, $stateParams) {
+        it('should resolve SelectedGiftCard', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedGiftCard);
-            expect(oc.SpendingAccounts.Get).toHaveBeenCalledWith($stateParams.giftCardid);
+            expect(oc.SpendingAccounts.Get).toHaveBeenCalledWith($stateParams.giftcardid);
         }));
     });
 
@@ -75,17 +75,17 @@ describe('Component: GiftCards', function() {
             spyOn(oc.SpendingAccounts, 'Get').and.returnValue(null);
             spyOn(oc.SpendingAccounts, 'ListAssignments').and.returnValue(null);
         }));
-        it('should resolve UserList', inject(function ($injector) {
+        it('should resolve UserList', inject(function($injector) {
             $injector.invoke(state.resolve.UserList);
             expect(oc.Users.List).toHaveBeenCalled();
         }));
-        it('should resolve AssignedUsers', inject(function ($injector, $stateParams) {
+        it('should resolve AssignedUsers', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.AssignedUsers);
-            expect(oc.SpendingAccounts.ListAssignments).toHaveBeenCalledWith($stateParams.giftCardid, null, null, 'User');
+            expect(oc.SpendingAccounts.ListAssignments).toHaveBeenCalledWith($stateParams.giftcardid, null, null, 'User');
         }));
-        it('should resolve SelectedGiftCard', inject(function ($injector, $stateParams) {
+        it('should resolve SelectedGiftCard', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedGiftCard);
-            expect(oc.SpendingAccounts.Get).toHaveBeenCalledWith($stateParams.giftCardid);
+            expect(oc.SpendingAccounts.Get).toHaveBeenCalledWith($stateParams.giftcardid);
         }));
     });
 

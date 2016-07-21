@@ -25,13 +25,13 @@ function UserGroupsConfig($stateProvider) {
             }
         })
         .state('userGroups.edit', {
-            url: '/:userGroupid/edit',
+            url: '/:usergroupid/edit',
             templateUrl: 'userGroups/templates/userGroupEdit.tpl.html',
             controller: 'UserGroupEditCtrl',
             controllerAs: 'userGroupEdit',
             resolve: {
                 SelectedUserGroup: function($stateParams, OrderCloud) {
-                    return OrderCloud.UserGroups.Get($stateParams.userGroupid);
+                    return OrderCloud.UserGroups.Get($stateParams.usergroupid);
                 }
             }
         })
@@ -42,7 +42,7 @@ function UserGroupsConfig($stateProvider) {
             controllerAs: 'userGroupCreate'
         })
         .state('userGroups.assign', {
-            url: '/:userGroupid/assign',
+            url: '/:usergroupid/assign',
             templateUrl: 'userGroups/templates/userGroupAssign.tpl.html',
             controller: 'UserGroupAssignCtrl',
             controllerAs: 'userGroupAssign',
@@ -51,10 +51,10 @@ function UserGroupsConfig($stateProvider) {
                     return OrderCloud.Users.List(null, 1, 20);
                 },
                 AssignedUsers: function($stateParams, OrderCloud) {
-                    return OrderCloud.UserGroups.ListUserAssignments($stateParams.userGroupid);
+                    return OrderCloud.UserGroups.ListUserAssignments($stateParams.usergroupid);
                 },
                 SelectedUserGroup: function($stateParams, OrderCloud) {
-                    return OrderCloud.UserGroups.Get($stateParams.userGroupid);
+                    return OrderCloud.UserGroups.Get($stateParams.usergroupid);
                 }
             }
         })
@@ -187,7 +187,7 @@ function UserGroupAssignController($scope, toastr, OrderCloud, Assignments, Pagi
 
     $scope.$watchCollection(function() {
         return vm.list;
-    }, function(){
+    }, function() {
         Paging.SetSelected(vm.list.Items, vm.assignments.Items, 'UserID');
     });
 

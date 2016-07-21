@@ -129,7 +129,7 @@ function FacetedCategoryManageController ($state, $uibModal, toastr, Underscore,
         });
 
         modalInstance.result.then(function(facetToSave) {
-            if(vm.category.xp == null) vm.category.xp = { OC_Facets: {}};
+            if (vm.category.xp == null) vm.category.xp = {OC_Facets: {}};
             if (vm.category.xp && !vm.category.xp.OC_Facets) vm.category.xp.OC_Facets = {};
             vm.category.xp.OC_Facets[facetToSave.facet.toLowerCase()] = {};
             vm.category.xp.OC_Facets[facetToSave.facet.toLowerCase()].Values = facetToSave.facetValues;
@@ -162,11 +162,11 @@ function FacetedCategoryManageController ($state, $uibModal, toastr, Underscore,
     };
 
     vm.deleteFacet = function(facetName) {
-        if(confirm('Are you sure you want to delete this facet?')) {
-            if(Object.keys(vm.category.xp.OC_Facets).length === 1) {
+        if (confirm('Are you sure you want to delete this facet?')) {
+            if (Object.keys(vm.category.xp.OC_Facets).length === 1) {
                 delete vm.category.xp.OC_Facets;
                 OrderCloud.Categories.Update(vm.category.ID, vm.category)
-                    .then(function(){
+                    .then(function() {
                     var keyName = 'xp.OC_Facets.' + vm.category.ID + '.' + facetName;
                     var filterObj = {};
                     filterObj[keyName] = '*';
@@ -183,7 +183,7 @@ function FacetedCategoryManageController ($state, $uibModal, toastr, Underscore,
             else {
                 delete vm.category.xp.OC_Facets[facetName];
                 OrderCloud.Categories.Update(vm.category.ID, vm.category)
-                    .then(function(){
+                    .then(function() {
                         var keyName = 'xp.OC_Facets.' + vm.category.ID + '.' + facetName;
                         var filterObj = {};
                         filterObj[keyName] = '*';
@@ -212,7 +212,7 @@ function CategoryFacetsModalController($uibModalInstance) {
     vm.facet = null;
 
     vm.addValue = function() {
-        if(vm.facetValue != null) {
+        if (vm.facetValue != null) {
             vm.facetValues.push(vm.facetValue);
             vm.facetValue = null;
             $('#facetValue').focus();

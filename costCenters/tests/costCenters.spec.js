@@ -22,7 +22,7 @@ describe('Component: CostCenters', function() {
             state = $state.get('costCenters');
             spyOn(oc.CostCenters, 'List').and.returnValue(null);
         }));
-        it('should resolve CostCenterList', inject(function ($injector) {
+        it('should resolve CostCenterList', inject(function($injector) {
             $injector.invoke(state.resolve.CostCenterList);
             expect(oc.CostCenters.List).toHaveBeenCalled();
         }));
@@ -36,9 +36,9 @@ describe('Component: CostCenters', function() {
             defer.resolve();
             spyOn(oc.CostCenters, 'Get').and.returnValue(defer.promise);
         }));
-        it('should resolve SelectedCostCenter', inject(function ($injector, $stateParams) {
+        it('should resolve SelectedCostCenter', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedCostCenter);
-            expect(oc.CostCenters.Get).toHaveBeenCalledWith($stateParams.costCenterid);
+            expect(oc.CostCenters.Get).toHaveBeenCalledWith($stateParams.costcenterid);
         }));
     });
 
@@ -53,21 +53,21 @@ describe('Component: CostCenters', function() {
             defer.resolve();
             spyOn(oc.CostCenters, 'Get').and.returnValue(defer.promise);
         }));
-        it('should resolve Buyer', inject(function ($injector) {
+        it('should resolve Buyer', inject(function($injector) {
             $injector.invoke(state.resolve.Buyer);
             expect(oc.Buyers.Get).toHaveBeenCalled();
         }));
-        it('should resolve UserGroupList', inject(function ($injector) {
+        it('should resolve UserGroupList', inject(function($injector) {
             $injector.invoke(state.resolve.UserGroupList);
             expect(oc.UserGroups.List).toHaveBeenCalled();
         }));
-        it('should resolve AssignmentsList', inject(function ($injector, $stateParams) {
+        it('should resolve AssignmentsList', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.AssignedUserGroups);
-            expect(oc.CostCenters.ListAssignments).toHaveBeenCalledWith($stateParams.costCenterid);
+            expect(oc.CostCenters.ListAssignments).toHaveBeenCalledWith($stateParams.costcenterid);
         }));
-        it('should resolve SelectedCostCenter', inject(function ($injector, $stateParams) {
+        it('should resolve SelectedCostCenter', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedCostCenter);
-            expect(oc.CostCenters.Get).toHaveBeenCalledWith($stateParams.costCenterid);
+            expect(oc.CostCenters.Get).toHaveBeenCalledWith($stateParams.costcenterid);
         }));
     });
 

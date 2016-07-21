@@ -25,7 +25,7 @@ describe('Component: CreditCards', function() {
             state = $state.get('creditCards');
             spyOn(oc.CreditCards, 'List').and.returnValue(null);
         }));
-        it('should resolve CreditCardList', inject(function ($injector) {
+        it('should resolve CreditCardList', inject(function($injector) {
             $injector.invoke(state.resolve.CreditCardList);
             expect(oc.CreditCards.List).toHaveBeenCalled();
         }));
@@ -37,9 +37,9 @@ describe('Component: CreditCards', function() {
             state = $state.get('creditCards.edit');
             spyOn(oc.CreditCards, 'Get').and.returnValue(null);
         }));
-        it('should resolve SelectedCreditCard', inject(function ($injector, $stateParams) {
+        it('should resolve SelectedCreditCard', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedCreditCard);
-            expect(oc.CreditCards.Get).toHaveBeenCalledWith($stateParams.creditCardid);
+            expect(oc.CreditCards.Get).toHaveBeenCalledWith($stateParams.creditcardid);
         }));
     });
 
@@ -52,21 +52,21 @@ describe('Component: CreditCards', function() {
             spyOn(oc.CreditCards, 'ListAssignments').and.returnValue(null);
             spyOn(oc.CreditCards, 'Get').and.returnValue(null);
         }));
-        it('should resolve Buyer', inject(function ($injector) {
+        it('should resolve Buyer', inject(function($injector) {
             $injector.invoke(state.resolve.Buyer);
             expect(oc.Buyers.Get).toHaveBeenCalled();
         }));
-        it('should resolve UserGroupList', inject(function ($injector) {
+        it('should resolve UserGroupList', inject(function($injector) {
             $injector.invoke(state.resolve.UserGroupList);
             expect(oc.UserGroups.List).toHaveBeenCalled();
         }));
-        it('should resolve AssignmentsList', inject(function ($injector, $stateParams) {
+        it('should resolve AssignmentsList', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.AssignedUserGroups);
-            expect(oc.CreditCards.ListAssignments).toHaveBeenCalledWith($stateParams.creditCardid);
+            expect(oc.CreditCards.ListAssignments).toHaveBeenCalledWith($stateParams.creditcardid);
         }));
-        it('should resolve SelectedCreditCard', inject(function ($injector, $stateParams) {
+        it('should resolve SelectedCreditCard', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedCreditCard);
-            expect(oc.CreditCards.Get).toHaveBeenCalledWith($stateParams.creditCardid);
+            expect(oc.CreditCards.Get).toHaveBeenCalledWith($stateParams.creditcardid);
         }));
     });
 

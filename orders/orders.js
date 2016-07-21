@@ -261,12 +261,12 @@ function OrdersFactory($q, Underscore, OrderCloud) {
             deferred.resolve();
         } else {
             if (filters.favorite) {
-                OrderCloud.Orders[userType == 'admin' ? 'ListIncoming' : 'ListOutgoing'](filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, filters.sortType, { ID: filters.OrderID, Status: filters.Status, FromUserID: filters.groupOrders, xp:{favorite:filters.favorite} }, filters.FromCompanyID)
+                OrderCloud.Orders[userType == 'admin' ? 'ListIncoming' : 'ListOutgoing'](filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, filters.sortType, {ID: filters.OrderID, Status: filters.Status, FromUserID: filters.groupOrders, xp:{favorite:filters.favorite} }, filters.FromCompanyID)
                     .then(function(data) {
                         deferred.resolve(data);
                     });
             } else {
-                OrderCloud.Orders[userType == 'admin' ? 'ListIncoming' : 'ListOutgoing'](filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, filters.sortType, { ID: filters.OrderID, Status: filters.Status, FromUserID: filters.groupOrders}, filters.FromCompanyID)
+                OrderCloud.Orders[userType == 'admin' ? 'ListIncoming' : 'ListOutgoing'](filters.FromDate, filters.ToDate, filters.searchTerm, 1, 100, null, filters.sortType, {ID: filters.OrderID, Status: filters.Status, FromUserID: filters.groupOrders}, filters.FromCompanyID)
                     .then(function(data) {
                         deferred.resolve(data);
                     });
@@ -276,11 +276,11 @@ function OrdersFactory($q, Underscore, OrderCloud) {
         return deferred.promise;
     }
 
-    function _getGroupOrders(groupList){
+    function _getGroupOrders(groupList) {
         var userIDs =[];
         var dfd = $q.defer();
         getUserIDs(groupList)
-            .then(function(users){
+            .then(function(users) {
                 angular.forEach(users, function(user) {
                     userIDs.push(user.UserID)
                 });
@@ -288,17 +288,17 @@ function OrdersFactory($q, Underscore, OrderCloud) {
             });
         return dfd.promise;
 
-        function getUserIDs(groups){
+        function getUserIDs(groups) {
             var dfd = $q.defer();
             var queue = [];
             var userList = [];
-            angular.forEach(groups, function(group){
+            angular.forEach(groups, function(group) {
                 queue.push(OrderCloud.UserGroups.ListUserAssignments(group));
             });
 
             $q.all(queue)
-                .then(function(users){
-                    angular.forEach(users, function(user){
+                .then(function(users) {
+                    angular.forEach(users, function(user) {
                        userList = userList.concat(user.Items);
                     });
 

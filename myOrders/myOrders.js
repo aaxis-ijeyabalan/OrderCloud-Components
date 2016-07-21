@@ -32,7 +32,7 @@ function MyOrdersConfig($stateProvider) {
                 SelectedOrder: function($stateParams, OrderCloud) {
                     return OrderCloud.Me.GetOrder($stateParams.orderid);
                 },
-                SelectedPayments: function($stateParams, $q, OrderCloud){
+                SelectedPayments: function($stateParams, $q, OrderCloud) {
                     var dfd = $q.defer();
                     var paymentList = {};
 
@@ -40,10 +40,10 @@ function MyOrdersConfig($stateProvider) {
                         .then(function(data) {
                             paymentList = data.Items;
                             dfd.resolve(paymentList);
-                            angular.forEach(paymentList, function(payment){
-                                if(payment.Type === 'CreditCard'){
+                            angular.forEach(paymentList, function(payment) {
+                                if (payment.Type === 'CreditCard') {
                                     OrderCloud.CreditCards.Get(payment.CreditCardID)
-                                        .then(function(cc){
+                                        .then(function(cc) {
                                             payment.creditCards = cc;
                                         })
                                 }

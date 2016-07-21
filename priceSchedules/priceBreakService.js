@@ -35,16 +35,16 @@ function PriceBreakFactory(Underscore, toastr) {
         return _setMinMax(priceSchedule);
     }
 
-    function _addDisplayQuantity(priceSchedule){
+    function _addDisplayQuantity(priceSchedule) {
         displayQuantity(priceSchedule);
         return _setMinMax(priceSchedule);
     }
 
-    function displayQuantity(priceSchedule){
+    function displayQuantity(priceSchedule) {
         //Organize the priceschedule array in order of quantity
-        priceSchedule.PriceBreaks.sort(function(a,b){return a.Quantity - b.Quantity});
+        priceSchedule.PriceBreaks.sort(function(a,b) {return a.Quantity - b.Quantity});
         //find out the max quantity in the array
-        var maxQuantity = Math.max.apply(Math,priceSchedule.PriceBreaks.map(function(object){return object.Quantity}));
+        var maxQuantity = Math.max.apply(Math,priceSchedule.PriceBreaks.map(function(object) {return object.Quantity}));
         // go through each item in the priceschedule array
         for (var i = 0; i < priceSchedule.PriceBreaks.length; i++) {
             //if max number is unique, display max number  with + symbol

@@ -26,7 +26,7 @@ describe('Component: SpendingAccounts', function() {
             state = $state.get('spendingAccounts');
             spyOn(oc.SpendingAccounts, 'List').and.returnValue(null);
         }));
-        it('should resolve SpendingAccountList', inject(function ($injector) {
+        it('should resolve SpendingAccountList', inject(function($injector) {
             $injector.invoke(state.resolve.SpendingAccountList);
             expect(oc.SpendingAccounts.List).toHaveBeenCalledWith(null, null, null, null, null, {'RedemptionCode': '!*'});
         }));
@@ -38,9 +38,9 @@ describe('Component: SpendingAccounts', function() {
             state = $state.get('spendingAccounts.edit');
             spyOn(oc.SpendingAccounts, 'Get').and.returnValue(null);
         }));
-        it('should resolve SelectedSpendingAccount', inject(function ($injector, $stateParams) {
+        it('should resolve SelectedSpendingAccount', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedSpendingAccount);
-            expect(oc.SpendingAccounts.Get).toHaveBeenCalledWith($stateParams.spendingAccountid);
+            expect(oc.SpendingAccounts.Get).toHaveBeenCalledWith($stateParams.spendingaccountid);
         }));
     });
 
@@ -52,17 +52,17 @@ describe('Component: SpendingAccounts', function() {
             spyOn(oc.SpendingAccounts, 'ListAssignments').and.returnValue(null);
             spyOn(oc.SpendingAccounts, 'Get').and.returnValue(null);
         }));
-        it('should resolve UserGroupList', inject(function ($injector) {
+        it('should resolve UserGroupList', inject(function($injector) {
             $injector.invoke(state.resolve.UserGroupList);
             expect(oc.UserGroups.List).toHaveBeenCalled();
         }));
-        it('should resolve AssignedUserGroups', inject(function ($injector, $stateParams) {
+        it('should resolve AssignedUserGroups', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.AssignedUserGroups);
-            expect(oc.SpendingAccounts.ListAssignments).toHaveBeenCalledWith($stateParams.spendingAccountid, null, null, 'Group');
+            expect(oc.SpendingAccounts.ListAssignments).toHaveBeenCalledWith($stateParams.spendingaccountid, null, null, 'Group');
         }));
-        it('should resolve SelectedSpendingAccount', inject(function ($injector, $stateParams) {
+        it('should resolve SelectedSpendingAccount', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedSpendingAccount);
-            expect(oc.SpendingAccounts.Get).toHaveBeenCalledWith($stateParams.spendingAccountid);
+            expect(oc.SpendingAccounts.Get).toHaveBeenCalledWith($stateParams.spendingaccountid);
         }));
     });
 
@@ -74,17 +74,17 @@ describe('Component: SpendingAccounts', function() {
             spyOn(oc.SpendingAccounts, 'Get').and.returnValue(null);
             spyOn(oc.SpendingAccounts, 'ListAssignments').and.returnValue(null);
         }));
-        it('should resolve UserList', inject(function ($injector) {
+        it('should resolve UserList', inject(function($injector) {
             $injector.invoke(state.resolve.UserList);
             expect(oc.Users.List).toHaveBeenCalled();
         }));
-        it('should resolve AssignedUsers', inject(function ($injector, $stateParams) {
+        it('should resolve AssignedUsers', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.AssignedUsers);
-            expect(oc.SpendingAccounts.ListAssignments).toHaveBeenCalledWith($stateParams.spendingAccountid, null, null, 'User');
+            expect(oc.SpendingAccounts.ListAssignments).toHaveBeenCalledWith($stateParams.spendingaccountid, null, null, 'User');
         }));
-        it('should resolve SelectedSpendingAccount', inject(function ($injector, $stateParams) {
+        it('should resolve SelectedSpendingAccount', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedSpendingAccount);
-            expect(oc.SpendingAccounts.Get).toHaveBeenCalledWith($stateParams.spendingAccountid);
+            expect(oc.SpendingAccounts.Get).toHaveBeenCalledWith($stateParams.spendingaccountid);
         }));
     });
 
@@ -255,9 +255,9 @@ describe('Component: SpendingAccounts', function() {
         });
     });
 
-    describe('Factory: SpendingAccountAssignment', function(){
+    describe('Factory: SpendingAccountAssignment', function() {
        var spendingAccountAssignment, sampleList, assignments;
-        beforeEach(inject(function(SpendingAccountAssignment, Assignments, $state){
+        beforeEach(inject(function(SpendingAccountAssignment, Assignments, $state) {
             spendingAccountAssignment = SpendingAccountAssignment;
             sampleList = [{ID: 1, selected: true}, {ID: 2, selected: false}, {ID: 3}];
             assignments = Assignments;

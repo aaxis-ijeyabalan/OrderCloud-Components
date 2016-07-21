@@ -197,7 +197,7 @@ function LineItemEditController($state, Underscore, OrderCloud, LineItemHelpers,
         angular.forEach(vm.item.Specs, function(spec) {
             var origSpec = Underscore.where(originalSpecs, {SpecID: spec.ID})[0];
             if (!origSpec || origSpec.Value !== spec.Value || origSpec.OptionID !== spec.OptionID) {
-                if(!patchObject.Specs) patchObject.Specs = [];
+                if (!patchObject.Specs) patchObject.Specs = [];
                 patchObject.Specs.push(spec);
             }
         });

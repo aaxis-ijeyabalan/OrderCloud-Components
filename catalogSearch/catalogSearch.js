@@ -1,7 +1,7 @@
 angular.module('orderCloud')
     .config (CatalogSearchConfig)
-    .controller( 'CatalogSearchCtrl', CatalogSearchController)
-    .directive( 'ordercloudCatalogSearch', ordercloudCatalogSearchDirective)
+    .controller('CatalogSearchCtrl', CatalogSearchController)
+    .directive('ordercloudCatalogSearch', ordercloudCatalogSearchDirective)
     .controller('CatalogSearchResultsCtrl', CatalogSearchResultsController)
 ;
 
@@ -58,11 +58,11 @@ function CatalogSearchController($scope, $state, $q, OrderCloud) {
         return dfd.promise;
     };
 
-    vm.onSelect = function($item){
+    vm.onSelect = function($item) {
         ($item.NameType === 'Category') ? $state.go('catalog.category', {categoryid: $item.ID}) : $state.go('catalog.product', {productid: $item.ID});
     };
 
-    vm.onHardEnter = function(search){
+    vm.onHardEnter = function(search) {
         $state.go('catalogSearchResults', {searchterm: search}, {reload: true});
     };
 }

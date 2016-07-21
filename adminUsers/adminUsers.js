@@ -39,7 +39,7 @@ function AdminUsersConfig($stateProvider) {
                 SelectedAdminUser: function($stateParams, OrderCloud) {
                     return OrderCloud.AdminUsers.Get($stateParams.adminuserid);
                 },
-                SecurityProfilesAvailable : function(OrderCloud){
+                SecurityProfilesAvailable : function(OrderCloud) {
                     return OrderCloud.SecurityProfiles.List();
                 }
             }
@@ -50,7 +50,7 @@ function AdminUsersConfig($stateProvider) {
             controller: 'AdminUserCreateCtrl',
             controllerAs: 'adminUserCreate',
             resolve: {
-                SecurityProfilesAvailable: function(OrderCloud){
+                SecurityProfilesAvailable: function(OrderCloud) {
                    return OrderCloud.SecurityProfiles.List();
                 }
             }

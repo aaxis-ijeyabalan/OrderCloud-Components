@@ -292,7 +292,7 @@ function SpecCreateController($exceptionHandler, $q, $state, toastr, Underscore,
                 });
                 $q.all(queue).then(function() {
                     dfd.resolve();
-                    if(DefaultOptionID != null){
+                    if (DefaultOptionID != null) {
                         OrderCloud.Specs.Patch(spec.ID, {DefaultOptionID: DefaultOptionID})
                     }
                     $state.go('specs', {}, {reload: true});

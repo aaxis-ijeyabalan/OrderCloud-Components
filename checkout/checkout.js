@@ -97,8 +97,8 @@ function checkoutConfig($stateProvider) {
                 SubmittedOrder: function($q, $stateParams, $state, toastr, OrderCloud) {
                     var dfd = $q.defer();
                     OrderCloud.Orders.Get($stateParams.orderid)
-                        .then(function(order){
-                            if(order.Status == 'Unsubmitted') {
+                        .then(function(order) {
+                            if (order.Status == 'Unsubmitted') {
                                 $state.go('checkout.shipping')
                                     .then(function() {
                                         toastr.error('You cannot review an Unsubmitted Order', 'Error');
@@ -139,7 +139,7 @@ function CheckoutController($state, $rootScope, toastr, OrderCloud, CheckoutServ
     vm.isMultipleAddressShipping = true;
     vm.currentOrderPayments = OrderPayments.Items;
 
-    vm.orderIsValid = function(){
+    vm.orderIsValid = function() {
         var orderPaymentsTotal = 0;
         var validPaymentMethods = false;
         angular.forEach(vm.currentOrderPayments, function(payment) {
@@ -224,10 +224,10 @@ function OrderConfirmationController($rootScope, $state, toastr, OrderCloud, Ord
         }
         if (payment.Type === 'SpendingAccount' && payment.SpendingAccountID) {
             OrderCloud.SpendingAccounts.Get(payment.SpendingAccountID)
-                .then(function(sa){
+                .then(function(sa) {
                     vm.orderPayments[index].spendingAccountDetails = sa;
                 })
-                .catch(function(ex){
+                .catch(function(ex) {
                     toastr.error(ex, 'Error');
                 });
         }
@@ -235,9 +235,9 @@ function OrderConfirmationController($rootScope, $state, toastr, OrderCloud, Ord
 
     vm.submitOrder = function() {
         OrderCloud.Orders.Submit(vm.currentOrder.ID)
-            .then(function(order){
+            .then(function(order) {
                 CurrentOrder.Remove()
-                    .then(function(){
+                    .then(function() {
                         $state.go('orderReview', {orderid: order.ID});
                         toastr.success('Your order has been submitted', 'Success');
                         $rootScope.$broadcast('OC:RemoveOrder');
@@ -262,10 +262,10 @@ function OrderReviewController($q, toastr, OrderCloud, LineItemHelpers, Submitte
             angular.forEach(vm.orderPayments, function(payment, index) {
                 if (payment.Type === 'CreditCard' && payment.CreditCardID) {
                     OrderCloud.CreditCards.Get(payment.CreditCardID)
-                        .then(function(cc){
+                        .then(function(cc) {
                             vm.orderPayments[index].creditCardDetails = cc;
                         })
-                        .catch(function(ex){
+                        .catch(function(ex) {
                             toastr.error(ex, 'Error');
                         })
                 }
@@ -307,23 +307,23 @@ function OrderReviewController($q, toastr, OrderCloud, LineItemHelpers, Submitte
         window.print();
     };
 
-    vm.addToFavorites = function(){
+    vm.addToFavorites = function() {
         //TODO: Refactor when SDK allows us to patch null
-        if(!SubmittedOrder.xp) {
+        if (!SubmittedOrder.xp) {
             SubmittedOrder.xp ={}
         }
         SubmittedOrder.xp.favorite = true;
 
         OrderCloud.Orders.Update(SubmittedOrder.ID, SubmittedOrder)
-            .then(function(){
+            .then(function() {
                 toastr.success("Your order has been added to Favorites! You can now easily find your order in 'Order History'", 'Success')
             })
-            .catch(function(){
+            .catch(function() {
                 toastr.error('There was a problem adding this order to your Favorites', 'Error');
             });
     };
 
-    vm.removeFromFavorites = function(){
+    vm.removeFromFavorites = function() {
         delete SubmittedOrder.xp.favorite;
         OrderCloud.Orders.Patch(SubmittedOrder.ID, {xp: null});
         toastr.success('Your order has been removed from Favorites', 'Success')
@@ -355,11 +355,11 @@ function CheckoutLineItemsController($rootScope, $scope, $q, Underscore, toastr,
         //vm.calculatingTax = true;
         Underscore.where(vm.lineItems.Items, {ID: LineItemID})[0].ShippingAddress = address;
         //TaxService.Calculate($scope.order.ID)
-        //    .then(function (taxData) {
-        //        if(taxData.calculatedTaxSummary){
+        //    .then(function(taxData) {
+        //        if (taxData.calculatedTaxSummary) {
         //            vm.taxInformation = taxData.calculatedTaxSummary.totalTax;
         //            CurrentOrder.Get()
-        //                .then(function(order){
+        //                .then(function(order) {
         //                    order.xp = {taxInfo: vm.taxInformation};
         //                    OrderCloud.Orders.Update(order.ID, order);
         //                })
@@ -369,7 +369,7 @@ function CheckoutLineItemsController($rootScope, $scope, $q, Underscore, toastr,
         //            vm.calculatingTax = false;
         //            vm.taxInformation = 0;
         //            CurrentOrder.Get()
-        //                .then(function(order){
+        //                .then(function(order) {
         //                    order.xp = {taxInfo: vm.taxInformation};
         //                    OrderCloud.Orders.Update(order.ID, order);
         //                })
@@ -384,11 +384,11 @@ function CheckoutLineItemsController($rootScope, $scope, $q, Underscore, toastr,
             li.ShippingAddressID = address.ID;
             li.ShippingAddress = address;
         //    TaxService.Calculate($scope.order.ID)
-        //        .then(function (taxData) {
-        //            if(taxData.calculatedTaxSummary){
+        //        .then(function(taxData) {
+        //            if (taxData.calculatedTaxSummary) {
         //                vm.taxInformation = taxData.calculatedTaxSummary.totalTax;
         //                CurrentOrder.Get()
-        //                    .then(function(order){
+        //                    .then(function(order) {
         //                        order.xp = {taxInfo: vm.taxInformation};
         //                        OrderCloud.Orders.Update(order.ID, order);
         //                    })
@@ -398,7 +398,7 @@ function CheckoutLineItemsController($rootScope, $scope, $q, Underscore, toastr,
         //                vm.calculatingTax = false;
         //                vm.taxInformation = 0;
         //                CurrentOrder.Get()
-        //                    .then(function(order){
+        //                    .then(function(order) {
         //                        order.xp = {taxInfo: vm.taxInformation};
         //                        OrderCloud.Orders.Update(order.ID, order);
         //                    })
@@ -445,9 +445,9 @@ function CheckoutLineItemsController($rootScope, $scope, $q, Underscore, toastr,
 //            accessToken: OrderCloud.Auth.ReadToken(),
 //            buyerID: OrderCloud.BuyerID.Get()
 //        };
-//        return $http.post('https://Four51TRIAL104401.jitterbit.net/Four51OnPrem/v1/CalculateTax', requestObject).then(function (taxInfo) {
+//        return $http.post('https://Four51TRIAL104401.jitterbit.net/Four51OnPrem/v1/CalculateTax', requestObject).then(function(taxInfo) {
 //            return taxInfo.data;
-//        }).catch(function (err) {
+//        }).catch(function(err) {
 //            $exceptionHandler(err);
 //        });
 //    }

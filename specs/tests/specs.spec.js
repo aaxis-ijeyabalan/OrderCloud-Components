@@ -36,7 +36,7 @@ describe('Component: Specs', function() {
             state = $state.get('specs');
             spyOn(oc.Specs, 'List').and.returnValue(null);
         }));
-        it('should resolve SpecList', inject(function ($injector) {
+        it('should resolve SpecList', inject(function($injector) {
             $injector.invoke(state.resolve.SpecList);
             expect(oc.Specs.List).toHaveBeenCalled();
         }));
@@ -48,7 +48,7 @@ describe('Component: Specs', function() {
             state = $state.get('specs.edit');
             spyOn(oc.Specs, 'Get').and.returnValue(null);
         }));
-        it('should resolve SelectedSpec', inject(function ($injector, $stateParams) {
+        it('should resolve SelectedSpec', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedSpec);
             expect(oc.Specs.Get).toHaveBeenCalledWith($stateParams.specid);
         }));
@@ -62,15 +62,15 @@ describe('Component: Specs', function() {
             spyOn(oc.Specs, 'ListProductAssignments').and.returnValue(null);
             spyOn(oc.Specs, 'Get').and.returnValue(null);
         }));
-        it('should resolve ProductList', inject(function ($injector) {
+        it('should resolve ProductList', inject(function($injector) {
             $injector.invoke(state.resolve.ProductList);
             expect(oc.Products.List).toHaveBeenCalledWith(null, 1, 20);
         }));
-        it('should resolve ProductAssignments', inject(function ($injector, $stateParams) {
+        it('should resolve ProductAssignments', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.ProductAssignments);
             expect(oc.Specs.ListProductAssignments).toHaveBeenCalledWith($stateParams.specid);
         }));
-        it('should resolve SelectedSpec', inject(function ($injector, $stateParams) {
+        it('should resolve SelectedSpec', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedSpec);
             expect(oc.Specs.Get).toHaveBeenCalledWith($stateParams.specid);
         }));

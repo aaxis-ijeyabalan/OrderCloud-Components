@@ -1,6 +1,6 @@
 angular.module('orderCloud')
-    .directive( 'ordercloudProductQuickView', ordercloudProductQuickViewDirective)
-    .controller( 'ProductQuickViewCtrl', ProductQuickViewController)
+    .directive('ordercloudProductQuickView', ordercloudProductQuickViewDirective)
+    .controller('ProductQuickViewCtrl', ProductQuickViewController)
     .controller ('ProductQuickViewModalCtrl', ProductQuickViewModalController)
 ;
 
@@ -18,7 +18,7 @@ function ordercloudProductQuickViewDirective() {
 
 function ProductQuickViewController($uibModal) {
     var vm = this;
-    vm.open = function(product){
+    vm.open = function(product) {
         $uibModal.open({
             animation: true,
             size: 'lg',
@@ -72,7 +72,7 @@ function ProductQuickViewController($uibModal) {
     };
 }
 
-function ProductQuickViewModalController($uibModalInstance, SelectedProduct, SpecList, AddToOrder){
+function ProductQuickViewModalController($uibModalInstance, SelectedProduct, SpecList, AddToOrder) {
     var vm = this;
     vm.selectedProduct = SelectedProduct;
     vm.selectedProduct.item = {Specs: SpecList};
@@ -84,7 +84,7 @@ function ProductQuickViewModalController($uibModalInstance, SelectedProduct, Spe
     vm.addToCart = function(product) {
         product.Quantity = product.item.Quantity;
         product.Specs = product.item.Specs;
-        AddToOrder.Add(product).then(function(){
+        AddToOrder.Add(product).then(function() {
             $uibModalInstance.close()
         });
     };

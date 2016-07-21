@@ -166,7 +166,7 @@ function FacetedProductManageController ($state, toastr, OrderCloud, Product, As
     vm.requiredFacet = function(cat) {
         var disabled = false;
         if (cat.xp && cat.xp.OC_Facets) {
-            angular.forEach((cat.xp.OC_Facets), function(facetValues, facet){
+            angular.forEach((cat.xp.OC_Facets), function(facetValues, facet) {
                 if (facetValues.isRequired && vm.product.xp.OC_Facets[cat.ID] && vm.product.xp.OC_Facets[cat.ID][facet] && vm.product.xp.OC_Facets[cat.ID][facet].length == 0) {
                     disabled = true;
                 }
@@ -189,7 +189,7 @@ function FacetedProductManageController ($state, toastr, OrderCloud, Product, As
             .then(function() {
                 if (!vm.product.xp.OC_Facets) vm.product.xp.OC_Facets = {};
                 if (!vm.product.xp.OC_Facets[cat.ID]) vm.product.xp.OC_Facets[cat.ID] = {};
-                if(!vm.product.xp.OC_Facets[cat.ID][facetName]) vm.product.xp.OC_Facets[cat.ID][facetName] = [];
+                if (!vm.product.xp.OC_Facets[cat.ID][facetName]) vm.product.xp.OC_Facets[cat.ID][facetName] = [];
                 vm.product.xp.OC_Facets[cat.ID][facetName].push(vm.newFacetValue[facetName].toLowerCase());
                 OrderCloud.Products.Update(vm.product.ID, vm.product)
                     .then(function() {

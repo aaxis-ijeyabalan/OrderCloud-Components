@@ -29,7 +29,7 @@ function CheckoutShippingController($state, $rootScope, OrderCloud, OrderShippin
         if (order && order.ShippingAddressID) {
             OrderShippingAddress.Set(order.ShippingAddressID);
             OrderCloud.Addresses.Get(order.ShippingAddressID)
-                .then(function(address){
+                .then(function(address) {
                     OrderCloud.Orders.Patch(order.ID, {ShippingAddressID: address.ID})
                         .then(function() {
                             $rootScope.$broadcast('OrderShippingAddressChanged', order, address);

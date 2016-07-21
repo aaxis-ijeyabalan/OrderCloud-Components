@@ -67,9 +67,9 @@ function CartController($q, $rootScope, $timeout, OrderCloud, Order, LineItemsLi
     vm.removeItem = LineItemHelpers.RemoveItem;
     vm.pagingfunction = PagingFunction;
 
-    vm.updateQuantity = function(cartOrder,lineItem){
+    vm.updateQuantity = function(cartOrder,lineItem) {
         $timeout.cancel();
-        $timeout(function(){
+        $timeout(function() {
             LineItemHelpers.UpdateQuantity(cartOrder,lineItem);
         },800);
     };
@@ -116,7 +116,7 @@ function MiniCartController($q, $state, $rootScope,$uibModal, $ocMedia, OrderClo
     vm.showLineItems = false;
     vm.$ocMedia = $ocMedia;
 
-    vm.getLI = function(){
+    vm.getLI = function() {
         CurrentOrder.Get()
         .then(function(data) {
             vm.Order = data;
@@ -176,7 +176,7 @@ function MiniCartController($q, $state, $rootScope,$uibModal, $ocMedia, OrderClo
     $rootScope.$on('LineItemAddedToCart', function() {
         CurrentOrder.Get()
             .then(function(order) {
-                if (vm.$ocMedia('max-width:767px')){
+                if (vm.$ocMedia('max-width:767px')) {
                     vm.openModal(order);
                 } else {
                     vm.lineItemCall(order);
@@ -185,7 +185,7 @@ function MiniCartController($q, $state, $rootScope,$uibModal, $ocMedia, OrderClo
             });
     });
 
-    $rootScope.$on('OC:RemoveOrder', function(){ //broadcast is in build > src > app > common > line items
+    $rootScope.$on('OC:RemoveOrder', function() {//broadcast is in build > src > app > common > line items
         vm.Order = null;
         vm.LineItems = {};
     });
@@ -200,14 +200,14 @@ function MiniCartController($q, $state, $rootScope,$uibModal, $ocMedia, OrderClo
         }
     };
 
-    vm.openModal = function(order){
+    vm.openModal = function(order) {
         $uibModal.open({
-            animation:true,
-            size :'lg',
+            animation: true,
+            size: 'lg',
             templateUrl: 'cart/templates/modalMinicart.tpl.html',
-            controller : 'MinicartModalController',
-            controllerAs : 'minicartModal',
-            resolve : {
+            controller: 'MinicartModalController',
+            controllerAs: 'minicartModal',
+            resolve: {
                 LineItems: vm.lineItemCall(order)
             }
         });
@@ -224,7 +224,7 @@ function OrderCloudMiniCartDirective() {
     };
 }
 
-function MinicartModalController($state, $uibModalInstance, LineItems){
+function MinicartModalController($state, $uibModalInstance, LineItems) {
     var vm = this;
     vm.lineItems = LineItems;
     vm.lineItemsLength = vm.lineItems.length;

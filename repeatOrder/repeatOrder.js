@@ -6,7 +6,7 @@ angular.module('orderCloud')
 
 function RepeatOrderController(toastr, OrderCloud, RepeatOrderFactory) {
     var vm = this;
-    vm.reorder = function(orderID, includebilling, includeshipping, clientid, userid, claims){
+    vm.reorder = function(orderID, includebilling, includeshipping, clientid, userid, claims) {
         vm.includeBilling = (includebilling === 'true');
         vm.includeShipping = (includeshipping === 'true');
         vm.userType = JSON.parse(atob(OrderCloud.Auth.ReadToken().split('.')[1])).usrtype;
@@ -34,7 +34,7 @@ function RepeatOrderController(toastr, OrderCloud, RepeatOrderFactory) {
     };
 }
 
-function RepeatOrderFactory($q, $state, $localForage, toastr, OrderCloud, LineItemHelpers, CurrentOrder, appname){
+function RepeatOrderFactory($q, $state, $localForage, toastr, OrderCloud, LineItemHelpers, CurrentOrder, appname) {
     return {
         SetAccessToken: _setAccessToken,
         CheckLineItemsValid: _checkLineItemsValid,
@@ -43,7 +43,7 @@ function RepeatOrderFactory($q, $state, $localForage, toastr, OrderCloud, LineIt
         SuccessConfirmation: _successConfirmation
     };
 
-    function _setAccessToken(usertype, userid, clientid, claims){
+    function _setAccessToken(usertype, userid, clientid, claims) {
         var dfd = $q.defer();
         var tokenRequest = {clientID: clientid, Claims: [claims || 'FullAccess']};
         if (usertype === 'admin') {
@@ -63,7 +63,7 @@ function RepeatOrderFactory($q, $state, $localForage, toastr, OrderCloud, LineIt
         return dfd.promise;
     }
 
-    function _checkLineItemsValid(userType, originalOrderID){
+    function _checkLineItemsValid(userType, originalOrderID) {
         var dfd = $q.defer();
         ListAllProducts()
             .then(function(productList) {
@@ -97,11 +97,11 @@ function RepeatOrderFactory($q, $state, $localForage, toastr, OrderCloud, LineIt
             });
         return dfd.promise;
 
-        function ListAllProducts(){
+        function ListAllProducts() {
             var dfd = $q.defer();
             var queue = [];
             ((userType === 'buyer') ? OrderCloud.Me.ListProducts(null, 1, 100) : OrderCloud.As().Me.ListProducts(null, 1, 100))
-                .then(function(data){
+                .then(function(data) {
                     var productList = data;
                     if (data.Meta.TotalPages > data.Meta.Page) {
                         var page = data.Meta.Page;
@@ -117,7 +117,7 @@ function RepeatOrderFactory($q, $state, $localForage, toastr, OrderCloud, LineIt
                             });
                             dfd.resolve(productList.Items);
                         })
-                        .catch(function(err){
+                        .catch(function(err) {
                             dfd.reject(err)
                         });
                 });
@@ -125,7 +125,7 @@ function RepeatOrderFactory($q, $state, $localForage, toastr, OrderCloud, LineIt
         }
     }
 
-    function _getCurrentOrderLineItems(validLI){
+    function _getCurrentOrderLineItems(validLI) {
         var dfd = $q.defer();
         var totalLI;
         //cant use CurrentOrder.GetID() because if there is not a current ID the promise is rejected which halts everything
@@ -140,7 +140,7 @@ function RepeatOrderFactory($q, $state, $localForage, toastr, OrderCloud, LineIt
                             totalLI = validLI.concat(li);
                             dfd.resolve(totalLI);
                         })
-                        .catch(function(err){
+                        .catch(function(err) {
                             dfd.reject(err)
                         });
                 } else {
@@ -156,7 +156,7 @@ function RepeatOrderFactory($q, $state, $localForage, toastr, OrderCloud, LineIt
         OrderCloud.Orders.Get(originalOrderID)
             .then(function(data) {
                 var billingAddress = data.BillingAddress;
-                (userType === 'buyer' ? OrderCloud.Orders.Create({}) : OrderCloud.As().Orders.Create({}) )
+                (userType === 'buyer' ? OrderCloud.Orders.Create({}) : OrderCloud.As().Orders.Create({}))
                     .then(function(order) {
                         var orderID = order.ID;
                         userType === 'buyer' ? CurrentOrder.Set(orderID) : angular.noop();
@@ -174,7 +174,7 @@ function RepeatOrderFactory($q, $state, $localForage, toastr, OrderCloud, LineIt
                             .then(function(data) {
                                 dfd.resolve(order);
                             })
-                            .catch(function(err){
+                            .catch(function(err) {
                                 dfd.reject(err);
                             });
                     });
@@ -182,12 +182,12 @@ function RepeatOrderFactory($q, $state, $localForage, toastr, OrderCloud, LineIt
         return dfd.promise;
     }
 
-    function _successConfirmation(order, usertype, includeBilling, includeShipping){
-        if(usertype == 'buyer'){
+    function _successConfirmation(order, usertype, includeBilling, includeShipping) {
+        if (usertype == 'buyer') {
             (includeBilling || includeShipping) ? $state.go('checkout') : $state.go('cart');
         }
         else{
-            toastr.success('Your reorder was successfully placed! The new order number is: ' + order.ID );
+            toastr.success('Your reorder was successfully placed! The new order number is: ' + order.ID);
             $state.go('orderHistory');
         }
     }

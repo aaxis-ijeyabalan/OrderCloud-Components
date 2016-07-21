@@ -18,10 +18,10 @@ function CouponsConfig($stateProvider) {
             url: '/coupons?search&page&pageSize',
             data: {componentName : 'Coupons'},
             resolve: {
-                Parameters: function($stateParams, OrderCloudParameters){
+                Parameters: function($stateParams, OrderCloudParameters) {
                     return OrderCloudParameters.Get($stateParams);
                 },
-                CouponList: function(OrderCloud, Parameters){
+                CouponList: function(OrderCloud, Parameters) {
                     return OrderCloud.Coupons.List(Parameters.search, Parameters.page, Parameters.pageSize || 12);
                 }
             }
@@ -36,9 +36,9 @@ function CouponsConfig($stateProvider) {
                     var d = $q.defer();
                     OrderCloud.Coupons.Get($stateParams.couponid)
                         .then(function(coupon) {
-                            if(coupon.StartDate != null)
+                            if (coupon.StartDate != null)
                                 coupon.StartDate = new Date(coupon.StartDate);
-                            if(coupon.ExpirationDate != null)
+                            if (coupon.ExpirationDate != null)
                                 coupon.ExpirationDate = new Date(coupon.ExpirationDate);
                             d.resolve(coupon);
                         });
@@ -247,9 +247,9 @@ function CouponAssignController($scope, toastr, OrderCloud, Assignments, Paging,
     vm.saveAssignments = saveAssignments;
     vm.pagingfunction = PagingFunction;
 
-    $scope.$watchCollection(function(){
+    $scope.$watchCollection(function() {
         return vm.list;
-    }, function(){
+    }, function() {
         Paging.SetSelected(vm.list.Items, vm.assignments.Items, 'UserGroupID')
     });
 
@@ -287,9 +287,9 @@ function CouponAssignProductController($scope, toastr, OrderCloud, Assignments, 
     vm.saveAssignments = SaveAssignment;
     vm.pagingfunction = PagingFunction;
 
-    $scope.$watchCollection(function(){
+    $scope.$watchCollection(function() {
         return vm.list;
-    }, function(){
+    }, function() {
         Paging.SetSelected(vm.list.Items, vm.assignments.Items, 'ProductID');
     });
 
@@ -326,9 +326,9 @@ function CouponAssignCategoryController($scope, toastr, OrderCloud, Assignments,
     vm.saveAssignments = SaveAssignment;
     vm.pagingfunction = PagingFunction;
 
-    $scope.$watchCollection(function(){
+    $scope.$watchCollection(function() {
         return vm.list;
-    }, function(){
+    }, function() {
         Paging.SetSelected(vm.list.Items, vm.assignments.Items, 'CategoryID');
     });
 

@@ -34,7 +34,7 @@ describe('Component: PriceSchedules', function() {
             state = $state.get('priceSchedules');
             spyOn(oc.PriceSchedules, 'List').and.returnValue(null);
         }));
-        it('should resolve PriceScheduleList', inject(function ($injector) {
+        it('should resolve PriceScheduleList', inject(function($injector) {
             $injector.invoke(state.resolve.PriceScheduleList);
             expect(oc.PriceSchedules.List).toHaveBeenCalled();
         }));
@@ -46,9 +46,9 @@ describe('Component: PriceSchedules', function() {
             state = $state.get('priceSchedules.edit');
             spyOn(oc.PriceSchedules, 'Get').and.returnValue(null);
         }));
-        it('should resolve SelectedPriceSchedule', inject(function ($injector, $stateParams) {
+        it('should resolve SelectedPriceSchedule', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedPriceSchedule);
-            expect(oc.PriceSchedules.Get).toHaveBeenCalledWith($stateParams.priceScheduleid);
+            expect(oc.PriceSchedules.Get).toHaveBeenCalledWith($stateParams.pricescheduleid);
         }));
     });
 

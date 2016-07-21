@@ -25,13 +25,13 @@ function CostCentersConfig($stateProvider) {
             }
         })
         .state('costCenters.edit', {
-            url: '/:costCenterid/edit',
+            url: '/:costcenterid/edit',
             templateUrl:'costCenters/templates/costCenterEdit.tpl.html',
             controller:'CostCenterEditCtrl',
             controllerAs: 'costCenterEdit',
             resolve: {
                 SelectedCostCenter: function($stateParams, $state, OrderCloud) {
-                    return OrderCloud.CostCenters.Get($stateParams.costCenterid)
+                    return OrderCloud.CostCenters.Get($stateParams.costcenterid)
                         .catch(function() {
                             $state.go('^.costCenters');
                         });
@@ -45,7 +45,7 @@ function CostCentersConfig($stateProvider) {
             controllerAs: 'costCenterCreate'
         })
         .state('costCenters.assign', {
-            url: '/:costCenterid/assign',
+            url: '/:costcenterid/assign',
             templateUrl: 'costCenters/templates/costCenterAssign.tpl.html',
             controller: 'CostCenterAssignCtrl',
             controllerAs: 'costCenterAssign',
@@ -57,10 +57,10 @@ function CostCentersConfig($stateProvider) {
                     return OrderCloud.UserGroups.List(null, 1, 20);
                 },
                 AssignedUserGroups: function($stateParams, OrderCloud) {
-                    return OrderCloud.CostCenters.ListAssignments($stateParams.costCenterid);
+                    return OrderCloud.CostCenters.ListAssignments($stateParams.costcenterid);
                 },
                 SelectedCostCenter: function($stateParams, $state, OrderCloud) {
-                    return OrderCloud.CostCenters.Get($stateParams.costCenterid).catch(function() {
+                    return OrderCloud.CostCenters.Get($stateParams.costcenterid).catch(function() {
                         $state.go('^');
                     });
                 }
@@ -203,9 +203,9 @@ function CostCenterAssignController($scope, toastr, OrderCloud, Assignments, Pag
         });
     }
 
-    $scope.$watchCollection(function(){
+    $scope.$watchCollection(function() {
         return vm.list;
-    }, function(){
+    }, function() {
         Paging.SetSelected(vm.list.Items, vm.assignments.Items, 'UserGroupID')
     });
 

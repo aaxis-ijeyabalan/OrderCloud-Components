@@ -139,14 +139,14 @@ function ShipmentEditController($exceptionHandler, $state, OrderCloud, SelectedS
         pagingfunction: PagingFunction,
         list: []
     };
-    if (vm.shipment.DateShipped != null){
+    if (vm.shipment.DateShipped != null) {
         vm.shipment.DateShipped = new Date(vm.shipment.DateShipped);
     }
 
     vm.goToLineItems = function(order) {
         vm.OrderSelected = order.ID;
         OrderCloud.LineItems.List(vm.OrderSelected,null, 1, 20)
-            .then(function(data){
+            .then(function(data) {
                 vm.lineitems.list = data;
                 angular.forEach(vm.lineitems.list.Items, function(li) {
                     angular.forEach(vm.shipment.Items, function(shipli) {
@@ -220,7 +220,7 @@ function ShipmentCreateController($exceptionHandler, $state, OrderCloud, OrderLi
     vm.goToLineItems = function(order) {
         vm.orderID=order.ID;
         OrderCloud.LineItems.List(order.ID,null, 1, 20)
-            .then(function(data){
+            .then(function(data) {
                 vm.lineitems.list = data;
                 vm.OrderSelected = true;
             })
@@ -236,7 +236,7 @@ function ShipmentCreateController($exceptionHandler, $state, OrderCloud, OrderLi
 
     vm.Submit = function() {
         angular.forEach(vm.lineitems.list.Items, function(li) {
-            if(li.addToShipment){
+            if (li.addToShipment) {
                 vm.shipment.Items.push({OrderID: vm.orderID, LineItemId: li.ID, QuantityShipped: li.QuantityShipped});
             }
         });

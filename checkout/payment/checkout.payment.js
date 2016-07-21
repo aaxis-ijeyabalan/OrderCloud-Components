@@ -86,7 +86,7 @@ function CheckoutPaymentController($state, Underscore, toastr, OrderCloud, Avail
         }
         else {
             OrderCloud.Payments.Delete(order.ID, vm.currentOrderPayments[index].ID)
-                .then(function(){
+                .then(function() {
                     OrderCloud.Payments.Create(order.ID, {Type: vm.currentOrderPayments[index].Type})
                         .then(function() {
                             $state.reload();
@@ -169,12 +169,12 @@ function CheckoutPaymentController($state, Underscore, toastr, OrderCloud, Avail
 
     function SetAmountMax(order) {
         angular.forEach(vm.currentOrderPayments, function(payment) {
-            var maxAmount = order.Total - Underscore.reduce(Underscore.pluck(vm.currentOrderPayments, 'Amount'), function(a, b) { return a + b; });
+            var maxAmount = order.Total - Underscore.reduce(Underscore.pluck(vm.currentOrderPayments, 'Amount'), function(a, b) {return a + b; });
             payment.MaxAmount = (payment.Amount + maxAmount).toString();
         });
     }
 
-    function SavePONumber(index,order){
+    function SavePONumber(index,order) {
         !vm.currentOrderPayments[index].xp ? vm.currentOrderPayments[index].xp = {} : vm.currentOrderPayments[index].xp;
         if (vm.currentOrderPayments[index].Type === "PurchaseOrder") {
             OrderCloud.Payments.Update(order.ID, vm.currentOrderPayments[index].ID, vm.currentOrderPayments[index]);

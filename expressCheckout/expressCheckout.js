@@ -27,7 +27,7 @@ function ExpressCheckoutConfig($stateProvider) {
                             if (!order.ShippingAddressID && CurrentUser.xp && CurrentUser.xp.defaultShippingAddressID) {
                                 queue.push(OrderCloud.Me.ListAddresses()
                                     .then(function(data) {
-                                        if(Underscore.where(data.Items, {ID: CurrentUser.xp.defaultShippingAddressID, Shipping: true}).length) {
+                                        if (Underscore.where(data.Items, {ID: CurrentUser.xp.defaultShippingAddressID, Shipping: true}).length) {
                                             patchObj.ShippingAddressID = CurrentUser.xp.defaultShippingAddressID;
                                         }
                                     }));
@@ -35,13 +35,13 @@ function ExpressCheckoutConfig($stateProvider) {
                             if (!order.BillingAddressID && CurrentUser.xp && CurrentUser.xp.defaultBillingAddressID) {
                                 queue.push(OrderCloud.Me.ListAddresses()
                                     .then(function(data) {
-                                        if(Underscore.where(data.Items, {ID: CurrentUser.xp.defaultBillingAddressID, Billing: true}).length) {
+                                        if (Underscore.where(data.Items, {ID: CurrentUser.xp.defaultBillingAddressID, Billing: true}).length) {
                                             patchObj.BillingAddressID = CurrentUser.xp.defaultBillingAddressID;
                                         }
                                     }));
                             }
                             $q.all(queue)
-                                .then(function(){
+                                .then(function() {
                                     if (!patchObj.ShippingAddressID && !patchObj.BillingAddressID) {
                                         dfd.resolve(order);
                                     }
@@ -71,11 +71,11 @@ function ExpressCheckoutConfig($stateProvider) {
                 OrderPayments: function($q, $state, toastr, Underscore, OrderCloud, CurrentUser, Order) {
                     var dfd = $q.defer();
                     OrderCloud.Payments.List(Order.ID)
-                        .then(function(payments){
-                            if(!payments.Items.length && CurrentUser.xp && CurrentUser.xp.defaultCreditCardID){
+                        .then(function(payments) {
+                            if (!payments.Items.length && CurrentUser.xp && CurrentUser.xp.defaultCreditCardID) {
                                 OrderCloud.Me.ListCreditCards()
-                                    .then(function(data){
-                                        if(Underscore.where(data.Items, {ID: CurrentUser.xp.defaultCreditCardID}).length) {
+                                    .then(function(data) {
+                                        if (Underscore.where(data.Items, {ID: CurrentUser.xp.defaultCreditCardID}).length) {
                                             OrderCloud.Payments.Create(Order.ID, {Type: 'CreditCard', CreditCardID: CurrentUser.xp.defaultCreditCardID})
                                                 .then(function() {
                                                     OrderCloud.Payments.List(Order.ID)
@@ -212,7 +212,7 @@ function ExpressCheckoutController($q, $state, $rootScope, toastr, OrderCloud, C
             });
     };
 
-    vm.savePONumber = function(order){
+    vm.savePONumber = function(order) {
         !vm.orderPayments[0].xp ? vm.orderPayments[0].xp = {} : vm.orderPayments[0].xp;
         if (vm.orderPayments[0].Type === 'PurchaseOrder') {
             OrderCloud.Payments.Update(order.ID, vm.orderPayments[0].ID, vm.orderPayments[0])
@@ -346,14 +346,14 @@ function ExpressOrderReviewController($q, toastr, OrderCloud, LineItemHelpers, S
         window.print();
     };
 
-    vm.addToFavorites = function(){
+    vm.addToFavorites = function() {
         //TODO: Refactor when SDK allows us to patch null
-        if(!SubmittedOrder.xp) {
+        if (!SubmittedOrder.xp) {
             SubmittedOrder.xp ={}
         }
         SubmittedOrder.xp.favorite = true;
 
-        OrderCloud.Orders.Patch(SubmittedOrder.ID, {xp: SubmittedOrder.xp.favorite} )
+        OrderCloud.Orders.Patch(SubmittedOrder.ID, {xp: SubmittedOrder.xp.favorite})
             .then(function() {
                 toastr.success('Your order has been added to Favorites! You can now easily find your order in Order History', 'Success')
             })
@@ -362,7 +362,7 @@ function ExpressOrderReviewController($q, toastr, OrderCloud, LineItemHelpers, S
             });
     };
 
-    vm.removeFromFavorites = function(){
+    vm.removeFromFavorites = function() {
         delete SubmittedOrder.xp.favorite;
         OrderCloud.Orders.Patch(SubmittedOrder.ID, {xp: SubmittedOrder.xp});
         toastr.success('Your order has been removed from Favorites', 'Success');

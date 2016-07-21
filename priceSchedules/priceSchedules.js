@@ -24,13 +24,13 @@ function PriceSchedulesConfig($stateProvider) {
             }
         })
         .state('priceSchedules.edit', {
-            url: '/:priceScheduleid/edit',
+            url: '/:pricescheduleid/edit',
             templateUrl: 'priceSchedules/templates/priceScheduleEdit.tpl.html',
             controller: 'PriceScheduleEditCtrl',
             controllerAs: 'priceScheduleEdit',
             resolve: {
                 SelectedPriceSchedule: function($stateParams, OrderCloud) {
-                    return OrderCloud.PriceSchedules.Get($stateParams.priceScheduleid);
+                    return OrderCloud.PriceSchedules.Get($stateParams.pricescheduleid);
                 }
             }
         })
@@ -158,7 +158,7 @@ function PriceScheduleEditController($scope, $exceptionHandler, $state, toastr, 
 
     $scope.$watch(function() {
         return vm.priceSchedule.RestrictedQuantity;
-    },function(value){
+    },function(value) {
         if (vm.priceSchedule.RestrictedQuantity) {
             vm.priceHeader = 'Total Price';
         } else {
@@ -198,8 +198,8 @@ function PriceScheduleCreateController($scope, $exceptionHandler, $state, toastr
 
     $scope.$watch(function() {
         return vm.priceSchedule.RestrictedQuantity;
-    },function(value){
-        if (vm.priceSchedule.RestrictedQuantity){
+    },function(value) {
+        if (vm.priceSchedule.RestrictedQuantity) {
             vm.priceHeader = 'Total Price';
         } else {
             vm.priceHeader =  'Price Per Unit';

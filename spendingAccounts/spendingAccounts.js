@@ -29,14 +29,14 @@ function SpendingAccountsConfig($stateProvider) {
 			}
 		})
 		.state('spendingAccounts.edit', {
-			url: '/:spendingAccountid/edit',
+			url: '/:spendingaccountid/edit',
 			templateUrl: 'spendingAccounts/templates/spendingAccountEdit.tpl.html',
 			controller: 'SpendingAccountEditCtrl',
 			controllerAs: 'spendingAccountEdit',
 			resolve: {
 				SelectedSpendingAccount: function($q, $stateParams, OrderCloud) {
 					var d = $q.defer();
-					OrderCloud.SpendingAccounts.Get($stateParams.spendingAccountid)
+					OrderCloud.SpendingAccounts.Get($stateParams.spendingaccountid)
 						.then(function(giftcard) {
 							if (giftcard.StartDate != null)
 								giftcard.StartDate = new Date(giftcard.StartDate);
@@ -56,7 +56,7 @@ function SpendingAccountsConfig($stateProvider) {
 			controllerAs: 'spendingAccountCreate'
 		})
 		.state('spendingAccounts.assignGroup', {
-			url: '/:spendingAccountid/assign',
+			url: '/:spendingaccountid/assign',
 			templateUrl: 'spendingAccounts/templates/spendingAccountAssignGroup.tpl.html',
 			controller: 'SpendingAccountAssignGroupCtrl',
 			controllerAs: 'spendingAccountAssignGroup',
@@ -65,15 +65,15 @@ function SpendingAccountsConfig($stateProvider) {
 					return OrderCloud.UserGroups.List();
 				},
 				AssignedUserGroups: function($stateParams, OrderCloud) {
-					return OrderCloud.SpendingAccounts.ListAssignments($stateParams.spendingAccountid, null, null, 'Group');
+					return OrderCloud.SpendingAccounts.ListAssignments($stateParams.spendingaccountid, null, null, 'Group');
 				},
 				SelectedSpendingAccount: function($stateParams, OrderCloud) {
-					return OrderCloud.SpendingAccounts.Get($stateParams.spendingAccountid);
+					return OrderCloud.SpendingAccounts.Get($stateParams.spendingaccountid);
 				}
 			}
 		})
 		.state('spendingAccounts.assignUser', {
-			url: '/:spendingAccountid/assign/user',
+			url: '/:spendingaccountid/assign/user',
 			templateUrl: 'spendingAccounts/templates/spendingAccountAssignUser.tpl.html',
 			controller: 'SpendingAccountAssignUserCtrl',
 			controllerAs: 'spendingAccountAssignUser',
@@ -82,10 +82,10 @@ function SpendingAccountsConfig($stateProvider) {
 					return OrderCloud.Users.List();
 				},
 				AssignedUsers: function($stateParams, OrderCloud) {
-					return OrderCloud.SpendingAccounts.ListAssignments($stateParams.spendingAccountid, null, null, 'User');
+					return OrderCloud.SpendingAccounts.ListAssignments($stateParams.spendingaccountid, null, null, 'User');
 				},
 				SelectedSpendingAccount: function($stateParams, OrderCloud) {
-					return OrderCloud.SpendingAccounts.Get($stateParams.spendingAccountid);
+					return OrderCloud.SpendingAccounts.Get($stateParams.spendingaccountid);
 				}
 			}
 		})

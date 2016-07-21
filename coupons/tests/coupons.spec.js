@@ -35,7 +35,7 @@ describe('Component: Coupons', function() {
             state = $state.get('coupons');
             spyOn(oc.Coupons, 'List').and.returnValue(null);
         }));
-        it('should resolve CouponList', inject(function ($injector) {
+        it('should resolve CouponList', inject(function($injector) {
             $injector.invoke(state.resolve.CouponList);
             expect(oc.Coupons.List).toHaveBeenCalled();
         }));
@@ -49,7 +49,7 @@ describe('Component: Coupons', function() {
             defer.resolve();
             spyOn(oc.Coupons, 'Get').and.returnValue(defer.promise);
         }));
-        it('should resolve SelectedCoupon', inject(function ($injector, $stateParams) {
+        it('should resolve SelectedCoupon', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedCoupon);
             expect(oc.Coupons.Get).toHaveBeenCalledWith($stateParams.couponid);
         }));
@@ -64,19 +64,19 @@ describe('Component: Coupons', function() {
             spyOn(oc.Coupons, 'ListAssignments').and.returnValue(null);
             spyOn(oc.Coupons, 'Get').and.returnValue(null);
         }));
-        it('should resolve Buyer', inject(function ($injector) {
+        it('should resolve Buyer', inject(function($injector) {
             $injector.invoke(state.resolve.Buyer);
             expect(oc.Buyers.Get).toHaveBeenCalled();
         }));
-        it('should resolve UserGroupList', inject(function ($injector) {
+        it('should resolve UserGroupList', inject(function($injector) {
             $injector.invoke(state.resolve.UserGroupList);
             expect(oc.UserGroups.List).toHaveBeenCalled();
         }));
-        it('should resolve AssignedUserGroups', inject(function ($injector, $stateParams) {
+        it('should resolve AssignedUserGroups', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.AssignedUserGroups);
             expect(oc.Coupons.ListAssignments).toHaveBeenCalledWith($stateParams.couponid);
         }));
-        it('should resolve SelectedCoupon', inject(function ($injector, $stateParams) {
+        it('should resolve SelectedCoupon', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedCoupon);
             expect(oc.Coupons.Get).toHaveBeenCalledWith($stateParams.couponid);
         }));
@@ -90,15 +90,15 @@ describe('Component: Coupons', function() {
             spyOn(oc.Coupons, 'Get').and.returnValue(null);
             spyOn(oc.Coupons, 'ListProductAssignments').and.returnValue(null);
         }));
-        it('should resolve ProductList', inject(function ($injector) {
+        it('should resolve ProductList', inject(function($injector) {
             $injector.invoke(state.resolve.ProductList);
             expect(oc.Products.List).toHaveBeenCalled();
         }));
-        it('should resolve ProductAssignments', inject(function ($injector, $stateParams) {
+        it('should resolve ProductAssignments', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.ProductAssignments);
             expect(oc.Coupons.ListProductAssignments).toHaveBeenCalledWith($stateParams.couponid);
         }));
-        it('should resolve SelectedCoupon', inject(function ($injector, $stateParams) {
+        it('should resolve SelectedCoupon', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedCoupon);
             expect(oc.Coupons.Get).toHaveBeenCalledWith($stateParams.couponid);
         }));
@@ -112,15 +112,15 @@ describe('Component: Coupons', function() {
             spyOn(oc.Coupons, 'Get').and.returnValue(null);
             spyOn(oc.Coupons, 'ListCategoryAssignments').and.returnValue(null);
         }));
-        it('should resolve CategoryList', inject(function ($injector) {
+        it('should resolve CategoryList', inject(function($injector) {
             $injector.invoke(state.resolve.CategoryList);
             expect(oc.Categories.List).toHaveBeenCalled();
         }));
-        it('should resolve CategoryAssignments', inject(function ($injector, $stateParams) {
+        it('should resolve CategoryAssignments', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.CategoryAssignments);
             expect(oc.Coupons.ListCategoryAssignments).toHaveBeenCalledWith($stateParams.couponid);
         }));
-        it('should resolve SelectedCoupon', inject(function ($injector, $stateParams) {
+        it('should resolve SelectedCoupon', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedCoupon);
             expect(oc.Coupons.Get).toHaveBeenCalledWith($stateParams.couponid);
         }));

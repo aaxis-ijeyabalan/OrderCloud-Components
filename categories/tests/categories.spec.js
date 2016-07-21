@@ -24,7 +24,7 @@ describe('Component: Categories', function() {
             state = $state.get('categories');
             spyOn(oc.Categories, 'List').and.returnValue(null);
         }));
-        it('should resolve CategoryList', inject(function ($injector) {
+        it('should resolve CategoryList', inject(function($injector) {
             $injector.invoke(state.resolve.CategoryList);
             expect(oc.Categories.List).toHaveBeenCalled();
         }));
@@ -38,7 +38,7 @@ describe('Component: Categories', function() {
             defer.resolve();
             spyOn(oc.Categories, 'Get').and.returnValue(defer.promise);
         }));
-        it('should resolve SelectedCategory', inject(function ($injector, $stateParams) {
+        it('should resolve SelectedCategory', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedCategory);
             expect(oc.Categories.Get).toHaveBeenCalledWith($stateParams.categoryid);
         }));
@@ -54,15 +54,15 @@ describe('Component: Categories', function() {
             defer.resolve();
             spyOn(oc.Categories, 'Get').and.returnValue(defer.promise);
         }));
-        it('should resolve UserGroupList', inject(function ($injector) {
+        it('should resolve UserGroupList', inject(function($injector) {
             $injector.invoke(state.resolve.UserGroupList);
             expect(oc.UserGroups.List).toHaveBeenCalled();
         }));
-        it('should resolve AssignedUserGroups', inject(function ($injector, $stateParams) {
+        it('should resolve AssignedUserGroups', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.AssignedUserGroups);
             expect(oc.Categories.ListAssignments).toHaveBeenCalledWith($stateParams.categoryid);
         }));
-        it('should resolve SelectedCategory', inject(function ($injector, $stateParams) {
+        it('should resolve SelectedCategory', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedCategory);
             expect(oc.Categories.Get).toHaveBeenCalledWith($stateParams.categoryid);
         }));
@@ -78,15 +78,15 @@ describe('Component: Categories', function() {
             defer.resolve();
             spyOn(oc.Categories, 'Get').and.returnValue(defer.promise);
         }));
-        it('should resolve ProductList', inject(function ($injector) {
+        it('should resolve ProductList', inject(function($injector) {
             $injector.invoke(state.resolve.ProductList);
             expect(oc.Products.List).toHaveBeenCalled();
         }));
-        it('should resolve ProductAssignments', inject(function ($injector, $stateParams) {
+        it('should resolve ProductAssignments', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.ProductAssignments);
             expect(oc.Categories.ListProductAssignments).toHaveBeenCalledWith($stateParams.categoryid);
         }));
-        it('should resolve SelectedCategory', inject(function ($injector, $stateParams) {
+        it('should resolve SelectedCategory', inject(function($injector, $stateParams) {
             $injector.invoke(state.resolve.SelectedCategory);
             expect(oc.Categories.Get).toHaveBeenCalledWith($stateParams.categoryid);
         }));
@@ -159,7 +159,7 @@ describe('Component: Categories', function() {
                 expect(oc.Categories.Create).toHaveBeenCalledWith(category);
             });
             it ('should enter the categories state', inject(function($state) {
-                expect($state.go).toHaveBeenCalledWith('categories', {}, {reload:true});
+                expect($state.go).toHaveBeenCalledWith('categories', {}, {reload: true});
             }));
         });
     });
