@@ -6,6 +6,10 @@ angular.module('orderCloud')
     .controller('PromotionAssignGroupCtrl', PromotionAssignGroupController)
     .controller('PromotionAssignUserCtrl', PromotionAssignUserController)
     .factory('PromotionAssignment', PromotionAssignment)
+    .controller('PromotionInputCtrl', PromotionInputController)
+    .directive('ordercloudPromotionInput', OrdercloudPromotionInputDirective)
+    .controller('RemovePromotionCtrl', RemovePromotionController)
+    .directive('ordercloudRemovePromotion', OrdercloudRemovePromotionDirective)
 ;
 
 function PromotionsConfig($stateProvider) {
@@ -341,5 +345,63 @@ function PromotionAssignment($q, $state, $injector, Underscore, OrderCloud, Assi
             return dfd.promise;
         }
         else return null;
+    }
+}
+
+function PromotionInputController($scope, $state, toastr, OrderCloud) {
+    var vm = this;
+
+    vm.Submit = function() {
+        OrderCloud.Orders.AddPromotion($scope.order.ID, vm.code)
+            .then(function(promo) {
+                $state.reload();
+                toastr.success(promo.Name + ' has been added.', 'Success')
+            })
+            .catch(function(ex) {
+                toastr.error(ex.data.Errors[0].Message, 'Error');
+                vm.code = null;
+            });
+    };
+}
+
+function OrdercloudPromotionInputDirective() {
+    return {
+        restrict: 'E',
+        scope: {
+            order: '=',
+            orderpromotions: '='
+        },
+        replace: true,
+        templateUrl: 'promotions/templates/promotion-input.tpl.html',
+        controller: 'PromotionInputCtrl',
+        controllerAs: 'promotionInput'
+    };
+}
+
+function RemovePromotionController($scope, $state, toastr, OrderCloud) {
+    var vm = this;
+
+    vm.Remove = function() {
+        OrderCloud.Orders.RemovePromotion($scope.order.ID, $scope.promotion.Code)
+            .then(function() {
+                $state.reload();
+            })
+            .catch(function(ex) {
+                toastr.error(ex.data.Errors[0].Message, 'Error');
+            });
+    };
+}
+
+function OrdercloudRemovePromotionDirective() {
+    return {
+        restrict: 'E',
+        scope: {
+            order: '=',
+            promotion: '='
+        },
+        replace: true,
+        templateUrl: 'promotions/templates/remove-promotion.tpl.html',
+        controller: 'RemovePromotionCtrl',
+        controllerAs: 'removePromotion'
     }
 }

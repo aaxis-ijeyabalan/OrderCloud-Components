@@ -83,7 +83,7 @@
                 <td data-title="Start Date">{{promotion.StartDate | date:'MM/dd/yyyy'}}</td>
                 <td data-title="End Date">{{promotion.ExpirationDate | date:'MM/dd/yyyy'}}</td>
                 <td class="actions-cell">
-                    <button class="btn btn-default btn-sm">Edit</button>
+                    <button class="btn btn-default btn-sm" ui-sref=".edit({promotionid: promotion.ID})">Edit</button>
                     <div class="btn-group" uib-dropdown dropdown-append-to-body>
                         <button type="button" class="btn btn-default btn-sm" uib-dropdown-toggle>Assign <span class="caret"></span></button>
                         <ul class="dropdown-menu-right" uib-dropdown-menu role="menu">
