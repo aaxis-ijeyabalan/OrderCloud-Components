@@ -1,24 +1,22 @@
-angular.module( 'orderCloud' )
-
-	.config( AddressesConfig )
-	.controller( 'AddressesCtrl', AddressesController )
-	.controller( 'AddressEditCtrl', AddressEditController )
-	.controller( 'AddressCreateCtrl', AddressCreateController )
-    .controller( 'AddressAssignCtrl', AddressAssignController )
-
+angular.module('orderCloud')
+	.config(AddressesConfig)
+	.controller('AddressesCtrl', AddressesController)
+	.controller('AddressEditCtrl', AddressEditController)
+	.controller('AddressCreateCtrl', AddressCreateController)
+    .controller('AddressAssignCtrl', AddressAssignController)
 ;
 
-function AddressesConfig( $stateProvider ) {
+function AddressesConfig($stateProvider) {
 	$stateProvider
-		.state( 'addresses', {
+		.state('addresses', {
 			parent: 'base',
-			templateUrl:'addresses/templates/addresses.tpl.html',
-			controller:'AddressesCtrl',
+			templateUrl: 'addresses/templates/addresses.tpl.html',
+			controller: 'AddressesCtrl',
 			controllerAs: 'addresses',
 			url: '/addresses?search&page&pageSize&searchOn&sortBy&filters',
 			data: {componentName: 'Addresses'},
 			resolve: {
-				Parameters: function( $stateParams, OrderCloudParameters ) {
+				Parameters: function($stateParams, OrderCloudParameters) {
 					return OrderCloudParameters.Get($stateParams);
 				},
 				AddressList: function(OrderCloud, Parameters) {
@@ -26,10 +24,10 @@ function AddressesConfig( $stateProvider ) {
 				}
 			}
 		})
-		.state( 'addresses.edit', {
+		.state('addresses.edit', {
 			url: '/:addressid/edit',
-			templateUrl:'addresses/templates/addressEdit.tpl.html',
-			controller:'AddressEditCtrl',
+			templateUrl: 'addresses/templates/addressEdit.tpl.html',
+			controller: 'AddressEditCtrl',
 			controllerAs: 'addressEdit',
 			resolve: {
 				SelectedAddress: function($stateParams, $state, OrderCloud) {
@@ -39,13 +37,13 @@ function AddressesConfig( $stateProvider ) {
 				}
 			}
 		})
-		.state( 'addresses.create', {
+		.state('addresses.create', {
 			url: '/addresses/create',
-			templateUrl:'addresses/templates/addressCreate.tpl.html',
-			controller:'AddressCreateCtrl',
+			templateUrl: 'addresses/templates/addressCreate.tpl.html',
+			controller: 'AddressCreateCtrl',
 			controllerAs: 'addressCreate'
 		})
-        .state( 'addresses.assign', {
+        .state('addresses.assign', {
             url: '/addresses/:addressid/assign',
 	        templateUrl: 'addresses/templates/addressAssign.tpl.html',
 	        controller: 'AddressAssignCtrl',
@@ -66,7 +64,7 @@ function AddressesConfig( $stateProvider ) {
         })
 }
 
-function AddressesController( $state, $ocMedia, OrderCloud, OrderCloudParameters, AddressList, Parameters ) {
+function AddressesController($state, $ocMedia, OrderCloud, OrderCloudParameters, AddressList, Parameters) {
 	var vm = this;
 	vm.list = AddressList;
 	vm.parameters = Parameters;
@@ -133,7 +131,7 @@ function AddressesController( $state, $ocMedia, OrderCloud, OrderCloudParameters
 
 	//Load the next page of results with all of the same parameters
 	vm.loadMore = function() {
-		return OrderCloud.Addresses.List( Parameters.search, vm.list.Meta.Page + 1, Parameters.pageSize || vm.list.Meta.PageSize, Parameters.searchOn, Parameters.sortBy, Parameters.filters)
+		return OrderCloud.Addresses.List(Parameters.search, vm.list.Meta.Page + 1, Parameters.pageSize || vm.list.Meta.PageSize, Parameters.searchOn, Parameters.sortBy, Parameters.filters)
 			.then(function(data) {
 				vm.list.Items = vm.list.Items.concat(data.Items);
 				vm.list.Meta = data.Meta;
@@ -141,19 +139,24 @@ function AddressesController( $state, $ocMedia, OrderCloud, OrderCloudParameters
 	};
 }
 
-function AddressEditController( $exceptionHandler, $state, OrderCloud, SelectedAddress, toastr, OCGeography ) {
+function AddressEditController($exceptionHandler, $state, $scope, toastr, OrderCloud, OCGeography, SelectedAddress) {
 	var vm = this,
         addressID = SelectedAddress.ID;
 	vm.addressName = SelectedAddress.AddressName;
 	vm.address = SelectedAddress;
-    vm.countries = OCGeography.countries;
-    vm.states = OCGeography.states;
+    vm.countries = OCGeography.Countries;
+    vm.states = OCGeography.States;
 
+    $scope.$watch(function() {
+        return vm.address.Country
+    }, function() {
+        vm.address.State = null;
+    });
 
 	vm.Submit = function() {
 		OrderCloud.Addresses.Update(addressID, vm.address)
 			.then(function() {
-				$state.go('addresses', {}, {reload:true});
+				$state.go('addresses', {}, {reload: true});
                 toastr.success('Address Updated', 'Success');
 			})
             .catch(function(ex) {
@@ -164,7 +167,7 @@ function AddressEditController( $exceptionHandler, $state, OrderCloud, SelectedA
 	vm.Delete = function() {
 		OrderCloud.Addresses.Delete(SelectedAddress.ID, false)
 			.then(function() {
-				$state.go('addresses', {}, {reload:true})
+				$state.go('addresses', {}, {reload: true});
                 toastr.success('Address Deleted', 'Success');
 			})
             .catch(function(ex) {
@@ -173,16 +176,24 @@ function AddressEditController( $exceptionHandler, $state, OrderCloud, SelectedA
 	};
 }
 
-function AddressCreateController($exceptionHandler, $state, OrderCloud, toastr, OCGeography) {
+function AddressCreateController($exceptionHandler, $scope, $state, toastr, OrderCloud, OCGeography) {
 	var vm = this;
-	vm.address = {};
-    vm.countries = OCGeography.countries;
-    vm.states = OCGeography.states;
+	vm.address = {
+        Country: 'US' // this is to default 'create' addresses to the country US
+    };
+    vm.countries = OCGeography.Countries;
+    vm.states = OCGeography.States;
+
+    $scope.$watch(function() {
+        return vm.address.Country
+    }, function() {
+        vm.address.State = null;
+    });
 
 	vm.Submit = function() {
 		OrderCloud.Addresses.Create(vm.address)
 			.then(function() {
-				$state.go('addresses', {}, {reload:true});
+				$state.go('addresses', {}, {reload: true});
                 toastr.success('Address Created', 'Success');
 			})
             .catch(function(ex) {
@@ -191,7 +202,7 @@ function AddressCreateController($exceptionHandler, $state, OrderCloud, toastr, 
 	};
 }
 
-function AddressAssignController($q, $scope, $state, Underscore, OrderCloud, Assignments, AssignmentsList, UserGroupList, SelectedAddress, toastr) {
+function AddressAssignController($q, $scope, $state, Underscore, toastr, OrderCloud, Assignments, AssignmentsList, UserGroupList, SelectedAddress) {
     var vm = this;
     vm.list = UserGroupList;
     vm.assignments = AssignmentsList;
@@ -205,7 +216,7 @@ function AddressAssignController($q, $scope, $state, Underscore, OrderCloud, Ass
 
     vm.setSelected = setSelected;
     function setSelected() {
-        var assigned = Assignments.getAssigned(vm.assignments.Items, 'UserGroupID');
+        var assigned = Assignments.GetAssigned(vm.assignments.Items, 'UserGroupID');
         angular.forEach(vm.list.Items, function(item) {
             if (assigned.indexOf(item.ID) > -1) {
                 item.selected = true;
@@ -251,9 +262,9 @@ function AddressAssignController($q, $scope, $state, Underscore, OrderCloud, Ass
     function SaveAssignments() {
         var assigned = Underscore.pluck(vm.assignments.Items, 'UserGroupID');
         var selected = Underscore.pluck(Underscore.where(vm.list.Items, {selected: true}), 'ID');
-        var toAdd = Assignments.getToAssign(vm.list.Items, vm.assignments.Items, 'UserGroupID');
+        var toAdd = Assignments.GetToAssign(vm.list.Items, vm.assignments.Items, 'UserGroupID');
         var toUpdate = Underscore.intersection(selected, assigned);
-        var toDelete = Assignments.getToDelete(vm.list.Items, vm.assignments.Items, 'UserGroupID');
+        var toDelete = Assignments.GetToDelete(vm.list.Items, vm.assignments.Items, 'UserGroupID');
         var queue = [];
         var dfd = $q.defer();
         angular.forEach(vm.list.Items, function(Item) {
