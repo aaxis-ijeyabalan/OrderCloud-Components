@@ -55,15 +55,19 @@ function CartConfig($stateProvider) {
                             dfd.reject();
                         });
                     return dfd.promise;
+                },
+                PromotionsList: function(OrderCloud, Order) {
+                    return OrderCloud.Orders.ListPromotions(Order.ID);
                 }
             }
         });
 }
 
-function CartController($q, $rootScope, $timeout, OrderCloud, Order, LineItemsList, LineItemHelpers) {
+function CartController($q, $rootScope, $timeout, OrderCloud, LineItemHelpers, Order, LineItemsList, PromotionsList) {
     var vm = this;
     vm.order = Order;
     vm.lineItems = LineItemsList;
+    vm.promotions = PromotionsList;
     vm.removeItem = LineItemHelpers.RemoveItem;
     vm.pagingfunction = PagingFunction;
 
