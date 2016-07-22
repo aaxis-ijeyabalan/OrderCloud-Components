@@ -10,6 +10,7 @@ angular.module('orderCloud')
     .directive('ordercloudPromotionInput', OrdercloudPromotionInputDirective)
     .controller('RemovePromotionCtrl', RemovePromotionController)
     .directive('ordercloudRemovePromotion', OrdercloudRemovePromotionDirective)
+    .factory('OrderCloudExpressions', OrderCloudExpressionsService)
 ;
 
 function PromotionsConfig($stateProvider) {
@@ -195,9 +196,55 @@ function PromotionEditController($exceptionHandler, $state, toastr, OrderCloud, 
     };
 }
 
-function PromotionCreateController($exceptionHandler, $state, toastr, OrderCloud) {
+function PromotionCreateController($exceptionHandler, $state, $scope, toastr, OrderCloud, OrderCloudExpressions) {
     var vm = this;
     vm.promotion = {};
+    vm.expressionObjects = OrderCloudExpressions.Objects;
+    vm.eligibleConditions = [];
+
+    vm.addEligibleCondition = function(logicalOperator) {
+        if (logicalOperator) {
+            vm.eligibleConditions.push({
+                Value: logicalOperator,
+                LogicalOperator: true
+            });
+        }
+        vm.eligibleConditions.push({
+            Object: null,
+            Property: null,
+            XPProperty: null,
+            Operator: null,
+            Value: null,
+            LogicalOperator: false
+        });
+    };
+
+    vm.removeEligibleCondition = function(index) {
+        vm.eligibleConditions.splice(index - 1, 2);
+    };
+
+    $scope.$watch(function () {
+        return vm.eligibleConditions;
+    },function(conditions){
+        console.log(conditions);
+        updateEligibleExpression(conditions);
+    }, true);
+
+    function updateEligibleExpression(conditions) {
+        var result = '';
+        angular.forEach(conditions, function(condition) {
+            if (condition.LogicalOperator) {
+                result += ' ' + condition.Value + ' ';
+            } else {
+                result += (condition.Object ? condition.Object.Value : '');
+                result += (condition.Property ? ('.' + condition.Property.Value) : '');
+                result += ((condition.Property && condition.Property.Value == 'xp') ? ('.' + condition.XPProperty) : '');
+                result += (condition.Operator ? (' ' + condition.Operator.Value) : '');
+                result += (condition.Value ? ' ' + condition.Value : '');
+            }
+        });
+        vm.promotion.EligibleExpression = result;
+    }
 
     vm.Submit = function() {
         OrderCloud.Promotions.Create(vm.promotion)
@@ -403,5 +450,149 @@ function OrdercloudRemovePromotionDirective() {
         templateUrl: 'promotions/templates/remove-promotion.tpl.html',
         controller: 'RemovePromotionCtrl',
         controllerAs: 'removePromotion'
+    }
+}
+
+function OrderCloudExpressionsService() {
+    var _objects = [
+        {
+            Name: 'Order',
+            Value: 'order',
+            Properties: [
+                {
+                    Name: 'Billing Address ID',
+                    Value: 'BillingAddressID',
+                    Operators: [
+                        {Name: 'Equals (=)', Value: '='}
+                    ]
+                },
+                {
+                    Name: 'Line Item Count',
+                    Value: 'LineItemCount',
+                    Operators: [
+                        {Name: 'Equals (=)', Value: '='},
+                        {Name: 'Greater than (>)', Value: '>'},
+                        {Name: 'Greater than or equal to (>=)', Value: '>='},
+                        {Name: 'Less than (<)', Value: '<'},
+                        {Name: 'Less than or equal to (<=)', Value: '<='}
+                    ]
+                },
+                {
+                    Name: 'Subtotal',
+                    Value: 'Subtotal',
+                    Operators: [
+                        {Name: 'Equals (=)', Value: '='},
+                        {Name: 'Greater than (>)', Value: '>'},
+                        {Name: 'Greater than or equal to (>=)', Value: '>='},
+                        {Name: 'Less than (<)', Value: '<'},
+                        {Name: 'Less than or equal to (<=)', Value: '<='}
+                    ]
+                },
+                {
+                    Name: 'Shipping Cost',
+                    Value: 'ShippingCost',
+                    Operators: [
+                        {Name: 'Equals (=)', Value: '='},
+                        {Name: 'Greater than (>)', Value: '>'},
+                        {Name: 'Greater than or equal to (>=)', Value: '>='},
+                        {Name: 'Less than (<)', Value: '<'},
+                        {Name: 'Less than or equal to (<=)', Value: '<='}
+                    ]
+                },
+                {
+                    Name: 'Total',
+                    Value: 'Total',
+                    Operators: [
+                        {Name: 'Equals (=)', Value: '='},
+                        {Name: 'Greater than (>)', Value: '>'},
+                        {Name: 'Greater than or equal to (>=)', Value: '>='},
+                        {Name: 'Less than (<)', Value: '<'},
+                        {Name: 'Less than or equal to (<=)', Value: '<='}
+                    ]
+                },
+                {
+                    Name: 'Extended Property',
+                    Value: 'xp',
+                    Operators: [
+                        {Name: 'Equals (=)', Value: '='},
+                        {Name: 'Greater than (>)', Value: '>'},
+                        {Name: 'Greater than or equal to (>=)', Value: '>='},
+                        {Name: 'Less than (<)', Value: '<'},
+                        {Name: 'Less than or equal to (<=)', Value: '<='}
+                    ]
+                }
+            ]
+        },
+        {
+            Name: 'Line Items',
+            Value: 'items',
+            Properties: [
+                {
+                    Name: 'Any',
+                    'Value': 'any'
+                },
+                {
+                    Name: 'All',
+                    Value: 'all'
+                },
+                {
+                    Name: 'Quantity',
+                    Value: 'quantity'
+                },
+                {
+                    Name: 'Total',
+                    Value: 'total'
+                }
+            ]
+            /*Properties: [
+                {
+                    Name: 'Product ID',
+                    Value: 'ProductID',
+                    Operators: [{Name: 'Equals (=)', Value: '='}]
+                },
+                {
+                    Name: 'Quantity',
+                    Value: 'Quantity',
+                    Operators: [
+                        {Name: 'Equals (=)', Value: '='},
+                        {Name: 'Greater than (>)', Value: '>'},
+                        {Name: 'Greater than or equal to (>=)', Value: '>='},
+                        {Name: 'Less than (<)', Value: '<'},
+                        {Name: 'Less than or equal to (<=)', Value: '<='}
+                    ]
+                },
+                {
+                    Name: 'Line Total',
+                    Value: 'LineTotal',
+                    Operators: [
+                        {Name: 'Equals (=)', Value: '='},
+                        {Name: 'Greater than (>)', Value: '>'},
+                        {Name: 'Greater than or equal to (>=)', Value: '>='},
+                        {Name: 'Less than (<)', Value: '<'},
+                        {Name: 'Less than or equal to (<=)', Value: '<='}
+                    ]
+                },
+                {
+                    Name: 'Shipping Address ID',
+                    Value: 'ShippingAddressID',
+                    Operators: [{Name: 'Equals (=)', Value: '='}]
+                },
+                {
+                    Name: 'Extended Property',
+                    Value: 'xp',
+                    Operators: [
+                        {Name: 'Equals (=)', Value: '='},
+                        {Name: 'Greater than (>)', Value: '>'},
+                        {Name: 'Greater than or equal to (>=)', Value: '>='},
+                        {Name: 'Less than (<)', Value: '<'},
+                        {Name: 'Less than or equal to (<=)', Value: '<='}
+                    ]
+                }
+            ]*/
+        }
+    ];
+
+    return {
+        Objects: _objects
     }
 }
