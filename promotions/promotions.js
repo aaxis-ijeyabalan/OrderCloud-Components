@@ -201,7 +201,6 @@ function PromotionCreateController($exceptionHandler, $state, $scope, $filter, t
     vm.promotion = {};
     vm.expressionObjects = OrderCloudExpressions.Objects;
     vm.eligibleConditions = [];
-    vm.itemOperators = ['=', '>', '>=', '<', '<='];
 
     vm.addEligibleCondition = function(logicalOperator) {
         if (logicalOperator) {
@@ -307,6 +306,21 @@ function PromotionCreateController($exceptionHandler, $state, $scope, $filter, t
                 if (condition.Object && condition.Object.Value == 'order') {
                     result += (condition.Property ? ('.' + condition.Property.Value) : '');
                     result += ((condition.Property && condition.Property.Value == 'xp') ? ('.' + condition.XPProperty) : '');
+                    result += (condition.Operator ? (' ' + condition.Operator) : '');
+                    if (condition.Value) {
+                        result += ' ';
+                        switch (condition.ValueType) {
+                            case 'String':
+                                result += "'" + condition.Value.replace(/['"]/g, '') + "'";
+                                break;
+                            case 'Number':
+                                result += condition.Value;
+                                break;
+                            case 'Date':
+                                result += '#' + $filter('date')(condition.Value, 'shortDate') + '#';
+                                break;
+                        }
+                    }
                 } else if (condition.Object && condition.Object.Value == 'items') {
                     result += (condition.Function ? ('.' + condition.Function.Value + (!condition.ItemConditions[0].Property ? '()' : '')) : '');
                     if (condition.ItemConditions[0].Property) {
@@ -339,20 +353,20 @@ function PromotionCreateController($exceptionHandler, $state, $scope, $filter, t
                         });
                         result += ')';
                     }
-                }
-                result += (condition.Operator ? (' ' + condition.Operator) : '');
-                if (condition.Value) {
-                    result += ' ';
-                    switch (condition.ValueType) {
-                        case 'String':
-                            result += "'" + condition.Value.replace(/['"]/g, '') + "'";
-                            break;
-                        case 'Number':
-                            result += condition.Value;
-                            break;
-                        case 'Date':
-                            result += '#' + $filter('date')(condition.Value, 'shortDate') + '#';
-                            break;
+                    result += ((condition.Operator && condition.Function.Operators.length > 0) ? (' ' + condition.Operator) : '');
+                    if (condition.Value && condition.Function && condition.Function.Operators.length > 0) {
+                        result += ' ';
+                        switch (condition.ValueType) {
+                            case 'String':
+                                result += "'" + condition.Value.replace(/['"]/g, '') + "'";
+                                break;
+                            case 'Number':
+                                result += condition.Value;
+                                break;
+                            case 'Date':
+                                result += '#' + $filter('date')(condition.Value, 'shortDate') + '#';
+                                break;
+                        }
                     }
                 }
             }
@@ -616,19 +630,23 @@ function OrderCloudExpressionsService() {
             Functions: [
                 {
                     Name: 'Any',
-                    'Value': 'any'
+                    Value: 'any',
+                    Operators: []
                 },
                 {
                     Name: 'All',
-                    Value: 'all'
+                    Value: 'all',
+                    Operators: []
                 },
                 {
                     Name: 'Quantity',
-                    Value: 'quantity'
+                    Value: 'quantity',
+                    Operators: ['=', '>', '>=', '<', '<=']
                 },
                 {
                     Name: 'Total',
-                    Value: 'total'
+                    Value: 'total',
+                    Operators: ['=', '>', '>=', '<', '<=']
                 }
             ],
             Properties: [
