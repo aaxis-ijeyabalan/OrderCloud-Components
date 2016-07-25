@@ -53,9 +53,10 @@
     <div class="form-group">
         <label for="promotionEligibleExpressionInput">Eligible Expression</label>
         <div class="input-group">
-            <input id="promotionEligibleExpressionInput" type="text" class="form-control" ng-model="promotionCreate.promotion.EligibleExpression" readonly required="true"/>
+            <input id="promotionEligibleExpressionInput" type="text" class="form-control" ng-model="promotionCreate.promotion.EligibleExpression" ng-readonly="!promotionCreate.promotion.xp.OverrideEligibleExpression" required="true"/>
             <div class="input-group-btn">
-                <button type="button" class="btn btn-info" ng-if="!promotionCreate.eligibleConditions.length" ng-click="promotionCreate.addEligibleCondition()"><i class="fa fa-plus"></i> Add Condition</button>
+                <button type="button" class="btn btn-default" ng-class="{'active': promotionCreate.promotion.xp.OverrideEligibleExpression}" ng-click="promotionCreate.overrideEligibleExpression()"><i class="fa fa-edit"></i></button>
+                <button type="button" class="btn btn-info" ng-if="!promotionCreate.eligibleConditions.length" ng-click="promotionCreate.addEligibleCondition()" ng-disabled="promotionCreate.promotion.xp.OverrideEligibleExpression"><i class="fa fa-plus"></i> Add Condition</button>
                 <button type="button" class="btn btn-info dropdown-toggle" ng-if="promotionCreate.eligibleConditions.length" data-toggle="dropdown"><i class="fa fa-plus"></i> Add Condition <i class="fa fa-caret-down"></i></button>
                 <ul class="dropdown-menu">
                     <li><a href="#" ng-click="promotionCreate.addEligibleCondition('or')">Or</a></li>
@@ -64,7 +65,7 @@
             </div>
         </div>
     </div>
-    <div class="row rule-condition" ng-repeat="condition in promotionCreate.eligibleConditions">
+    <div class="row rule-condition" ng-repeat="condition in promotionCreate.eligibleConditions" ng-if="!promotionCreate.promotion.xp.OverrideEligibleExpression">
         <div ng-if="condition.LogicalOperator">
             <div class="form-group col-sm-1">
                 <select class="form-control" ng-model="condition.Value" ng-options="logicalOperator as logicalOperator for logicalOperator in ['or', 'and']"></select>

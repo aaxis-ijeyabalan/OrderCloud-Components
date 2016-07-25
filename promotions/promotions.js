@@ -198,9 +198,19 @@ function PromotionEditController($exceptionHandler, $state, toastr, OrderCloud, 
 
 function PromotionCreateController($exceptionHandler, $state, $scope, $filter, toastr, OrderCloud, OrderCloudExpressions) {
     var vm = this;
-    vm.promotion = {};
+    vm.promotion = {xp: {}};
     vm.expressionObjects = OrderCloudExpressions.Objects;
     vm.eligibleConditions = [];
+
+    vm.overrideEligibleExpression = function() {
+        if (vm.promotion.xp.OverrideEligibleExpression) {
+            vm.promotion.xp.OverrideEligibleExpression = false;
+        }
+        else {
+            vm.promotion.xp.OverrideEligibleExpression = true;
+            vm.eligibleConditions = [];
+        }
+    };
 
     vm.addEligibleCondition = function(logicalOperator) {
         if (logicalOperator) {
@@ -294,6 +304,7 @@ function PromotionCreateController($exceptionHandler, $state, $scope, $filter, t
     }, true);
 
     function updateEligibleExpression(conditions) {
+        if (vm.promotion.xp.OverrideEligibleExpression) return;
         var result = '';
         angular.forEach(conditions, function(condition) {
             if (condition.LogicalOperator) {
@@ -375,6 +386,9 @@ function PromotionCreateController($exceptionHandler, $state, $scope, $filter, t
     }
 
     vm.Submit = function() {
+        if (!vm.promotion.xp.OverrideEligibleExpression) {
+            vm.promotion.xp.EligibleConditions = vm.eligibleConditions;
+        }
         OrderCloud.Promotions.Create(vm.promotion)
             .then(function() {
                 $state.go('promotions', {}, {reload: true});
