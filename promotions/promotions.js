@@ -196,20 +196,15 @@ function PromotionEditController($exceptionHandler, $state, toastr, OrderCloud, 
     };
 }
 
-function PromotionCreateController($exceptionHandler, $state, $scope, $filter, toastr, OrderCloud, OrderCloudExpressions) {
+function PromotionCreateController($exceptionHandler, $state, $scope, toastr, OrderCloud, OrderCloudExpressions) {
     var vm = this;
     vm.promotion = {xp: {}};
-    vm.expressionObjects = OrderCloudExpressions.Objects;
+    vm.expressionObjects = OrderCloudExpressions.Objects();
     vm.eligibleConditions = [];
 
     vm.overrideEligibleExpression = function() {
-        if (vm.promotion.xp.OverrideEligibleExpression) {
-            vm.promotion.xp.OverrideEligibleExpression = false;
-        }
-        else {
-            vm.promotion.xp.OverrideEligibleExpression = true;
-            vm.eligibleConditions = [];
-        }
+        vm.promotion.xp.OverrideEligibleExpression = !vm.promotion.xp.OverrideEligibleExpression;
+        vm.eligibleConditions = [];
     };
 
     vm.addEligibleCondition = function(logicalOperator) {
@@ -305,84 +300,7 @@ function PromotionCreateController($exceptionHandler, $state, $scope, $filter, t
 
     function updateEligibleExpression(conditions) {
         if (vm.promotion.xp.OverrideEligibleExpression) return;
-        var result = '';
-        angular.forEach(conditions, function(condition) {
-            if (condition.LogicalOperator) {
-                result += ' ' + condition.Value + ' ';
-            } else {
-                if (condition.Object && condition.Property && !condition.Operator && condition.Property.Operators.length == 1) {
-                    condition.Operator = condition.Property.Operators[0];
-                }
-                result += (condition.Object ? condition.Object.Value : '');
-                if (condition.Object && condition.Object.Value == 'order') {
-                    result += (condition.Property ? ('.' + condition.Property.Value) : '');
-                    result += ((condition.Property && condition.Property.Value == 'xp') ? ('.' + condition.XPProperty) : '');
-                    result += (condition.Operator ? (' ' + condition.Operator) : '');
-                    if (condition.Value) {
-                        result += ' ';
-                        switch (condition.ValueType) {
-                            case 'String':
-                                result += "'" + condition.Value.replace(/['"]/g, '') + "'";
-                                break;
-                            case 'Number':
-                                result += condition.Value;
-                                break;
-                            case 'Date':
-                                result += '#' + $filter('date')(condition.Value, 'shortDate') + '#';
-                                break;
-                        }
-                    }
-                } else if (condition.Object && condition.Object.Value == 'items') {
-                    result += (condition.Function ? ('.' + condition.Function.Value + (!condition.ItemConditions[0].Property ? '()' : '')) : '');
-                    if (condition.ItemConditions[0].Property) {
-                        result += '(';
-                        angular.forEach(condition.ItemConditions, function(c) {
-                            if (c.LogicalOperator) {
-                                result += ' ' + c.Value + ' ';
-                            }
-                            else {
-                                if (c.Property && c.Property.Operators.length == 1) {
-                                    c.Operator = c.Property.Operators[0];
-                                }
-                                result += (c.Property ? c.Property.Value : '');
-                                result += ((c.Property && c.Property.Value == 'xp') ? ('.' + c.XPProperty) : '');
-                                result += (c.Operator ? (' ' + c.Operator + ' ') : '');
-                                if (c.Value) {
-                                    switch (c.ValueType) {
-                                        case 'String':
-                                            result += "'" + c.Value.replace(/['"]/g, '') + "'";
-                                            break;
-                                        case 'Number':
-                                            result += c.Value;
-                                            break;
-                                        case 'Date':
-                                            result += '#' + $filter('date')(c.Value, 'shortDate') + '#';
-                                            break;
-                                    }
-                                }
-                            }
-                        });
-                        result += ')';
-                    }
-                    result += ((condition.Operator && condition.Function.Operators.length > 0) ? (' ' + condition.Operator) : '');
-                    if (condition.Value && condition.Function && condition.Function.Operators.length > 0) {
-                        result += ' ';
-                        switch (condition.ValueType) {
-                            case 'String':
-                                result += "'" + condition.Value.replace(/['"]/g, '') + "'";
-                                break;
-                            case 'Number':
-                                result += condition.Value;
-                                break;
-                            case 'Date':
-                                result += '#' + $filter('date')(condition.Value, 'shortDate') + '#';
-                                break;
-                        }
-                    }
-                }
-            }
-        });
-        vm.promotion.EligibleExpression = result;
+        vm.promotion.EligibleExpression = OrderCloudExpressions.TranslateEligibleExpression(conditions);
     }
 
     vm.Submit = function() {
@@ -595,106 +513,192 @@ function OrdercloudRemovePromotionDirective() {
     }
 }
 
-function OrderCloudExpressionsService() {
-    var _objects = [
-        {
-            Name: 'Order',
-            Value: 'order',
-            Properties: [
-                {
-                    Name: 'Billing Address ID',
-                    Value: 'BillingAddressID',
-                    Operators: ['=']
-                },
-                {
-                    Name: 'Date Created',
-                    Value: 'DateCreated',
-                    Operators: ['=', '>', '>=', '<', '<=']
-                },
-                {
-                    Name: 'Line Item Count',
-                    Value: 'LineItemCount',
-                    Operators: ['=', '>', '>=', '<', '<=']
-                },
-                {
-                    Name: 'Subtotal',
-                    Value: 'Subtotal',
-                    Operators: ['=', '>', '>=', '<', '<=']
-                },
-                {
-                    Name: 'Shipping Cost',
-                    Value: 'ShippingCost',
-                    Operators: ['=', '>', '>=', '<', '<=']
-                },
-                {
-                    Name: 'Total',
-                    Value: 'Total',
-                    Operators: ['=', '>', '>=', '<', '<=']
-                },
-                {
-                    Name: 'Extended Property',
-                    Value: 'xp',
-                    Operators: ['=', '>', '>=', '<', '<=']
-                }
-            ]
-        },
-        {
-            Name: 'Line Items',
-            Value: 'items',
-            Functions: [
-                {
-                    Name: 'Any',
-                    Value: 'any',
-                    Operators: []
-                },
-                {
-                    Name: 'All',
-                    Value: 'all',
-                    Operators: []
-                },
-                {
-                    Name: 'Quantity',
-                    Value: 'quantity',
-                    Operators: ['=', '>', '>=', '<', '<=']
-                },
-                {
-                    Name: 'Total',
-                    Value: 'total',
-                    Operators: ['=', '>', '>=', '<', '<=']
-                }
-            ],
-            Properties: [
-                {
-                    Name: 'Product ID',
-                    Value: 'ProductID',
-                    Operators: ['=']
-                },
-                {
-                    Name: 'Quantity',
-                    Value: 'Quantity',
-                    Operators: ['=', '>', '>=', '<', '<=']
-                },
-                {
-                    Name: 'Line Total',
-                    Value: 'LineTotal',
-                    Operators: ['=', '>', '>=', '<', '<=']
-                },
-                {
-                    Name: 'Shipping Address ID',
-                    Value: 'ShippingAddressID',
-                    Operators: ['=']
-                },
-                {
-                    Name: 'Extended Property',
-                    Value: 'xp',
-                    Operators: ['=', '>', '>=', '<', '<=']
-                }
-            ],
-            Operators: ['=', '>', '>=', '<', '<=']
-        }
-    ];
+function OrderCloudExpressionsService($filter) {
+    var service = {
+        Objects: _objects,
+        TranslateEligibleExpression: _translateEligibleExpression
+    };
 
-    return {
-        Objects: _objects
+    function _objects() {
+        return [
+            {
+                Name: 'Order',
+                Value: 'order',
+                Properties: [
+                    {
+                        Name: 'Billing Address ID',
+                        Value: 'BillingAddressID',
+                        Operators: ['=']
+                    },
+                    {
+                        Name: 'Date Created',
+                        Value: 'DateCreated',
+                        Operators: ['=', '>', '>=', '<', '<=']
+                    },
+                    {
+                        Name: 'Line Item Count',
+                        Value: 'LineItemCount',
+                        Operators: ['=', '>', '>=', '<', '<=']
+                    },
+                    {
+                        Name: 'Subtotal',
+                        Value: 'Subtotal',
+                        Operators: ['=', '>', '>=', '<', '<=']
+                    },
+                    {
+                        Name: 'Shipping Cost',
+                        Value: 'ShippingCost',
+                        Operators: ['=', '>', '>=', '<', '<=']
+                    },
+                    {
+                        Name: 'Total',
+                        Value: 'Total',
+                        Operators: ['=', '>', '>=', '<', '<=']
+                    },
+                    {
+                        Name: 'Extended Property',
+                        Value: 'xp',
+                        Operators: ['=', '>', '>=', '<', '<=']
+                    }
+                ]
+            },
+            {
+                Name: 'Line Items',
+                Value: 'items',
+                Functions: [
+                    {
+                        Name: 'Any',
+                        Value: 'any',
+                        Operators: []
+                    },
+                    {
+                        Name: 'All',
+                        Value: 'all',
+                        Operators: []
+                    },
+                    {
+                        Name: 'Quantity',
+                        Value: 'quantity',
+                        Operators: ['=', '>', '>=', '<', '<=']
+                    },
+                    {
+                        Name: 'Total',
+                        Value: 'total',
+                        Operators: ['=', '>', '>=', '<', '<=']
+                    }
+                ],
+                Properties: [
+                    {
+                        Name: 'Product ID',
+                        Value: 'ProductID',
+                        Operators: ['=']
+                    },
+                    {
+                        Name: 'Quantity',
+                        Value: 'Quantity',
+                        Operators: ['=', '>', '>=', '<', '<=']
+                    },
+                    {
+                        Name: 'Line Total',
+                        Value: 'LineTotal',
+                        Operators: ['=', '>', '>=', '<', '<=']
+                    },
+                    {
+                        Name: 'Shipping Address ID',
+                        Value: 'ShippingAddressID',
+                        Operators: ['=']
+                    },
+                    {
+                        Name: 'Extended Property',
+                        Value: 'xp',
+                        Operators: ['=', '>', '>=', '<', '<=']
+                    }
+                ],
+                Operators: ['=', '>', '>=', '<', '<=']
+            }
+        ];
     }
+
+    function _translateEligibleExpression(conditions) {
+        var result = '';
+        angular.forEach(conditions, function(condition) {
+            if (condition.LogicalOperator) {
+                result += ' ' + condition.Value + ' ';
+            } else {
+                if (condition.Object && condition.Property && !condition.Operator && condition.Property.Operators.length == 1) {
+                    condition.Operator = condition.Property.Operators[0];
+                }
+                result += (condition.Object ? condition.Object.Value : '');
+                if (condition.Object && condition.Object.Value == 'order') {
+                    result += (condition.Property ? ('.' + condition.Property.Value) : '');
+                    result += ((condition.Property && condition.Property.Value == 'xp') ? ('.' + (condition.XPProperty ? condition.XPProperty : '')) : '');
+                    result += (condition.Operator ? (' ' + condition.Operator) : '');
+                    if (condition.Value) {
+                        result += ' ';
+                        switch (condition.ValueType) {
+                            case 'String':
+                                result += "'" + condition.Value.replace(/['"]/g, '') + "'";
+                                break;
+                            case 'Number':
+                                result += condition.Value;
+                                break;
+                            case 'Date':
+                                result += '#' + $filter('date')(condition.Value, 'shortDate') + '#';
+                                break;
+                        }
+                    }
+                } else if (condition.Object && condition.Object.Value == 'items') {
+                    result += (condition.Function ? ('.' + condition.Function.Value + (!condition.ItemConditions[0].Property ? '()' : '')) : '');
+                    if (condition.ItemConditions[0].Property) {
+                        result += '(';
+                        angular.forEach(condition.ItemConditions, function(c) {
+                            if (c.LogicalOperator) {
+                                result += ' ' + c.Value + ' ';
+                            }
+                            else {
+                                if (c.Property && c.Property.Operators.length == 1) {
+                                    c.Operator = c.Property.Operators[0];
+                                }
+                                result += (c.Property ? c.Property.Value : '');
+                                result += ((c.Property && c.Property.Value == 'xp') ? ('.' + (c.XPProperty ? c.XPProperty : '')) : '');
+                                result += (c.Operator ? (' ' + c.Operator + ' ') : '');
+                                if (c.Value) {
+                                    switch (c.ValueType) {
+                                        case 'String':
+                                            result += "'" + c.Value.replace(/['"]/g, '') + "'";
+                                            break;
+                                        case 'Number':
+                                            result += c.Value;
+                                            break;
+                                        case 'Date':
+                                            result += '#' + $filter('date')(c.Value, 'shortDate') + '#';
+                                            break;
+                                    }
+                                }
+                            }
+                        });
+                        result += ')';
+                    }
+                    result += ((condition.Operator && condition.Function.Operators.length > 0) ? (' ' + condition.Operator) : '');
+                    if (condition.Value && condition.Function && condition.Function.Operators.length > 0) {
+                        result += ' ';
+                        switch (condition.ValueType) {
+                            case 'String':
+                                result += "'" + condition.Value.replace(/['"]/g, '') + "'";
+                                break;
+                            case 'Number':
+                                result += condition.Value;
+                                break;
+                            case 'Date':
+                                result += '#' + $filter('date')(condition.Value, 'shortDate') + '#';
+                                break;
+                        }
+                    }
+                }
+            }
+        });
+        return result;
+    }
+
+    return service;
 }
