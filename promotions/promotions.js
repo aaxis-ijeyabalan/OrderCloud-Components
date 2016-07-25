@@ -196,11 +196,12 @@ function PromotionEditController($exceptionHandler, $state, toastr, OrderCloud, 
     };
 }
 
-function PromotionCreateController($exceptionHandler, $state, $scope, toastr, OrderCloud, OrderCloudExpressions) {
+function PromotionCreateController($exceptionHandler, $state, $scope, $filter, toastr, OrderCloud, OrderCloudExpressions) {
     var vm = this;
     vm.promotion = {};
     vm.expressionObjects = OrderCloudExpressions.Objects;
     vm.eligibleConditions = [];
+    vm.itemOperators = ['=', '>', '>=', '<', '<='];
 
     vm.addEligibleCondition = function(logicalOperator) {
         if (logicalOperator) {
@@ -211,11 +212,15 @@ function PromotionCreateController($exceptionHandler, $state, $scope, toastr, Or
         }
         vm.eligibleConditions.push({
             Object: null,
+            Function: null,
             Property: null,
             XPProperty: null,
+            ItemConditions: [{Property: null, XPProperty: null, Operator: null, Value: null, ValueType: 'String', LogicalOperator: false, DatePickerOpen: false}],
             Operator: null,
             Value: null,
-            LogicalOperator: false
+            ValueType: 'String',
+            LogicalOperator: false,
+            DatePickerOpen: false
         });
     };
 
@@ -223,10 +228,69 @@ function PromotionCreateController($exceptionHandler, $state, $scope, toastr, Or
         vm.eligibleConditions.splice(index - 1, 2);
     };
 
+    vm.updateEligibleExpressionObject = function(index) {
+        vm.eligibleConditions[index].Function = null;
+        vm.eligibleConditions[index].Property = null;
+        vm.eligibleConditions[index].XPProperty = null;
+        vm.eligibleConditions[index].ItemConditions = [{Property: null, XPProperty: null, Operator: null, Value: null, ValueType: 'String', LogicalOperator: false, DatePickerOpen: false}];
+        vm.eligibleConditions[index].Operator = null;
+        vm.eligibleConditions[index].Value = null;
+        vm.eligibleConditions[index].ValueType = 'String';
+        vm.eligibleConditions[index].LogicalOperator = false;
+        vm.eligibleConditions[index].DatePickerOpen = false;
+    };
+
+    vm.addEligibleConditionItemCondition = function(logicalOperator, parentIndex) {
+        if (logicalOperator) {
+            vm.eligibleConditions[parentIndex].ItemConditions.push({
+                Value: logicalOperator,
+                LogicalOperator: true
+            });
+        }
+        vm.eligibleConditions[parentIndex].ItemConditions.push({
+            Property: null,
+            XPProperty: null,
+            Operator: null,
+            Value: null,
+            ValueType: 'String',
+            LogicalOperator: false,
+            DatePickerOpen: false
+        });
+    };
+
+    vm.removeEligibleConditionItemCondition = function(parentIndex, index) {
+        vm.eligibleConditions[parentIndex].ItemConditions.splice(index - 1, 2);
+    };
+
+    vm.changeEligibleConditionValueType = function(type, index) {
+        vm.eligibleConditions[index].ValueType = type;
+        vm.eligibleConditions[index].Value = null;
+    };
+
+    vm.changeEligibleConditionItemConditionValueType = function(type, parentIndex, index) {
+        vm.eligibleConditions[parentIndex].ItemConditions[index].ValueType = type;
+        vm.eligibleConditions[parentIndex].ItemConditions[index].Value = null;
+    };
+
+    vm.openEligibleConditionDate = function(index) {
+        angular.forEach(vm.eligibleConditions, function(condition) {
+            condition.DatePickerOpen = false;
+        });
+        vm.eligibleConditions[index].DatePickerOpen = true;
+    };
+
+    vm.openEligibleConditionItemConditionDate = function(parentIndex, index) {
+        angular.forEach(vm.eligibleConditions, function(condition) {
+            angular.forEach(condition.ItemConditions, function(ic) {
+               ic.DatePickerOpen = false;
+            });
+        });
+        vm.eligibleConditions[parentIndex].ItemConditions[index].DatePickerOpen = true;
+    };
+
     $scope.$watch(function () {
         return vm.eligibleConditions;
     },function(conditions){
-        console.log(conditions);
         updateEligibleExpression(conditions);
     }, true);
 
@@ -236,11 +300,61 @@ function PromotionCreateController($exceptionHandler, $state, $scope, toastr, Or
             if (condition.LogicalOperator) {
                 result += ' ' + condition.Value + ' ';
             } else {
+                if (condition.Object && condition.Property && !condition.Operator && condition.Property.Operators.length == 1) {
+                    condition.Operator = condition.Property.Operators[0];
+                }
                 result += (condition.Object ? condition.Object.Value : '');
-                result += (condition.Property ? ('.' + condition.Property.Value) : '');
-                result += ((condition.Property && condition.Property.Value == 'xp') ? ('.' + condition.XPProperty) : '');
-                result += (condition.Operator ? (' ' + condition.Operator.Value) : '');
-                result += (condition.Value ? ' ' + condition.Value : '');
+                if (condition.Object && condition.Object.Value == 'order') {
+                    result += (condition.Property ? ('.' + condition.Property.Value) : '');
+                    result += ((condition.Property && condition.Property.Value == 'xp') ? ('.' + condition.XPProperty) : '');
+                } else if (condition.Object && condition.Object.Value == 'items') {
+                    result += (condition.Function ? ('.' + condition.Function.Value + (!condition.ItemConditions[0].Property ? '()' : '')) : '');
+                    if (condition.ItemConditions[0].Property) {
+                        result += '(';
+                        angular.forEach(condition.ItemConditions, function(c) {
+                            if (c.LogicalOperator) {
+                                result += ' ' + c.Value + ' ';
+                            }
+                            else {
+                                if (c.Property && c.Property.Operators.length == 1) {
+                                    c.Operator = c.Property.Operators[0];
+                                }
+                                result += (c.Property ? c.Property.Value : '');
+                                result += ((c.Property && c.Property.Value == 'xp') ? ('.' + c.XPProperty) : '');
+                                result += (c.Operator ? (' ' + c.Operator + ' ') : '');
+                                if (c.Value) {
+                                    switch (c.ValueType) {
+                                        case 'String':
+                                            result += "'" + c.Value.replace(/['"]/g, '') + "'";
+                                            break;
+                                        case 'Number':
+                                            result += c.Value;
+                                            break;
+                                        case 'Date':
+                                            result += '#' + $filter('date')(c.Value, 'shortDate') + '#';
+                                            break;
+                                    }
+                                }
+                            }
+                        });
+                        result += ')';
+                    }
+                }
+                result += (condition.Operator ? (' ' + condition.Operator) : '');
+                if (condition.Value) {
+                    result += ' ';
+                    switch (condition.ValueType) {
+                        case 'String':
+                            result += "'" + condition.Value.replace(/['"]/g, '') + "'";
+                            break;
+                        case 'Number':
+                            result += condition.Value;
+                            break;
+                        case 'Date':
+                            result += '#' + $filter('date')(condition.Value, 'shortDate') + '#';
+                            break;
+                    }
+                }
             }
         });
         vm.promotion.EligibleExpression = result;
@@ -462,71 +576,44 @@ function OrderCloudExpressionsService() {
                 {
                     Name: 'Billing Address ID',
                     Value: 'BillingAddressID',
-                    Operators: [
-                        {Name: 'Equals (=)', Value: '='}
-                    ]
+                    Operators: ['=']
+                },
+                {
+                    Name: 'Date Created',
+                    Value: 'DateCreated',
+                    Operators: ['=', '>', '>=', '<', '<=']
                 },
                 {
                     Name: 'Line Item Count',
                     Value: 'LineItemCount',
-                    Operators: [
-                        {Name: 'Equals (=)', Value: '='},
-                        {Name: 'Greater than (>)', Value: '>'},
-                        {Name: 'Greater than or equal to (>=)', Value: '>='},
-                        {Name: 'Less than (<)', Value: '<'},
-                        {Name: 'Less than or equal to (<=)', Value: '<='}
-                    ]
+                    Operators: ['=', '>', '>=', '<', '<=']
                 },
                 {
                     Name: 'Subtotal',
                     Value: 'Subtotal',
-                    Operators: [
-                        {Name: 'Equals (=)', Value: '='},
-                        {Name: 'Greater than (>)', Value: '>'},
-                        {Name: 'Greater than or equal to (>=)', Value: '>='},
-                        {Name: 'Less than (<)', Value: '<'},
-                        {Name: 'Less than or equal to (<=)', Value: '<='}
-                    ]
+                    Operators: ['=', '>', '>=', '<', '<=']
                 },
                 {
                     Name: 'Shipping Cost',
                     Value: 'ShippingCost',
-                    Operators: [
-                        {Name: 'Equals (=)', Value: '='},
-                        {Name: 'Greater than (>)', Value: '>'},
-                        {Name: 'Greater than or equal to (>=)', Value: '>='},
-                        {Name: 'Less than (<)', Value: '<'},
-                        {Name: 'Less than or equal to (<=)', Value: '<='}
-                    ]
+                    Operators: ['=', '>', '>=', '<', '<=']
                 },
                 {
                     Name: 'Total',
                     Value: 'Total',
-                    Operators: [
-                        {Name: 'Equals (=)', Value: '='},
-                        {Name: 'Greater than (>)', Value: '>'},
-                        {Name: 'Greater than or equal to (>=)', Value: '>='},
-                        {Name: 'Less than (<)', Value: '<'},
-                        {Name: 'Less than or equal to (<=)', Value: '<='}
-                    ]
+                    Operators: ['=', '>', '>=', '<', '<=']
                 },
                 {
                     Name: 'Extended Property',
                     Value: 'xp',
-                    Operators: [
-                        {Name: 'Equals (=)', Value: '='},
-                        {Name: 'Greater than (>)', Value: '>'},
-                        {Name: 'Greater than or equal to (>=)', Value: '>='},
-                        {Name: 'Less than (<)', Value: '<'},
-                        {Name: 'Less than or equal to (<=)', Value: '<='}
-                    ]
+                    Operators: ['=', '>', '>=', '<', '<=']
                 }
             ]
         },
         {
             Name: 'Line Items',
             Value: 'items',
-            Properties: [
+            Functions: [
                 {
                     Name: 'Any',
                     'Value': 'any'
@@ -543,52 +630,35 @@ function OrderCloudExpressionsService() {
                     Name: 'Total',
                     Value: 'total'
                 }
-            ]
-            /*Properties: [
+            ],
+            Properties: [
                 {
                     Name: 'Product ID',
                     Value: 'ProductID',
-                    Operators: [{Name: 'Equals (=)', Value: '='}]
+                    Operators: ['=']
                 },
                 {
                     Name: 'Quantity',
                     Value: 'Quantity',
-                    Operators: [
-                        {Name: 'Equals (=)', Value: '='},
-                        {Name: 'Greater than (>)', Value: '>'},
-                        {Name: 'Greater than or equal to (>=)', Value: '>='},
-                        {Name: 'Less than (<)', Value: '<'},
-                        {Name: 'Less than or equal to (<=)', Value: '<='}
-                    ]
+                    Operators: ['=', '>', '>=', '<', '<=']
                 },
                 {
                     Name: 'Line Total',
                     Value: 'LineTotal',
-                    Operators: [
-                        {Name: 'Equals (=)', Value: '='},
-                        {Name: 'Greater than (>)', Value: '>'},
-                        {Name: 'Greater than or equal to (>=)', Value: '>='},
-                        {Name: 'Less than (<)', Value: '<'},
-                        {Name: 'Less than or equal to (<=)', Value: '<='}
-                    ]
+                    Operators: ['=', '>', '>=', '<', '<=']
                 },
                 {
                     Name: 'Shipping Address ID',
                     Value: 'ShippingAddressID',
-                    Operators: [{Name: 'Equals (=)', Value: '='}]
+                    Operators: ['=']
                 },
                 {
                     Name: 'Extended Property',
                     Value: 'xp',
-                    Operators: [
-                        {Name: 'Equals (=)', Value: '='},
-                        {Name: 'Greater than (>)', Value: '>'},
-                        {Name: 'Greater than or equal to (>=)', Value: '>='},
-                        {Name: 'Less than (<)', Value: '<'},
-                        {Name: 'Less than or equal to (<=)', Value: '<='}
-                    ]
+                    Operators: ['=', '>', '>=', '<', '<=']
                 }
-            ]*/
+            ],
+            Operators: ['=', '>', '>=', '<', '<=']
         }
     ];
 

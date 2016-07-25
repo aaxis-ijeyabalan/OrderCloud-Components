@@ -66,33 +66,106 @@
     </div>
     <div class="row rule-condition" ng-repeat="condition in promotionCreate.eligibleConditions">
         <div ng-if="condition.LogicalOperator">
-            <div class="form-group col-sm-2">
+            <div class="form-group col-sm-1">
                 <select class="form-control" ng-model="condition.Value" ng-options="logicalOperator as logicalOperator for logicalOperator in ['or', 'and']"></select>
             </div>
         </div>
         <div ng-if="!condition.LogicalOperator">
-            <div class="form-group col-sm-2">
+            <div class="form-group col-sm-1">
                 <label for="eligibleConditionObject{{$index}}">Object</label>
-                <select id="eligibleConditionObject{{$index}}" class="form-control" ng-model="condition.Object" ng-options="object as object.Name for object in promotionCreate.expressionObjects"></select>
+                <select id="eligibleConditionObject{{$index}}" class="form-control" ng-model="condition.Object" ng-options="object as object.Name for object in promotionCreate.expressionObjects" ng-change="promotionCreate.updateEligibleExpressionObject($index)"></select>
             </div>
-            <div class="form-group col-sm-2">
-                <label for="eligibleConditionProperty{{$index}}">Property</label>
-                <select id="eligibleConditionProperty{{$index}}" class="form-control" ng-model="condition.Property" ng-options="property as property.Name for property in condition.Object.Properties"></select>
+
+            <div ng-if="condition.Object.Value == 'order'">
+                <div class="form-group col-sm-2">
+                    <label for="eligibleConditionOrderProperty{{$index}}">Property</label>
+                    <select id="eligibleConditionOrderProperty{{$index}}" class="form-control" ng-model="condition.Property" ng-options="property as property.Name for property in condition.Object.Properties"></select>
+                </div>
+                <div class="form-group col-sm-2" ng-if="condition.Property.Value == 'xp'">
+                    <label for="eligibleConditionOrderXPProperty{{$index}}">XP Property</label>
+                    <input id="eligibleConditionOrderXPProperty{{$index}}" class="form-control" ng-model="condition.XPProperty" />
+                </div>
             </div>
-            <div class="form-group col-sm-2" ng-if="condition.Property.Value == 'xp'">
-                <label for="eligibleConditionXPProperty{{$index}}">XP Property</label>
-                <input id="eligibleConditionXPProperty{{$index}}" class="form-control" ng-model="condition.XPProperty" />
+
+            <div ng-if="condition.Object.Value == 'items'">
+                <div class="form-group col-sm-1">
+                    <label for="eligibleConditionFunction{{$index}}">Function</label>
+                    <select id="eligibleConditionFunction{{$index}}" class="form-control" ng-model="condition.Function" ng-options="function as function.Name for function in condition.Object.Functions"></select>
+                </div>
+                <div class="col-sm-6 panel panel-default" ng-if="condition.Function">
+                    <div ng-repeat="item in condition.ItemConditions" class="row">
+                        <div ng-if="item.LogicalOperator">
+                            <div class="form-group col-sm-2">
+                                <select class="form-control" ng-model="item.Value" ng-options="logicalOperator as logicalOperator for logicalOperator in ['or', 'and']"></select>
+                            </div>
+                        </div>
+                        <div ng-if="!item.LogicalOperator">
+                            <div class="form-group col-sm-3">
+                                <label for="eligibleConditionItemProperty{{$index}}">Property {{($index + 2)/2}}</label>
+                                <select id="eligibleConditionItemProperty{{$index}}" class="form-control" ng-model="condition.ItemConditions[$index].Property" ng-options="property as property.Name for property in condition.Object.Properties"></select>
+                            </div>
+                            <div class="form-group col-sm-3" ng-if="condition.ItemConditions[$index].Property.Value == 'xp'">
+                                <label for="eligibleConditionItemXPProperty{{$index}}">XP Property {{($index + 2)/2}}</label>
+                                <input id="eligibleConditionItemXPProperty{{$index}}" class="form-control" ng-model="condition.ItemConditions[$index].XPProperty" />
+                            </div>
+                            <div class="form-group col-sm-2">
+                                <label for="eligibleConditionItemConditionOperator{{$index}}">Operator</label>
+                                <select id="eligibleConditionItemConditionOperator{{$index}}" class="form-control" ng-model="condition.ItemConditions[$index].Operator" ng-options="operator as operator for operator in condition.ItemConditions[$index].Property.Operators"></select>
+                            </div>
+                            <div class="form-group" ng-class="{'col-sm-5': condition.ItemConditions[$index].Property.Value != 'xp', 'col-sm-3': condition.ItemConditions[$index].Property.Value == 'xp'}">
+                                <label>Value</label>
+                                <div class="input-group">
+                                    <input type="text" ng-if="condition.ItemConditions[$index].ValueType == 'String'" class="form-control" ng-model="condition.ItemConditions[$index].Value" />
+                                    <input type="number" ng-if="condition.ItemConditions[$index].ValueType == 'Number'" class="form-control" ng-model="condition.ItemConditions[$index].Value" />
+                                    <input type="text" ng-if="condition.ItemConditions[$index].ValueType == 'Date'" class="form-control" uib-datepicker-popup="shortDate" ng-focus="promotionCreate.openEligibleConditionItemConditionDate($parent.$index, $index)" is-open="condition.ItemConditions[$index].DatePickerOpen" ng-model="condition.ItemConditions[$index].Value" />
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa" ng-class="{'fa-font': item.ValueType == 'String', 'fa-hashtag': item.ValueType == 'Number', 'fa-calendar': item.ValueType == 'Date'}"></i> <i class="fa fa-caret-down"></i></button>
+                                        <ul class="dropdown-menu dropdown-menu-right">
+                                            <li><a href="#" ng-click="promotionCreate.changeEligibleConditionItemConditionValueType('String', $parent.$parent.$parent.$index, $index)">String</a></li>
+                                            <li><a href="#" ng-click="promotionCreate.changeEligibleConditionItemConditionValueType('Number', $parent.$parent.$parent.$index, $index)">Number</a></li>
+                                            <li><a href="#" ng-click="promotionCreate.changeEligibleConditionItemConditionValueType('Date', $parent.$parent.$parent.$index, $index)">Date</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-1 pull-right">
+                                <div class="btn-group" ng-if="$index == 0">
+                                    <button type="button" class="btn btn-info dropdown-toggle btn-inline-condition" data-toggle="dropdown"><i class="fa fa-plus"></i> <i class="fa fa-caret-down"></i></button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#" ng-click="promotionCreate.addEligibleConditionItemCondition('or', $parent.$index)">Or</a></li>
+                                        <li><a href="#" ng-click="promotionCreate.addEligibleConditionItemCondition('and', $parent.$index)">And</a></li>
+                                    </ul>
+                                </div>
+                                <button type="button" class="btn btn-danger btn-inline-condition" ng-if="$index > 0" ng-click="promotionCreate.removeEligibleConditionItemCondition($parent.$parent.$parent.$index, $index)"><i class="fa fa-times"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group col-sm-2">
-                <label for="eligibleConditionOperator{{$index}}">Operator</label>
-                <select id="eligibleConditionOperator{{$index}}" class="form-control" ng-model="condition.Operator" ng-options="operator as operator.Name for operator in condition.Property.Operators"></select>
-            </div>
-            <div class="form-group col-sm-2">
-                <label for="eligibleConditionValue{{$index}}">Value</label>
-                <input id="eligibleConditionValue{{$index}}" type="text" class="form-control" ng-model="condition.Value" />
+            <div ng-if="(condition.Object.Value == 'order') ? condition.Property : condition.Function">
+                <div class="form-group col-sm-1">
+                    <label for="eligibleConditionOrderOperator{{$index}}">Operator</label>
+                    <select id="eligibleConditionOrderOperator{{$index}}" class="form-control" ng-model="condition.Operator" ng-options="operator as operator for operator in (condition.Object.Value == 'order' ? condition.Property.Operators : promotionCreate.itemOperators)"></select>
+                </div>
+                <div class="form-group col-sm-2">
+                    <label>Value</label>
+                    <div class="input-group">
+                        <input type="text" ng-if="condition.ValueType == 'String'" class="form-control" ng-model="condition.Value" />
+                        <input type="number" ng-if="condition.ValueType == 'Number'" class="form-control" ng-model="condition.Value" />
+                        <input type="text" ng-if="condition.ValueType == 'Date'" class="form-control" uib-datepicker-popup="shortDate" ng-focus="promotionCreate.openEligibleConditionDate($index)" is-open="condition.DatePickerOpen" ng-model="condition.Value" />
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa" ng-class="{'fa-font': condition.ValueType == 'String', 'fa-hashtag': condition.ValueType == 'Number', 'fa-calendar': condition.ValueType == 'Date'}"></i> <i class="fa fa-caret-down"></i></button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li><a href="#" ng-click="promotionCreate.changeEligibleConditionValueType('String', $index)">String</a></li>
+                                <li><a href="#" ng-click="promotionCreate.changeEligibleConditionValueType('Number', $index)">Number</a></li>
+                                <li><a href="#" ng-click="promotionCreate.changeEligibleConditionValueType('Date', $index)">Date</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="col-sm-2" ng-if="!condition.LogicalOperator && $index">
-                <button type="button" class="btn btn-danger" ng-click="promotionCreate.removeEligibleCondition($index)">Remove</button>
+                <button type="button" class="btn btn-danger btn-inline-condition" ng-click="promotionCreate.removeEligibleCondition($index)">Remove</button>
             </div>
         </div>
     </div>
