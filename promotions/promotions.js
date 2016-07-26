@@ -13,6 +13,7 @@ angular.module('orderCloud')
     .factory('OrderCloudExpressions', OrderCloudExpressionsService)
     .filter('promotionproperties', promotionproperties)
     .filter('promotionfunctions', promotionfunctions)
+    .filter('comparisonoperators', comparisonoperators)
 ;
 
 function PromotionsConfig($stateProvider) {
@@ -169,11 +170,23 @@ function PromotionsController($state, $ocMedia, OrderCloud, OrderCloudParameters
     };
 }
 
-function PromotionEditController($exceptionHandler, $state, toastr, OrderCloud, SelectedPromotion) {
+function PromotionEditController($exceptionHandler, $state, toastr, OrderCloud, OrderCloudExpressions, SelectedPromotion) {
     var vm = this,
         promotionid = SelectedPromotion.ID;
     vm.promotionName = SelectedPromotion.Name;
     vm.promotion = SelectedPromotion;
+    vm.expressionObjects = OrderCloudExpressions.Objects();
+    vm.expressionProperties = OrderCloudExpressions.Properties();
+    vm.expressionFunctions = OrderCloudExpressions.Functions();
+    vm.expressionComparisonOperators = OrderCloudExpressions.ComparisonOperators();
+    vm.expressionArithmeticOperators = OrderCloudExpressions.ArithmeticOperators();
+
+    if (!vm.promotion.xp.OverrideEligibleExpression) {
+        vm.eligibleConditions = vm.promotion.xp.EligibleConditions;
+    }
+    if (!vm.promotion.xp.OverrideValueExpression) {
+        vm.valueConditions = vm.promotion.xp.ValueConditions;
+    }
 
     vm.Submit = function() {
         OrderCloud.Promotions.Update(promotionid, vm.promotion)
@@ -202,6 +215,11 @@ function PromotionCreateController($exceptionHandler, $state, $scope, toastr, Or
     var vm = this;
     vm.promotion = {xp: {}};
     vm.expressionObjects = OrderCloudExpressions.Objects();
+    vm.expressionProperties = OrderCloudExpressions.Properties();
+    vm.expressionFunctions = OrderCloudExpressions.Functions();
+    vm.expressionComparisonOperators = OrderCloudExpressions.ComparisonOperators();
+    vm.expressionArithmeticOperators = OrderCloudExpressions.ArithmeticOperators();
+
     vm.eligibleConditions = [];
     vm.valueConditions = [];
 
@@ -608,156 +626,53 @@ function OrdercloudRemovePromotionDirective() {
 function OrderCloudExpressionsService($filter) {
     var service = {
         Objects: _objects,
+        Properties: _properties,
+        Functions: _functions,
+        ComparisonOperators: _comparisonOperators,
+        ArithmeticOperators: _arithmeticOperators,
         TranslateEligibleExpression: _translateEligibleExpression,
         TranslateValueExpression: _translateValueExpression
     };
 
     function _objects() {
         return [
-            {
-                Name: 'Order',
-                Value: 'order',
-                Properties: [
-                    {
-                        Name: 'Billing Address ID',
-                        Value: 'BillingAddressID',
-                        EligibleOperators: ['='],
-                        EligibleExpression: true,
-                        ValueExpression: false
-                    },
-                    {
-                        Name: 'Date Created',
-                        Value: 'DateCreated',
-                        EligibleOperators: ['=', '>', '>=', '<', '<='],
-                        ValueOperators: [],
-                        EligibleExpression: true,
-                        ValueExpression: false
-                    },
-                    {
-                        Name: 'Line Item Count',
-                        Value: 'LineItemCount',
-                        EligibleOperators: ['=', '>', '>=', '<', '<='],
-                        ValueOperators: ['+', '-', '*', '/'],
-                        EligibleExpression: true,
-                        ValueExpression: true
-                    },
-                    {
-                        Name: 'Subtotal',
-                        Value: 'Subtotal',
-                        EligibleOperators: ['=', '>', '>=', '<', '<='],
-                        ValueOperators: ['+', '-', '*', '/'],
-                        EligibleExpression: true,
-                        ValueExpression: true
-                    },
-                    {
-                        Name: 'Shipping Cost',
-                        Value: 'ShippingCost',
-                        EligibleOperators: ['=', '>', '>=', '<', '<='],
-                        ValueOperators: ['+', '-', '*', '/'],
-                        EligibleExpression: true,
-                        ValueExpression: true
-                    },
-                    {
-                        Name: 'Total',
-                        Value: 'Total',
-                        EligibleOperators: ['=', '>', '>=', '<', '<='],
-                        ValueOperators: ['+', '-', '*', '/'],
-                        EligibleExpression: true,
-                        ValueExpression: true
-                    },
-                    {
-                        Name: 'Extended Property',
-                        Value: 'xp',
-                        EligibleOperators: ['=', '>', '>=', '<', '<='],
-                        ValueOperators: ['+', '-', '*', '/'],
-                        EligibleExpression: true,
-                        ValueExpression: true
-                    }
-                ]
-            },
-            {
-                Name: 'Line Items',
-                Value: 'items',
-                Functions: [
-                    {
-                        Name: 'Any',
-                        Value: 'any',
-                        EligibleExpression: true,
-                        ValueExpression: false,
-                        EligibleOperators: [],
-                        ValueOperators: []
-                    },
-                    {
-                        Name: 'All',
-                        Value: 'all',
-                        EligibleExpression: true,
-                        ValueExpression: false,
-                        EligibleOperators: [],
-                        ValueOperators: []
-                    },
-                    {
-                        Name: 'Quantity',
-                        Value: 'quantity',
-                        EligibleExpression: true,
-                        ValueExpression: true,
-                        EligibleOperators: ['=', '>', '>=', '<', '<='],
-                        ValueOperators: ['+', '-', '*', '/']
-                    },
-                    {
-                        Name: 'Total',
-                        Value: 'total',
-                        EligibleExpression: true,
-                        ValueExpression: true,
-                        EligibleOperators: ['=', '>', '>=', '<', '<='],
-                        ValueOperators: ['+', '-', '*', '/']
-                    }
-                ],
-                Properties: [
-                    {
-                        Name: 'Product ID',
-                        Value: 'ProductID',
-                        EligibleOperators: ['='],
-                        ValueOperators: ['='],
-                        EligibleExpression: true,
-                        ValueExpression: true
-                    },
-                    {
-                        Name: 'Quantity',
-                        Value: 'Quantity',
-                        EligibleOperators: ['=', '>', '>=', '<', '<='],
-                        ValueOperators: ['=', '>', '>=', '<', '<='],
-                        EligibleExpression: true,
-                        ValueExpression: true
-                    },
-                    {
-                        Name: 'Line Total',
-                        Value: 'LineTotal',
-                        EligibleOperators: ['=', '>', '>=', '<', '<='],
-                        ValueOperators: ['=', '>', '>=', '<', '<='],
-                        EligibleExpression: true,
-                        ValueExpression: true
-                    },
-                    {
-                        Name: 'Shipping Address ID',
-                        Value: 'ShippingAddressID',
-                        EligibleOperators: ['='],
-                        ValueOperators: ['='],
-                        EligibleExpression: true,
-                        ValueExpression: true
-                    },
-                    {
-                        Name: 'Extended Property',
-                        Value: 'xp',
-                        EligibleOperators: ['=', '>', '>=', '<', '<='],
-                        ValueOperators: ['=', '>', '>=', '<', '<='],
-                        EligibleExpression: true,
-                        ValueExpression: true
-                    }
-                ],
-                EligibleOperators: ['=', '>', '>=', '<', '<='],
-                ValueOperators: ['+', '-', '*', '/']
-            }
+            {Name: 'Order', Value: 'order'},
+            {Name: 'Line Items', Value: 'items'}
         ];
+    }
+
+    function _properties() {
+        return [
+            {Name: 'Billing Address ID', Value: 'BillingAddressID', Type: 'order', EligibleExpression: true, ValueExpression: false},
+            {Name: 'Date Created', Value: 'DateCreated', Type: 'order', EligibleExpression: true, ValueExpression: false},
+            {Name: 'Line Item Count', Value: 'LineItemCount', Type: 'order', EligibleExpression: true, ValueExpression: true},
+            {Name: 'Subtotal', Value: 'Subtotal', Type: 'order', EligibleExpression: true, ValueExpression: true},
+            {Name: 'Shipping Cost', Value: 'ShippingCost', Type: 'order', EligibleExpression: true, ValueExpression: true},
+            {Name: 'Total', Value: 'Total', Type: 'order', EligibleExpression: true, ValueExpression: true},
+            {Name: 'Extended Property', Value: 'xp', Type: 'order', EligibleExpression: true, ValueExpression: true},
+            {Name: 'Product ID', Value: 'ProductID', Type: 'items', EligibleExpression: true, ValueExpression: true},
+            {Name: 'Quantity', Value: 'Quantity', Type: 'items', EligibleExpression: true, ValueExpression: true},
+            {Name: 'Line Total', Value: 'LineTotal', Type: 'items', EligibleExpression: true, ValueExpression: true},
+            {Name: 'Shipping Address ID', Value: 'ShippingAddressID', Type: 'items', EligibleExpression: true, ValueExpression: true},
+            {Name: 'Extended Property', Value: 'xp', Type: 'items', EligibleExpression: true, ValueExpression: true}
+        ];
+    }
+
+    function _functions() {
+        return [
+            {Name: 'Any', Value: 'any', EligibleExpression: true, ValueExpression: false},
+            {Name: 'All', Value: 'all', EligibleExpression: true, ValueExpression: false},
+            {Name: 'Quantity', Value: 'quantity', EligibleExpression: true, ValueExpression: true},
+            {Name: 'Total', Value: 'total', EligibleExpression: true, ValueExpression: true}
+        ];
+    }
+
+    function _comparisonOperators() {
+        return ['=', '>', '>=', '<', '<='];
+    }
+
+    function _arithmeticOperators() {
+        return ['+', '-', '*', '/'];
     }
 
     function _translateEligibleExpression(conditions) {
@@ -766,13 +681,10 @@ function OrderCloudExpressionsService($filter) {
             if (condition.LogicalOperator) {
                 result += ' ' + condition.Value + ' ';
             } else {
-                if (condition.Object && condition.Property && !condition.Operator && condition.Property.EligibleOperators.length == 1) {
-                    condition.Operator = condition.Property.EligibleOperators[0];
-                }
-                result += (condition.Object ? condition.Object.Value : '');
-                if (condition.Object && condition.Object.Value == 'order') {
-                    result += (condition.Property ? ('.' + condition.Property.Value) : '');
-                    result += ((condition.Property && condition.Property.Value == 'xp') ? ('.' + (condition.XPProperty ? condition.XPProperty : '')) : '');
+                result += (condition.Object ? condition.Object : '');
+                if (condition.Object && condition.Object == 'order') {
+                    result += (condition.Property ? ('.' + condition.Property) : '');
+                    result += ((condition.Property && condition.Property == 'xp') ? ('.' + (condition.XPProperty ? condition.XPProperty : '')) : '');
                     result += (condition.Operator ? (' ' + condition.Operator) : '');
                     if (angular.isDefined(condition.Value) && condition.Value != null) {
                         result += ' ';
@@ -788,8 +700,8 @@ function OrderCloudExpressionsService($filter) {
                                 break;
                         }
                     }
-                } else if (condition.Object && condition.Object.Value == 'items') {
-                    result += (condition.Function ? ('.' + condition.Function.Value + (!condition.ItemConditions[0].Property ? '()' : '')) : '');
+                } else if (condition.Object && condition.Object == 'items') {
+                    result += (condition.Function ? ('.' + condition.Function + (!condition.ItemConditions[0].Property ? '()' : '')) : '');
                     if (condition.ItemConditions[0].Property) {
                         result += '(';
                         angular.forEach(condition.ItemConditions, function(c) {
@@ -797,11 +709,8 @@ function OrderCloudExpressionsService($filter) {
                                 result += ' ' + c.Value + ' ';
                             }
                             else {
-                                if (c.Property && c.Property.EligibleOperators.length == 1) {
-                                    c.Operator = c.Property.EligibleOperators[0];
-                                }
-                                result += (c.Property ? c.Property.Value : '');
-                                result += ((c.Property && c.Property.Value == 'xp') ? ('.' + (c.XPProperty ? c.XPProperty : '')) : '');
+                                result += (c.Property ? c.Property : '');
+                                result += ((c.Property && c.Property == 'xp') ? ('.' + (c.XPProperty ? c.XPProperty : '')) : '');
                                 result += (c.Operator ? (' ' + c.Operator + ' ') : '');
                                 if (angular.isDefined(c.Value) && c.Value != null) {
                                     switch (c.ValueType) {
@@ -820,8 +729,8 @@ function OrderCloudExpressionsService($filter) {
                         });
                         result += ')';
                     }
-                    result += ((condition.Operator && condition.Function.EligibleOperators.length > 0) ? (' ' + condition.Operator) : '');
-                    if ((angular.isDefined(condition.Value) && condition.Value != null) && condition.Function && condition.Function.EligibleOperators.length > 0) {
+                    result += (condition.Operator ? (' ' + condition.Operator) : '');
+                    if ((angular.isDefined(condition.Value) && condition.Value != null)) {
                         result += ' ';
                         switch (condition.ValueType) {
                             case 'String':
@@ -851,14 +760,14 @@ function OrderCloudExpressionsService($filter) {
                 result += ' ' + condition.Value + ' ';
             } else {
                 result += parentheses ? '(' : '';
-                result += (condition.Object ? condition.Object.Value : '');
-                if (condition.Object && condition.Object.Value == 'order') {
-                    result += (condition.Property ? ('.' + condition.Property.Value) : '');
-                    result += ((condition.Property && condition.Property.Value == 'xp') ? ('.' + (condition.XPProperty ? condition.XPProperty : '')) : '');
+                result += (condition.Object ? condition.Object : '');
+                if (condition.Object && condition.Object == 'order') {
+                    result += (condition.Property ? ('.' + condition.Property) : '');
+                    result += ((condition.Property && condition.Property == 'xp') ? ('.' + (condition.XPProperty ? condition.XPProperty : '')) : '');
                     result += (condition.Operator ? (' ' + condition.Operator) : '');
                     result += ((angular.isDefined(condition.Value) && condition.Value != null) ? (' ' + condition.Value) : '');
-                } else if (condition.Object && condition.Object.Value == 'items') {
-                    result += (condition.Function ? ('.' + condition.Function.Value + (!condition.ItemConditions[0].Property ? '()' : '')) : '');
+                } else if (condition.Object && condition.Object == 'items') {
+                    result += (condition.Function ? ('.' + condition.Function + (!condition.ItemConditions[0].Property ? '()' : '')) : '');
                     if (condition.ItemConditions[0].Property) {
                         result += '(';
                         angular.forEach(condition.ItemConditions, function(c) {
@@ -866,11 +775,8 @@ function OrderCloudExpressionsService($filter) {
                                 result += ' ' + c.Value + ' ';
                             }
                             else {
-                                if (c.Property && c.Property.ValueOperators.length == 1) {
-                                    c.Operator = c.Property.ValueOperators[0];
-                                }
-                                result += (c.Property ? c.Property.Value : '');
-                                result += ((c.Property && c.Property.Value == 'xp') ? ('.' + (c.XPProperty ? c.XPProperty : '')) : '');
+                                result += (c.Property ? c.Property : '');
+                                result += ((c.Property && c.Property == 'xp') ? ('.' + (c.XPProperty ? c.XPProperty : '')) : '');
                                 result += (c.Operator ? (' ' + c.Operator + ' ') : '');
                                 if (angular.isDefined(c.Value) && c.Value != null) {
                                     switch (c.ValueType) {
@@ -904,11 +810,17 @@ function OrderCloudExpressionsService($filter) {
 }
 
 function promotionproperties() {
-    return function(properties, type) {
+    return function(properties, type, object) {
         var result = [];
         angular.forEach(properties, function(property) {
-            if (type == 'eligible' && property.EligibleExpression) result.push(property);
-            if (type == 'value' && property.ValueExpression) result.push(property);
+            switch(type) {
+                case 'eligible':
+                    if (property.EligibleExpression && property.Type == object) result.push(property);
+                    break;
+                case 'value':
+                    if (property.ValueExpression && property.Type == object) result.push(property);
+                    break;
+            }
         });
         return result;
     }
@@ -923,4 +835,32 @@ function promotionfunctions() {
         });
         return result;
     }
+}
+
+function comparisonoperators() {
+    return function(operators, property) {
+        if (!property) return;
+        var map = {
+            'BillingAddressID': ['='],
+            'DateCreated': ['=', '>', '>=', '<', '<='],
+            'LineItemCount': ['=', '>', '>=', '<', '<='],
+            'Subtotal': ['=', '>', '>=', '<', '<='],
+            'ShippingCost': ['=', '>', '>=', '<', '<='],
+            'Total': ['=', '>', '>=', '<', '<='],
+            'xp': ['=', '>', '>=', '<', '<='],
+            'ProductID': ['='],
+            'Quantity': ['=', '>', '>=', '<', '<='],
+            'LineTotal': ['=', '>', '>=', '<', '<='],
+            'ShippingAddressID': ['='],
+            'any': [],
+            'all': [],
+            'quantity': ['=', '>', '>=', '<', '<='],
+            'total': ['=', '>', '>=', '<', '<=']
+        };
+        var result = [];
+        angular.forEach(operators, function(operator) {
+            if (map[property].indexOf(operator) > -1) result.push(operator);
+        });
+        return result;
+    };
 }
