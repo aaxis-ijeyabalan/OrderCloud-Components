@@ -170,7 +170,7 @@ function PromotionsController($state, $ocMedia, OrderCloud, OrderCloudParameters
     };
 }
 
-function PromotionEditController($exceptionHandler, $state, toastr, OrderCloud, OrderCloudExpressions, SelectedPromotion) {
+function PromotionEditController($exceptionHandler, $state, $scope, toastr, OrderCloud, OrderCloudExpressions, SelectedPromotion) {
     var vm = this,
         promotionid = SelectedPromotion.ID;
     vm.promotionName = SelectedPromotion.Name;
@@ -186,6 +186,193 @@ function PromotionEditController($exceptionHandler, $state, toastr, OrderCloud, 
     }
     if (!vm.promotion.xp.OverrideValueExpression) {
         vm.valueConditions = vm.promotion.xp.ValueConditions;
+    }
+
+    vm.overrideEligibleExpression = function() {
+        vm.promotion.xp.OverrideEligibleExpression = !vm.promotion.xp.OverrideEligibleExpression;
+        vm.eligibleConditions = [];
+    };
+
+    vm.overrideValueExpression = function() {
+        vm.promotion.xp.OverrideValueExpression = !vm.promotion.xp.OverrideValueExpression;
+        vm.valueConditions = [];
+    };
+
+    vm.addEligibleCondition = function(logicalOperator) {
+        if (logicalOperator) {
+            vm.eligibleConditions.push({
+                Value: logicalOperator,
+                LogicalOperator: true
+            });
+        }
+        vm.eligibleConditions.push({
+            Object: null,
+            Function: null,
+            Property: null,
+            XPProperty: null,
+            ItemConditions: [{Property: null, XPProperty: null, Operator: null, Value: null, ValueType: 'String', LogicalOperator: false, DatePickerOpen: false}],
+            Operator: null,
+            Value: null,
+            ValueType: 'String',
+            LogicalOperator: false,
+            DatePickerOpen: false
+        });
+    };
+
+    vm.addValueCondition = function(conditionOperator) {
+        if (conditionOperator) {
+            vm.valueConditions.push({
+                Value: conditionOperator,
+                ConditionOperator: true
+            });
+        }
+        vm.valueConditions.push({
+            Object: null,
+            Function: null,
+            Property: null,
+            XPProperty: null,
+            ItemConditions: [{Property: null, XPProperty: null, Operator: null, Value: null, ValueType: 'String', LogicalOperator: false, DatePickerOpen: false}],
+            Operator: null,
+            Value: null,
+            ValueType: 'Number',
+            ConditionOperator: false
+        });
+    };
+
+    vm.removeEligibleCondition = function(index) {
+        vm.eligibleConditions.splice(index - 1, 2);
+    };
+
+    vm.removeValueCondition = function(index) {
+        vm.valueConditions.splice(index - 1, 2);
+    };
+
+    vm.updateEligibleExpressionObject = function(index) {
+        vm.eligibleConditions[index].Function = null;
+        vm.eligibleConditions[index].Property = null;
+        vm.eligibleConditions[index].XPProperty = null;
+        vm.eligibleConditions[index].ItemConditions = [{Property: null, XPProperty: null, Operator: null, Value: null, ValueType: 'String', LogicalOperator: false, DatePickerOpen: false}];
+        vm.eligibleConditions[index].Operator = null;
+        vm.eligibleConditions[index].Value = null;
+        vm.eligibleConditions[index].ValueType = 'String';
+        vm.eligibleConditions[index].LogicalOperator = false;
+        vm.eligibleConditions[index].DatePickerOpen = false;
+    };
+
+    vm.updateValueExpressionObject = function(index) {
+        vm.valueConditions[index].Function = null;
+        vm.valueConditions[index].Property = null;
+        vm.valueConditions[index].XPProperty = null;
+        vm.valueConditions[index].ItemConditions = [{Property: null, XPProperty: null, Operator: null, Value: null, ValueType: 'String', LogicalOperator: false, DatePickerOpen: false}];
+        vm.valueConditions[index].Value = null;
+        vm.valueConditions[index].ValueType = 'Number';
+        vm.valueConditions[index].ConditionOperator = false;
+    };
+
+    vm.addEligibleConditionItemCondition = function(logicalOperator, parentIndex) {
+        if (logicalOperator) {
+            vm.eligibleConditions[parentIndex].ItemConditions.push({
+                Value: logicalOperator,
+                LogicalOperator: true
+            });
+        }
+        vm.eligibleConditions[parentIndex].ItemConditions.push({
+            Property: null,
+            XPProperty: null,
+            Operator: null,
+            Value: null,
+            ValueType: 'String',
+            LogicalOperator: false,
+            DatePickerOpen: false
+        });
+    };
+
+    vm.addValueConditionItemCondition = function(logicalOperator, parentIndex) {
+        if (logicalOperator) {
+            vm.valueConditions[parentIndex].ItemConditions.push({
+                Value: logicalOperator,
+                LogicalOperator: true
+            });
+        }
+        vm.valueConditions[parentIndex].ItemConditions.push({
+            Property: null,
+            XPProperty: null,
+            Operator: null,
+            Value: null,
+            ValueType: 'String',
+            LogicalOperator: false,
+            DatePickerOpen: false
+        });
+    };
+
+    vm.removeEligibleConditionItemCondition = function(parentIndex, index) {
+        vm.eligibleConditions[parentIndex].ItemConditions.splice(index - 1, 2);
+    };
+
+    vm.removeValueConditionItemCondition = function(parentIndex, index) {
+        vm.valueConditions[parentIndex].ItemConditions.splice(index - 1, 2);
+    };
+
+    vm.changeEligibleConditionValueType = function(type, index) {
+        vm.eligibleConditions[index].ValueType = type;
+        vm.eligibleConditions[index].Value = null;
+    };
+
+    vm.changeEligibleConditionItemConditionValueType = function(type, parentIndex, index) {
+        vm.eligibleConditions[parentIndex].ItemConditions[index].ValueType = type;
+        vm.eligibleConditions[parentIndex].ItemConditions[index].Value = null;
+    };
+
+    vm.changeValueConditionItemConditionValueType = function(type, parentIndex, index) {
+        vm.valueConditions[parentIndex].ItemConditions[index].ValueType = type;
+        vm.valueConditions[parentIndex].ItemConditions[index].Value = null;
+    };
+
+    vm.openEligibleConditionDate = function(index) {
+        angular.forEach(vm.eligibleConditions, function(condition) {
+            condition.DatePickerOpen = false;
+        });
+        vm.eligibleConditions[index].DatePickerOpen = true;
+    };
+
+    vm.openEligibleConditionItemConditionDate = function(parentIndex, index) {
+        angular.forEach(vm.eligibleConditions, function(condition) {
+            angular.forEach(condition.ItemConditions, function(ic) {
+                ic.DatePickerOpen = false;
+            });
+        });
+        vm.eligibleConditions[parentIndex].ItemConditions[index].DatePickerOpen = true;
+    };
+
+    vm.openValueConditionItemConditionDate = function(parentIndex, index) {
+        angular.forEach(vm.valueConditions, function(condition) {
+            angular.forEach(condition.ItemConditions, function(ic) {
+                ic.DatePickerOpen = false;
+            });
+        });
+        vm.valueConditions[parentIndex].ItemConditions[index].DatePickerOpen = true;
+    };
+
+    $scope.$watch(function () {
+        return vm.eligibleConditions;
+    },function(conditions){
+        updateEligibleExpression(conditions);
+    }, true);
+
+    $scope.$watch(function () {
+        return vm.valueConditions;
+    },function(conditions){
+        updateValueExpression(conditions);
+    }, true);
+
+    function updateEligibleExpression(conditions) {
+        if (vm.promotion.xp.OverrideEligibleExpression) return;
+        vm.promotion.EligibleExpression = OrderCloudExpressions.TranslateEligibleExpression(conditions);
+    }
+
+    function updateValueExpression(conditions) {
+        if (vm.promotion.xp.OverrideValueExpression) return;
+        vm.promotion.ValueExpression = OrderCloudExpressions.TranslateValueExpression(conditions);
     }
 
     vm.Submit = function() {
