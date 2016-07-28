@@ -215,7 +215,7 @@ describe('Component: Catalog', function() {
         it('should call Me ListCategories', function() {
             expect(oc.Me.ListCategories).toHaveBeenCalledWith(null, 1, 100, null, null, null, 'all');
         });
-        it('should call generate a tree by recursively calling getNode method', function() {
+        it('should call generate a tree by recursively calling getNode method', function() {gul
             expect(underscore.where).toHaveBeenCalledWith(mockCategoryItems, {ParentID: null});
             expect(underscore.where).toHaveBeenCalledWith(mockCategoryItems, {ParentID: 'TestCategory123'});
             expect(underscore.where).toHaveBeenCalledWith(mockCategoryItems, {ParentID: 'TestCategory456'});
